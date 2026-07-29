@@ -220,7 +220,10 @@ export const api = {
       request<{ id: string; isActive: false }>(`/api/v1/groups/${groupId}`, {
         method: "DELETE",
       }),
-    listMembers: (groupId: string, query?: { page?: number; limit?: number }) =>
+    listMembers: (
+      groupId: string,
+      query?: { page?: number; limit?: number; status?: "ACTIVE" | "REMOVED" },
+    ) =>
       request<{ members: Member[]; meta: PaginationMeta }>(
         `/api/v1/groups/${groupId}/members`,
         { query },
@@ -235,10 +238,24 @@ export const api = {
         `/api/v1/groups/${groupId}/members/${userId}`,
         { method: "DELETE" },
       ),
+    leave: (groupId: string) =>
+      request<{ userId: string; status: "INACTIVE" }>(
+        `/api/v1/groups/${groupId}/leave`,
+        { method: "POST" },
+      ),
+    restoreMember: (groupId: string, userId: string) =>
+      request<Member>(
+        `/api/v1/groups/${groupId}/members/${userId}/restore`,
+        { method: "POST" },
+      ),
     transferOwner: (groupId: string, newOwnerId: string) =>
       request<Group>(`/api/v1/groups/${groupId}/transfer-owner`, {
         method: "POST",
         body: { newOwnerId },
+      }),
+    regenerateInvite: (groupId: string) =>
+      request<Group>(`/api/v1/groups/${groupId}/regenerate-invite`, {
+        method: "POST",
       }),
   },
 

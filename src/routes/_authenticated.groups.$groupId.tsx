@@ -48,6 +48,8 @@ import {
   X,
   Plus,
   Trash2,
+  LogOut,
+  RotateCw,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/groups/$groupId")({
@@ -112,6 +114,7 @@ function GroupDetailPage() {
             </div>
           )}
         </div>
+        {group.role !== "OWNER" && <LeaveGroupButton group={group} />}
       </div>
 
       <Tabs defaultValue="queue">
@@ -137,6 +140,36 @@ function GroupDetailPage() {
         )}
       </Tabs>
     </div>
+  );
+}
+
+function LeaveGroupButton({ group }: { group: Group }) {
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => api.groups.leave(group.id),
+    onSuccess: () => {
+      toast.success("Você saiu do grupo.");
+      qc.removeQueries({ queryKey: ["group", group.id] });
+      qc.invalidateQueries({ queryKey: ["groups"] });
+      navigate({ to: "/groups" });
+    },
+    onError: (error) =>
+      toast.error(error instanceof ApiError ? error.message : "Erro ao sair."),
+  });
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      disabled={mutation.isPending}
+      onClick={() => {
+        if (confirm(`Sair de "${group.name}"?`)) mutation.mutate();
+      }}
+    >
+      <LogOut className="mr-1 h-3 w-3" />
+      {mutation.isPending ? "Saindo..." : "Sair do grupo"}
+    </Button>
   );
 }
 
@@ -593,15 +626,77 @@ function MembersTab({ group }: { group: Group }) {
     queryKey: ["members", group.id],
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
   });
+  const isAdmin = group.role === "OWNER" || group.role === "ADMIN";
+  const removedQ = useQuery({
+    queryKey: ["members", group.id, "removed"],
+    queryFn: () =>
+      api.groups.listMembers(group.id, { limit: 100, status: "REMOVED" }),
+    enabled: isAdmin,
+  });
   return (
-    <div className="space-y-3">
-      {membersQ.isLoading && (
-        <p className="text-sm text-muted-foreground">Carregando...</p>
-      )}
-      {membersQ.data?.members.map((m) => (
-        <MemberRow key={m.id} member={m} group={group} />
-      ))}
+    <div className="space-y-6">
+      <div className="space-y-3">
+        {membersQ.isLoading && (
+          <p className="text-sm text-muted-foreground">Carregando...</p>
+        )}
+        {membersQ.data?.members.map((m) => (
+          <MemberRow key={m.id} member={m} group={group} />
+        ))}
+      </div>
+      {isAdmin && removedQ.data?.members.length ? (
+        <div className="space-y-3 border-t pt-6">
+          <div>
+            <h3 className="font-semibold">Membros removidos</h3>
+            <p className="text-sm text-muted-foreground">
+              Restaure o acesso de quem foi removido anteriormente.
+            </p>
+          </div>
+          {removedQ.data.members.map((member) => (
+            <RemovedMemberRow key={member.id} member={member} group={group} />
+          ))}
+        </div>
+      ) : null}
     </div>
+  );
+}
+
+function RemovedMemberRow({ member, group }: { member: Member; group: Group }) {
+  const qc = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: () => api.groups.restoreMember(group.id, member.id),
+    onSuccess: () => {
+      toast.success("Membro restaurado.");
+      qc.invalidateQueries({ queryKey: ["members", group.id] });
+    },
+    onError: (error) =>
+      toast.error(
+        error instanceof ApiError ? error.message : "Não foi possível restaurar.",
+      ),
+  });
+
+  return (
+    <Card className="border-dashed">
+      <CardContent className="flex flex-wrap items-center gap-3 p-3">
+        <Avatar>
+          <AvatarImage src={resolveApiAssetUrl(member.avatarUrl)} />
+          <AvatarFallback>
+            {member.name.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+        <div className="flex-1">
+          <div className="font-medium">{member.name}</div>
+          <div className="text-xs text-muted-foreground">{member.email}</div>
+        </div>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={mutation.isPending}
+          onClick={() => mutation.mutate()}
+        >
+          {mutation.isPending ? "Restaurando..." : "Restaurar acesso"}
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -908,8 +1003,23 @@ function SettingsTab({ group }: { group: Group }) {
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
+  const regenerateInviteMut = useMutation({
+    mutationFn: () => api.groups.regenerateInvite(group.id),
+    onSuccess: () => {
+      toast.success("Código de convite renovado.");
+      qc.invalidateQueries({ queryKey: ["group", group.id] });
+      qc.invalidateQueries({ queryKey: ["groups"] });
+    },
+    onError: (error) =>
+      toast.error(
+        error instanceof ApiError
+          ? error.message
+          : "Não foi possível renovar o código.",
+      ),
+  });
 
   const isOwner = group.role === "OWNER";
+  const isAdmin = isOwner || group.role === "ADMIN";
 
   return (
     <div className="space-y-6">
@@ -949,6 +1059,31 @@ function SettingsTab({ group }: { group: Group }) {
           </form>
         </CardContent>
       </Card>
+      {isAdmin && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Código de convite</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              Renovar o código invalida imediatamente o convite anterior.
+            </p>
+            <Button
+              variant="outline"
+              disabled={regenerateInviteMut.isPending}
+              onClick={() => {
+                if (confirm("Renovar o código de convite atual?"))
+                  regenerateInviteMut.mutate();
+              }}
+            >
+              <RotateCw className="mr-2 h-4 w-4" />
+              {regenerateInviteMut.isPending
+                ? "Renovando..."
+                : "Renovar código"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
       {isOwner && (
         <Card className="border-destructive/50">
           <CardHeader>
