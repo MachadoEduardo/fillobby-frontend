@@ -6,8 +6,10 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Gamepad2, Library, LogOut, Users } from "lucide-react";
+import { Gamepad2, Library, LogOut, UserRound, Users } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { resolveApiAssetUrl } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -79,13 +81,25 @@ function AuthenticatedLayout() {
 
         <div className="mt-auto border-t pt-4">
           <div className="flex items-center gap-3 px-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-muted-foreground">
-              <Users className="h-4 w-4" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold">{user?.name}</p>
-              <p className="text-xs text-muted-foreground">Conta ativa</p>
-            </div>
+            <Link
+              to="/profile"
+              className="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 hover:text-primary"
+              title="Editar perfil"
+            >
+              <Avatar className="h-9 w-9">
+                <AvatarImage
+                  src={resolveApiAssetUrl(user?.avatarUrl)}
+                  alt={user?.name ?? "Perfil"}
+                />
+                <AvatarFallback>
+                  <UserRound className="h-4 w-4" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{user?.name}</p>
+                <p className="text-xs text-muted-foreground">Editar perfil</p>
+              </div>
+            </Link>
             <Button
               variant="ghost"
               size="icon"
@@ -111,6 +125,21 @@ function AuthenticatedLayout() {
               Fillobby
             </Link>
             <nav className="flex items-center gap-1">
+              <Link
+                to="/profile"
+                title="Editar perfil"
+                className="flex h-9 w-9 items-center justify-center"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={resolveApiAssetUrl(user?.avatarUrl)}
+                    alt={user?.name ?? "Perfil"}
+                  />
+                  <AvatarFallback>
+                    <UserRound className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               {navItems.map(({ to, label, icon: Icon }) => {
                 const active = pathname === to || pathname.startsWith(`${to}/`);
                 return (

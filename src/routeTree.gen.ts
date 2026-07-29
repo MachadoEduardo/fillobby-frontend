@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as AuthenticatedGamesRouteImport } from './routes/_authenticated.games'
 import { Route as AuthenticatedGroupsRouteImport } from './routes/_authenticated.groups'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated.profile'
 import { Route as AuthenticatedGroupsIndexRouteImport } from './routes/_authenticated.groups.index'
 import { Route as AuthenticatedGroupsGroupIdRouteImport } from './routes/_authenticated.groups.$groupId'
 
@@ -47,6 +48,11 @@ const AuthenticatedGroupsRoute = AuthenticatedGroupsRouteImport.update({
   path: '/groups',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedGroupsIndexRoute =
   AuthenticatedGroupsIndexRouteImport.update({
     id: '/',
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/games': typeof AuthenticatedGamesRoute
   '/groups': typeof AuthenticatedGroupsRouteWithChildren
+  '/profile': typeof AuthenticatedProfileRoute
   '/groups/$groupId': typeof AuthenticatedGroupsGroupIdRoute
   '/groups/': typeof AuthenticatedGroupsIndexRoute
 }
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/games': typeof AuthenticatedGamesRoute
+  '/profile': typeof AuthenticatedProfileRoute
   '/groups/$groupId': typeof AuthenticatedGroupsGroupIdRoute
   '/groups': typeof AuthenticatedGroupsIndexRoute
 }
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_authenticated/games': typeof AuthenticatedGamesRoute
   '/_authenticated/groups': typeof AuthenticatedGroupsRouteWithChildren
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/groups/$groupId': typeof AuthenticatedGroupsGroupIdRoute
   '/_authenticated/groups/': typeof AuthenticatedGroupsIndexRoute
 }
@@ -96,10 +105,18 @@ export interface FileRouteTypes {
     | '/register'
     | '/games'
     | '/groups'
+    | '/profile'
     | '/groups/$groupId'
     | '/groups/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/games' | '/groups/$groupId' | '/groups'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/games'
+    | '/profile'
+    | '/groups/$groupId'
+    | '/groups'
   id:
     | '__root__'
     | '/'
@@ -108,6 +125,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/_authenticated/games'
     | '/_authenticated/groups'
+    | '/_authenticated/profile'
     | '/_authenticated/groups/$groupId'
     | '/_authenticated/groups/'
   fileRoutesById: FileRoutesById
@@ -163,6 +181,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedGroupsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/groups/': {
       id: '/_authenticated/groups/'
       path: '/'
@@ -196,11 +221,13 @@ const AuthenticatedGroupsRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedGamesRoute: typeof AuthenticatedGamesRoute
   AuthenticatedGroupsRoute: typeof AuthenticatedGroupsRouteWithChildren
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedGamesRoute: AuthenticatedGamesRoute,
   AuthenticatedGroupsRoute: AuthenticatedGroupsRouteWithChildren,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

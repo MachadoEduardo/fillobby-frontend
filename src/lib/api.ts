@@ -12,8 +12,21 @@ import type {
   Vote,
 } from "./api-types";
 
-const RAW_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:3000";
+const RAW_BASE =
+  (import.meta.env.VITE_API_URL as string | undefined) ??
+  "http://localhost:3000";
 export const API_BASE_URL = RAW_BASE.replace(/\/+$/, "");
+
+export function resolveApiAssetUrl(
+  value: string | null | undefined,
+): string | undefined {
+  if (!value) return undefined;
+  try {
+    return new URL(value, `${API_BASE_URL}/`).toString();
+  } catch {
+    return value;
+  }
+}
 
 const TOKEN_KEY = "fillobby.token";
 const USER_KEY = "fillobby.user";
@@ -78,14 +91,30 @@ export function onUnauthorized(cb: () => void): () => void {
 interface RequestOptions {
   method?: string;
   body?: unknown;
+  rawBody?: BodyInit;
+  contentType?: string;
   query?: Query;
   auth?: boolean;
 }
 
+interface ApiResponseEnvelope {
+  data?: unknown;
+  error?: ApiErrorPayload;
+}
+
 async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
-  const { method = "GET", body, query, auth = true } = opts;
+  const {
+    method = "GET",
+    body,
+    rawBody,
+    contentType,
+    query,
+    auth = true,
+  } = opts;
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (rawBody !== undefined && contentType)
+    headers["Content-Type"] = contentType;
   if (auth) {
     const token = getStoredToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -96,7 +125,7 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
     response = await fetch(buildUrl(path, query), {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: rawBody ?? (body !== undefined ? JSON.stringify(body) : undefined),
     });
   } catch (err) {
     throw new ApiError(0, {
@@ -106,23 +135,25 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
     });
   }
 
-  let json: any = null;
+  let json: ApiResponseEnvelope | null = null;
   const text = await response.text();
   if (text) {
     try {
-      json = JSON.parse(text);
+      const parsed: unknown = JSON.parse(text);
+      if (typeof parsed === "object" && parsed !== null) {
+        json = parsed as ApiResponseEnvelope;
+      }
     } catch {
       // ignore
     }
   }
 
   if (!response.ok) {
-    const payload: ApiErrorPayload =
-      (json && json.error) || {
-        code: "UNKNOWN_ERROR",
-        message: `Erro ${response.status}.`,
-        details: [],
-      };
+    const payload: ApiErrorPayload = json?.error || {
+      code: "UNKNOWN_ERROR",
+      message: `Erro ${response.status}.`,
+      details: [],
+    };
     if (response.status === 401 && auth) {
       setStoredToken(null);
       setStoredUser(null);
@@ -138,7 +169,11 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
 export const api = {
   auth: {
     register: (input: { name: string; email: string; password: string }) =>
-      request<PublicUser>("/api/v1/auth/register", { method: "POST", body: input, auth: false }),
+      request<PublicUser>("/api/v1/auth/register", {
+        method: "POST",
+        body: input,
+        auth: false,
+      }),
     login: (input: { email: string; password: string }) =>
       request<{ token: string; user: PublicUser }>("/api/v1/auth/login", {
         method: "POST",
@@ -148,19 +183,43 @@ export const api = {
     me: () => request<{ user: PublicUser }>("/api/v1/auth/me"),
   },
 
+  // ============ PROFILE ============
+  profile: {
+    update: (input: { name: string }) =>
+      request<PublicUser>("/api/v1/profile", { method: "PATCH", body: input }),
+    uploadAvatar: (file: File) =>
+      request<PublicUser>("/api/v1/profile/avatar", {
+        method: "PUT",
+        rawBody: file,
+        contentType: file.type,
+      }),
+    removeAvatar: () =>
+      request<PublicUser>("/api/v1/profile/avatar", { method: "DELETE" }),
+  },
+
   // ============ GROUPS ============
   groups: {
     list: (query?: { page?: number; limit?: number }) =>
-      request<{ groups: Group[]; meta: PaginationMeta }>("/api/v1/groups", { query }),
+      request<{ groups: Group[]; meta: PaginationMeta }>("/api/v1/groups", {
+        query,
+      }),
     create: (input: { name: string; description?: string | null }) =>
       request<Group>("/api/v1/groups", { method: "POST", body: input }),
     join: (input: { inviteCode: string }) =>
       request<Group>("/api/v1/groups/join", { method: "POST", body: input }),
     get: (groupId: string) => request<Group>(`/api/v1/groups/${groupId}`),
-    update: (groupId: string, input: { name?: string; description?: string | null }) =>
-      request<Group>(`/api/v1/groups/${groupId}`, { method: "PATCH", body: input }),
+    update: (
+      groupId: string,
+      input: { name?: string; description?: string | null },
+    ) =>
+      request<Group>(`/api/v1/groups/${groupId}`, {
+        method: "PATCH",
+        body: input,
+      }),
     deactivate: (groupId: string) =>
-      request<{ id: string; isActive: false }>(`/api/v1/groups/${groupId}`, { method: "DELETE" }),
+      request<{ id: string; isActive: false }>(`/api/v1/groups/${groupId}`, {
+        method: "DELETE",
+      }),
     listMembers: (groupId: string, query?: { page?: number; limit?: number }) =>
       request<{ members: Member[]; meta: PaginationMeta }>(
         `/api/v1/groups/${groupId}/members`,
@@ -190,7 +249,10 @@ export const api = {
       platform?: Platform;
       page?: number;
       limit?: number;
-    }) => request<{ games: Game[]; meta: PaginationMeta }>("/api/v1/games", { query }),
+    }) =>
+      request<{ games: Game[]; meta: PaginationMeta }>("/api/v1/games", {
+        query,
+      }),
     create: (input: {
       title: string;
       platforms: Platform[];
@@ -208,9 +270,15 @@ export const api = {
         coverUrl: string | null;
         description: string | null;
       }>,
-    ) => request<Game>(`/api/v1/games/${gameId}`, { method: "PATCH", body: input }),
+    ) =>
+      request<Game>(`/api/v1/games/${gameId}`, {
+        method: "PATCH",
+        body: input,
+      }),
     deactivate: (gameId: string) =>
-      request<{ id: string; isActive: false }>(`/api/v1/games/${gameId}`, { method: "DELETE" }),
+      request<{ id: string; isActive: false }>(`/api/v1/games/${gameId}`, {
+        method: "DELETE",
+      }),
   },
 
   // ============ QUEUE ============
@@ -238,21 +306,38 @@ export const api = {
     get: (groupId: string, itemId: string) =>
       request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}`),
     cancel: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}`, { method: "DELETE" }),
-    transition: (groupId: string, itemId: string, status: "VOTING" | "PLAYING" | "COMPLETED") =>
+      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}`, {
+        method: "DELETE",
+      }),
+    transition: (
+      groupId: string,
+      itemId: string,
+      status: "VOTING" | "PLAYING" | "COMPLETED",
+    ) =>
       request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/status`, {
         method: "PATCH",
         body: { status },
       }),
-    setParticipants: (groupId: string, itemId: string, participantIds: string[]) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/participants`, {
-        method: "PUT",
-        body: { participantIds },
-      }),
+    setParticipants: (
+      groupId: string,
+      itemId: string,
+      participantIds: string[],
+    ) =>
+      request<QueueItem>(
+        `/api/v1/groups/${groupId}/queue/${itemId}/participants`,
+        {
+          method: "PUT",
+          body: { participantIds },
+        },
+      ),
     markReady: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, { method: "POST" }),
+      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, {
+        method: "POST",
+      }),
     unmarkReady: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, { method: "DELETE" }),
+      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, {
+        method: "DELETE",
+      }),
   },
 
   // ============ VOTES ============

@@ -1,6 +1,21 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { api, getStoredToken, getStoredUser, onUnauthorized, setStoredToken, setStoredUser } from "./api";
+import {
+  api,
+  getStoredToken,
+  getStoredUser,
+  onUnauthorized,
+  setStoredToken,
+  setStoredUser,
+} from "./api";
 import type { PublicUser } from "./api-types";
 
 interface AuthContextValue {
@@ -9,6 +24,7 @@ interface AuthContextValue {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<PublicUser>;
+  updateUser: (user: PublicUser) => void;
   logout: () => void;
   refresh: () => Promise<void>;
 }
@@ -19,7 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null>(() => getStoredToken());
   const [user, setUser] = useState<PublicUser | null>(() => getStoredUser());
-  const [isLoading, setIsLoading] = useState<boolean>(() => Boolean(getStoredToken()));
+  const [isLoading, setIsLoading] = useState<boolean>(() =>
+    Boolean(getStoredToken()),
+  );
 
   const logout = useCallback(() => {
     setStoredToken(null);
@@ -28,6 +46,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     queryClient.clear();
   }, [queryClient]);
+
+  const updateUser = useCallback((nextUser: PublicUser) => {
+    setStoredUser(nextUser);
+    setUser(nextUser);
+  }, []);
 
   const refresh = useCallback(async () => {
     const currentToken = getStoredToken();
@@ -74,10 +97,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isLoading,
       isAuthenticated: Boolean(token && user),
       login,
+      updateUser,
       logout,
       refresh,
     }),
-    [user, token, isLoading, login, logout, refresh],
+    [user, token, isLoading, login, updateUser, logout, refresh],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

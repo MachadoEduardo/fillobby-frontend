@@ -2,7 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { api, ApiError, QUEUE_STATUS_LABEL } from "@/lib/api";
+import {
+  api,
+  ApiError,
+  QUEUE_STATUS_LABEL,
+  resolveApiAssetUrl,
+} from "@/lib/api";
 import type { Group, Member, QueueItem, QueueStatus } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
@@ -486,7 +491,7 @@ function ParticipantsDialog({
                 onCheckedChange={() => toggle(m.id)}
               />
               <Avatar className="h-8 w-8">
-                <AvatarImage src={m.avatarUrl ?? undefined} />
+                <AvatarImage src={resolveApiAssetUrl(m.avatarUrl)} />
                 <AvatarFallback>
                   {m.name.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
@@ -649,7 +654,7 @@ function MemberRow({ member, group }: { member: Member; group: Group }) {
     <Card>
       <CardContent className="flex flex-wrap items-center gap-3 p-3">
         <Avatar>
-          <AvatarImage src={member.avatarUrl ?? undefined} />
+          <AvatarImage src={resolveApiAssetUrl(member.avatarUrl)} />
           <AvatarFallback>
             {member.name.slice(0, 2).toUpperCase()}
           </AvatarFallback>
