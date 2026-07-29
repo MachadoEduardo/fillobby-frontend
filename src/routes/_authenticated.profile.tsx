@@ -25,8 +25,12 @@ function ProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(user?.name ?? "");
   const [saving, setSaving] = useState(false);
+  const [passwordSaving, setPasswordSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   function synchronizeUser(nextUser: NonNullable<typeof user>) {
     updateUser(nextUser);
@@ -49,6 +53,30 @@ function ProfilePage() {
       );
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handlePasswordSubmit(event: FormEvent) {
+    event.preventDefault();
+    setPasswordSaving(true);
+    try {
+      await api.profile.changePassword({
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      toast.success("Senha atualizada com sucesso.");
+    } catch (error) {
+      toast.error(
+        error instanceof ApiError
+          ? error.message
+          : "Não foi possível atualizar a senha.",
+      );
+    } finally {
+      setPasswordSaving(false);
     }
   }
 
@@ -196,6 +224,54 @@ function ProfilePage() {
               disabled={saving || name.trim() === user.name}
             >
               {saving ? "Salvando..." : "Salvar alterações"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Segurança</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePasswordSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="current-password">Senha atual</Label>
+              <Input
+                id="current-password"
+                type="password"
+                required
+                value={currentPassword}
+                onChange={(event) => setCurrentPassword(event.target.value)}
+                autoComplete="current-password"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-password">Nova senha</Label>
+              <Input
+                id="new-password"
+                type="password"
+                required
+                minLength={8}
+                value={newPassword}
+                onChange={(event) => setNewPassword(event.target.value)}
+                autoComplete="new-password"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirmar nova senha</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                required
+                minLength={8}
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                autoComplete="new-password"
+              />
+            </div>
+            <Button type="submit" disabled={passwordSaving}>
+              {passwordSaving ? "Atualizando..." : "Atualizar senha"}
             </Button>
           </form>
         </CardContent>

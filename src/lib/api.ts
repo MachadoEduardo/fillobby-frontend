@@ -188,6 +188,15 @@ export const api = {
   profile: {
     update: (input: { name: string }) =>
       request<PublicUser>("/api/v1/profile", { method: "PATCH", body: input }),
+    changePassword: (input: {
+      currentPassword: string;
+      newPassword: string;
+      confirmPassword: string;
+    }) =>
+      request<PublicUser>("/api/v1/profile/password", {
+        method: "PATCH",
+        body: input,
+      }),
     uploadAvatar: (file: File) =>
       request<PublicUser>("/api/v1/profile/avatar", {
         method: "PUT",
