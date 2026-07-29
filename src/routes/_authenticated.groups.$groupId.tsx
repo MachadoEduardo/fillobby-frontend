@@ -13,15 +13,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  ArrowLeft, Copy, Crown, Shield, Users, ThumbsUp, ThumbsDown, Play, Check, X, Plus, Trash2,
+  ArrowLeft,
+  Gamepad2,
+  Copy,
+  Crown,
+  Shield,
+  Users,
+  ThumbsUp,
+  ThumbsDown,
+  Play,
+  Check,
+  X,
+  Plus,
+  Trash2,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/groups/$groupId")({
@@ -36,23 +57,30 @@ function GroupDetailPage() {
     queryFn: () => api.groups.get(groupId),
   });
 
-  if (groupQ.isLoading) return <p className="text-sm text-muted-foreground">Carregando grupo...</p>;
+  if (groupQ.isLoading)
+    return <p className="text-sm text-muted-foreground">Carregando grupo...</p>;
   if (groupQ.error)
-    return <p className="text-sm text-destructive">{(groupQ.error as ApiError).message}</p>;
+    return (
+      <p className="text-sm text-destructive">
+        {(groupQ.error as ApiError).message}
+      </p>
+    );
   if (!groupQ.data) return null;
 
   const group = groupQ.data;
   const isAdmin = group.role === "OWNER" || group.role === "ADMIN";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex items-start gap-3">
         <Button asChild variant="ghost" size="icon">
-          <Link to="/groups"><ArrowLeft className="h-4 w-4" /></Link>
+          <Link to="/groups">
+            <ArrowLeft className="h-4 w-4" />
+          </Link>
         </Button>
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold">{group.name}</h1>
+            <h1 className="page-heading">{group.name}</h1>
             <RoleBadge role={group.role} />
           </div>
           {group.description && (
@@ -60,12 +88,20 @@ function GroupDetailPage() {
           )}
           {group.inviteCode && (
             <div className="mt-2 flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">Código de convite:</span>
-              <code className="rounded bg-muted px-2 py-1 text-sm font-mono">{group.inviteCode}</code>
-              <Button variant="ghost" size="icon" onClick={() => {
-                navigator.clipboard.writeText(group.inviteCode!);
-                toast.success("Código copiado!");
-              }}>
+              <span className="text-xs text-muted-foreground">
+                Código de convite:
+              </span>
+              <code className="rounded-lg border border-primary/15 bg-primary/7 px-2.5 py-1 text-sm font-semibold tracking-wider text-primary">
+                {group.inviteCode}
+              </code>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  navigator.clipboard.writeText(group.inviteCode!);
+                  toast.success("Código copiado!");
+                }}
+              >
                 <Copy className="h-3 w-3" />
               </Button>
             </div>
@@ -74,17 +110,25 @@ function GroupDetailPage() {
       </div>
 
       <Tabs defaultValue="queue">
-        <TabsList className="flex-wrap">
+        <TabsList className="h-auto flex-wrap">
           <TabsTrigger value="queue">Fila</TabsTrigger>
           <TabsTrigger value="members">Membros</TabsTrigger>
           <TabsTrigger value="history">Histórico</TabsTrigger>
           {isAdmin && <TabsTrigger value="settings">Configurações</TabsTrigger>}
         </TabsList>
-        <TabsContent value="queue" className="mt-6"><QueueTab group={group} /></TabsContent>
-        <TabsContent value="members" className="mt-6"><MembersTab group={group} /></TabsContent>
-        <TabsContent value="history" className="mt-6"><HistoryTab group={group} /></TabsContent>
+        <TabsContent value="queue" className="mt-6">
+          <QueueTab group={group} />
+        </TabsContent>
+        <TabsContent value="members" className="mt-6">
+          <MembersTab group={group} />
+        </TabsContent>
+        <TabsContent value="history" className="mt-6">
+          <HistoryTab group={group} />
+        </TabsContent>
         {isAdmin && (
-          <TabsContent value="settings" className="mt-6"><SettingsTab group={group} /></TabsContent>
+          <TabsContent value="settings" className="mt-6">
+            <SettingsTab group={group} />
+          </TabsContent>
         )}
       </Tabs>
     </div>
@@ -93,20 +137,32 @@ function GroupDetailPage() {
 
 function RoleBadge({ role }: { role: "OWNER" | "ADMIN" | "MEMBER" }) {
   if (role === "OWNER")
-    return <Badge className="gap-1"><Crown className="h-3 w-3" /> Dono</Badge>;
+    return (
+      <Badge className="gap-1">
+        <Crown className="h-3 w-3" /> Dono
+      </Badge>
+    );
   if (role === "ADMIN")
-    return <Badge variant="secondary" className="gap-1"><Shield className="h-3 w-3" /> Admin</Badge>;
+    return (
+      <Badge variant="secondary" className="gap-1">
+        <Shield className="h-3 w-3" /> Admin
+      </Badge>
+    );
   return <Badge variant="outline">Membro</Badge>;
 }
 
 /* ============ QUEUE TAB ============ */
 
 const QUEUE_STATUS_VARIANT: Record<QueueStatus, string> = {
-  SUGGESTED: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100",
+  SUGGESTED:
+    "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100",
   VOTING: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100",
-  WAITING_PLAYERS: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100",
-  READY: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100",
-  PLAYING: "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-100",
+  WAITING_PLAYERS:
+    "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100",
+  READY:
+    "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100",
+  PLAYING:
+    "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-100",
   COMPLETED: "bg-muted text-muted-foreground",
   CANCELLED: "bg-destructive/10 text-destructive",
 };
@@ -120,14 +176,22 @@ function QueueTab({ group }: { group: Group }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">Itens ativos da fila do grupo.</p>
+        <p className="text-sm text-muted-foreground">
+          Itens ativos da fila do grupo.
+        </p>
         <SuggestGameDialog groupId={group.id} />
       </div>
 
-      {listQ.isLoading && <p className="text-sm text-muted-foreground">Carregando fila...</p>}
-      {listQ.error && <p className="text-sm text-destructive">{(listQ.error as ApiError).message}</p>}
+      {listQ.isLoading && (
+        <p className="text-sm text-muted-foreground">Carregando fila...</p>
+      )}
+      {listQ.error && (
+        <p className="text-sm text-destructive">
+          {(listQ.error as ApiError).message}
+        </p>
+      )}
       {listQ.data?.queueItems.length === 0 && (
-        <div className="rounded-lg border border-dashed p-10 text-center text-sm text-muted-foreground">
+        <div className="rounded-xl border border-dashed bg-card p-10 text-center text-sm text-muted-foreground">
           Nenhum item na fila. Sugira um jogo para começar!
         </div>
       )}
@@ -150,7 +214,8 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
   const canSelectParticipants =
     isAdmin && (item.status === "VOTING" || item.status === "WAITING_PLAYERS");
   const canReady =
-    isParticipant && (item.status === "WAITING_PLAYERS" || item.status === "READY");
+    isParticipant &&
+    (item.status === "WAITING_PLAYERS" || item.status === "READY");
   const [selectOpen, setSelectOpen] = useState(false);
   const [voted, setVoted] = useState<boolean | null>(null); // optimistic UI hint
 
@@ -161,15 +226,22 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
 
   const voteMut = useMutation({
     mutationFn: () => api.votes.create(group.id, item.id),
-    onSuccess: () => { setVoted(true); invalidate(); },
+    onSuccess: () => {
+      setVoted(true);
+      invalidate();
+    },
     onError: (e) => {
-      if (e instanceof ApiError && e.code === "VOTE_ALREADY_EXISTS") setVoted(true);
+      if (e instanceof ApiError && e.code === "VOTE_ALREADY_EXISTS")
+        setVoted(true);
       else toast.error(e instanceof ApiError ? e.message : "Erro ao votar.");
     },
   });
   const unvoteMut = useMutation({
     mutationFn: () => api.votes.removeOwn(group.id, item.id),
-    onSuccess: () => { setVoted(false); invalidate(); },
+    onSuccess: () => {
+      setVoted(false);
+      invalidate();
+    },
     onError: (e) => {
       if (e instanceof ApiError && e.code === "VOTE_NOT_FOUND") setVoted(false);
       else toast.error(e instanceof ApiError ? e.message : "Erro.");
@@ -193,19 +265,27 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
   });
   const cancelMut = useMutation({
     mutationFn: () => api.queue.cancel(group.id, item.id),
-    onSuccess: () => { toast.success("Item cancelado."); invalidate(); },
+    onSuccess: () => {
+      toast.success("Item cancelado.");
+      invalidate();
+    },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
 
   return (
-    <Card>
+    <Card className="transition-colors hover:border-primary/30">
       <CardContent className="p-4">
         <div className="flex gap-4">
           {item.game.coverUrl ? (
-            <img src={item.game.coverUrl} alt={item.game.title}
-              className="h-24 w-24 shrink-0 rounded object-cover" />
+            <img
+              src={item.game.coverUrl}
+              alt={item.game.title}
+              className="h-24 w-24 shrink-0 rounded-lg object-cover"
+            />
           ) : (
-            <div className="h-24 w-24 shrink-0 rounded bg-muted" />
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <Gamepad2 className="h-6 w-6" />
+            </div>
           )}
           <div className="flex-1 space-y-2">
             <div className="flex flex-wrap items-start justify-between gap-2">
@@ -213,10 +293,14 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
                 <h3 className="font-semibold">{item.game.title}</h3>
                 <div className="mt-1 flex flex-wrap gap-1">
                   {item.game.platforms.map((p) => (
-                    <Badge key={p} variant="secondary" className="text-xs">{p}</Badge>
+                    <Badge key={p} variant="secondary" className="text-xs">
+                      {p}
+                    </Badge>
                   ))}
                   {item.game.maxPlayers && (
-                    <Badge variant="outline" className="text-xs">até {item.game.maxPlayers} jogadores</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      até {item.game.maxPlayers} jogadores
+                    </Badge>
                   )}
                 </div>
               </div>
@@ -227,81 +311,134 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
             <div className="text-xs text-muted-foreground">
               Sugerido por {item.suggestedBy.name} · {item.voteCount} voto(s)
               {item.participantIds.length > 0 && (
-                <> · {item.readyUserIds.length}/{item.participantIds.length} prontos</>
+                <>
+                  {" "}
+                  · {item.readyUserIds.length}/{item.participantIds.length}{" "}
+                  prontos
+                </>
               )}
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              {canVote && (
-                voted === true ? (
-                  <Button size="sm" variant="outline" disabled={unvoteMut.isPending}
-                    onClick={() => unvoteMut.mutate()}>
+              {canVote &&
+                (voted === true ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={unvoteMut.isPending}
+                    onClick={() => unvoteMut.mutate()}
+                  >
                     <ThumbsDown className="mr-1 h-3 w-3" /> Remover voto
                   </Button>
                 ) : (
-                  <Button size="sm" disabled={voteMut.isPending} onClick={() => voteMut.mutate()}>
+                  <Button
+                    size="sm"
+                    disabled={voteMut.isPending}
+                    onClick={() => voteMut.mutate()}
+                  >
                     <ThumbsUp className="mr-1 h-3 w-3" /> Votar
                   </Button>
-                )
-              )}
+                ))}
 
-              {canReady && (
-                isReady ? (
-                  <Button size="sm" variant="outline" disabled={unreadyMut.isPending}
-                    onClick={() => unreadyMut.mutate()}>
+              {canReady &&
+                (isReady ? (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={unreadyMut.isPending}
+                    onClick={() => unreadyMut.mutate()}
+                  >
                     <X className="mr-1 h-3 w-3" /> Não estou pronto
                   </Button>
                 ) : (
-                  <Button size="sm" disabled={readyMut.isPending} onClick={() => readyMut.mutate()}>
+                  <Button
+                    size="sm"
+                    disabled={readyMut.isPending}
+                    onClick={() => readyMut.mutate()}
+                  >
                     <Check className="mr-1 h-3 w-3" /> Estou pronto
                   </Button>
-                )
-              )}
+                ))}
 
               {canSelectParticipants && (
-                <Button size="sm" variant="outline" onClick={() => setSelectOpen(true)}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSelectOpen(true)}
+                >
                   <Users className="mr-1 h-3 w-3" /> Participantes
                 </Button>
               )}
 
               {isAdmin && item.status === "SUGGESTED" && (
-                <Button size="sm" variant="outline" disabled={transMut.isPending}
-                  onClick={() => transMut.mutate("VOTING")}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={transMut.isPending}
+                  onClick={() => transMut.mutate("VOTING")}
+                >
                   Iniciar votação
                 </Button>
               )}
               {isAdmin && item.status === "READY" && (
-                <Button size="sm" disabled={transMut.isPending}
-                  onClick={() => transMut.mutate("PLAYING")}>
+                <Button
+                  size="sm"
+                  disabled={transMut.isPending}
+                  onClick={() => transMut.mutate("PLAYING")}
+                >
                   <Play className="mr-1 h-3 w-3" /> Iniciar partida
                 </Button>
               )}
               {isAdmin && item.status === "PLAYING" && (
-                <Button size="sm" disabled={transMut.isPending}
-                  onClick={() => transMut.mutate("COMPLETED")}>
+                <Button
+                  size="sm"
+                  disabled={transMut.isPending}
+                  onClick={() => transMut.mutate("COMPLETED")}
+                >
                   <Check className="mr-1 h-3 w-3" /> Concluir
                 </Button>
               )}
-              {isAdmin && item.status !== "COMPLETED" && item.status !== "CANCELLED" && (
-                <Button size="sm" variant="ghost" disabled={cancelMut.isPending}
-                  onClick={() => { if (confirm("Cancelar este item?")) cancelMut.mutate(); }}>
-                  <Trash2 className="mr-1 h-3 w-3" /> Cancelar
-                </Button>
-              )}
+              {isAdmin &&
+                item.status !== "COMPLETED" &&
+                item.status !== "CANCELLED" && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={cancelMut.isPending}
+                    onClick={() => {
+                      if (confirm("Cancelar este item?")) cancelMut.mutate();
+                    }}
+                  >
+                    <Trash2 className="mr-1 h-3 w-3" /> Cancelar
+                  </Button>
+                )}
             </div>
           </div>
         </div>
       </CardContent>
       {selectOpen && (
-        <ParticipantsDialog group={group} item={item} open={selectOpen} onOpenChange={setSelectOpen} />
+        <ParticipantsDialog
+          group={group}
+          item={item}
+          open={selectOpen}
+          onOpenChange={setSelectOpen}
+        />
       )}
     </Card>
   );
 }
 
 function ParticipantsDialog({
-  group, item, open, onOpenChange,
-}: { group: Group; item: QueueItem; open: boolean; onOpenChange: (v: boolean) => void }) {
+  group,
+  item,
+  open,
+  onOpenChange,
+}: {
+  group: Group;
+  item: QueueItem;
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+}) {
   const membersQ = useQuery({
     queryKey: ["members", group.id],
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
@@ -320,7 +457,9 @@ function ParticipantsDialog({
   });
 
   function toggle(id: string) {
-    setSelected((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+    );
   }
 
   return (
@@ -331,22 +470,36 @@ function ParticipantsDialog({
         </DialogHeader>
         {item.game.maxPlayers && (
           <p className="text-xs text-muted-foreground">
-            Máximo: {item.game.maxPlayers} jogadores (selecionados: {selected.length}).
+            Máximo: {item.game.maxPlayers} jogadores (selecionados:{" "}
+            {selected.length}).
           </p>
         )}
         {membersQ.isLoading && <p className="text-sm">Carregando...</p>}
         <div className="space-y-2">
           {membersQ.data?.members.map((m) => (
-            <label key={m.id} className="flex items-center gap-3 rounded p-2 hover:bg-accent">
-              <Checkbox checked={selected.includes(m.id)} onCheckedChange={() => toggle(m.id)} />
-              <Avatar className="h-8 w-8"><AvatarImage src={m.avatarUrl ?? undefined} />
-                <AvatarFallback>{m.name.slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
+            <label
+              key={m.id}
+              className="flex items-center gap-3 rounded p-2 hover:bg-accent"
+            >
+              <Checkbox
+                checked={selected.includes(m.id)}
+                onCheckedChange={() => toggle(m.id)}
+              />
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={m.avatarUrl ?? undefined} />
+                <AvatarFallback>
+                  {m.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <span className="text-sm">{m.name}</span>
             </label>
           ))}
         </div>
         <DialogFooter>
-          <Button disabled={mut.isPending || selected.length === 0} onClick={() => mut.mutate()}>
+          <Button
+            disabled={mut.isPending || selected.length === 0}
+            onClick={() => mut.mutate()}
+          >
             {mut.isPending ? "Salvando..." : "Salvar participantes"}
           </Button>
         </DialogFooter>
@@ -377,24 +530,43 @@ function SuggestGameDialog({ groupId }: { groupId: string }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm"><Plus className="mr-1 h-3 w-3" /> Sugerir jogo</Button>
+        <Button size="sm">
+          <Plus className="mr-1 h-3 w-3" /> Sugerir jogo
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>Sugerir um jogo</DialogTitle></DialogHeader>
-        <Input placeholder="Buscar no catálogo..." value={search}
-          onChange={(e) => setSearch(e.target.value)} />
+        <DialogHeader>
+          <DialogTitle>Sugerir um jogo</DialogTitle>
+        </DialogHeader>
+        <Input
+          placeholder="Buscar no catálogo..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         {gamesQ.isLoading && <p className="text-sm">Carregando...</p>}
         <div className="space-y-1">
           {gamesQ.data?.games.map((g) => (
-            <button key={g.id} type="button" disabled={mut.isPending}
+            <button
+              key={g.id}
+              type="button"
+              disabled={mut.isPending}
               onClick={() => mut.mutate(g.id)}
-              className="flex w-full items-center gap-3 rounded p-2 text-left hover:bg-accent">
+              className="flex w-full items-center gap-3 rounded p-2 text-left hover:bg-accent"
+            >
               {g.coverUrl ? (
-                <img src={g.coverUrl} alt="" className="h-10 w-10 rounded object-cover" />
-              ) : <div className="h-10 w-10 rounded bg-muted" />}
+                <img
+                  src={g.coverUrl}
+                  alt=""
+                  className="h-10 w-10 rounded object-cover"
+                />
+              ) : (
+                <div className="h-10 w-10 rounded bg-muted" />
+              )}
               <div className="flex-1">
                 <div className="text-sm font-medium">{g.title}</div>
-                <div className="text-xs text-muted-foreground">{g.platforms.join(", ")}</div>
+                <div className="text-xs text-muted-foreground">
+                  {g.platforms.join(", ")}
+                </div>
               </div>
             </button>
           ))}
@@ -418,7 +590,9 @@ function MembersTab({ group }: { group: Group }) {
   });
   return (
     <div className="space-y-3">
-      {membersQ.isLoading && <p className="text-sm text-muted-foreground">Carregando...</p>}
+      {membersQ.isLoading && (
+        <p className="text-sm text-muted-foreground">Carregando...</p>
+      )}
       {membersQ.data?.members.map((m) => (
         <MemberRow key={m.id} member={m} group={group} />
       ))}
@@ -434,7 +608,9 @@ function MemberRow({ member, group }: { member: Member; group: Group }) {
   const isAdmin = isOwner || group.role === "ADMIN";
   const canChangeRole = isOwner && member.role !== "OWNER" && !isSelf;
   const canRemove =
-    !isSelf && member.role !== "OWNER" && (isOwner || (group.role === "ADMIN" && member.role === "MEMBER"));
+    !isSelf &&
+    member.role !== "OWNER" &&
+    (isOwner || (group.role === "ADMIN" && member.role === "MEMBER"));
   const canTransfer = isOwner && !isSelf && member.role !== "OWNER";
 
   function invalidate() {
@@ -444,35 +620,58 @@ function MemberRow({ member, group }: { member: Member; group: Group }) {
   }
 
   const roleMut = useMutation({
-    mutationFn: (role: "ADMIN" | "MEMBER") => api.groups.changeRole(group.id, member.id, role),
-    onSuccess: () => { toast.success("Papel alterado."); invalidate(); },
+    mutationFn: (role: "ADMIN" | "MEMBER") =>
+      api.groups.changeRole(group.id, member.id, role),
+    onSuccess: () => {
+      toast.success("Papel alterado.");
+      invalidate();
+    },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
   const removeMut = useMutation({
     mutationFn: () => api.groups.removeMember(group.id, member.id),
-    onSuccess: () => { toast.success("Membro removido."); invalidate(); },
+    onSuccess: () => {
+      toast.success("Membro removido.");
+      invalidate();
+    },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
   const transferMut = useMutation({
     mutationFn: () => api.groups.transferOwner(group.id, member.id),
-    onSuccess: () => { toast.success("Propriedade transferida."); invalidate(); },
+    onSuccess: () => {
+      toast.success("Propriedade transferida.");
+      invalidate();
+    },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
 
   return (
     <Card>
       <CardContent className="flex flex-wrap items-center gap-3 p-3">
-        <Avatar><AvatarImage src={member.avatarUrl ?? undefined} />
-          <AvatarFallback>{member.name.slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
+        <Avatar>
+          <AvatarImage src={member.avatarUrl ?? undefined} />
+          <AvatarFallback>
+            {member.name.slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
         <div className="flex-1">
-          <div className="font-medium">{member.name} {isSelf && <span className="text-xs text-muted-foreground">(você)</span>}</div>
+          <div className="font-medium">
+            {member.name}{" "}
+            {isSelf && (
+              <span className="text-xs text-muted-foreground">(você)</span>
+            )}
+          </div>
           <div className="text-xs text-muted-foreground">{member.email}</div>
         </div>
         <RoleBadge role={member.role} />
         {canChangeRole && (
-          <Select value={member.role === "ADMIN" ? "ADMIN" : "MEMBER"}
-            onValueChange={(v) => roleMut.mutate(v as "ADMIN" | "MEMBER")}>
-            <SelectTrigger className="w-[130px]"><SelectValue /></SelectTrigger>
+          <Select
+            value={member.role === "ADMIN" ? "ADMIN" : "MEMBER"}
+            onValueChange={(v) => roleMut.mutate(v as "ADMIN" | "MEMBER")}
+          >
+            <SelectTrigger className="w-[130px]">
+              <SelectValue />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="ADMIN">Admin</SelectItem>
               <SelectItem value="MEMBER">Membro</SelectItem>
@@ -480,14 +679,26 @@ function MemberRow({ member, group }: { member: Member; group: Group }) {
           </Select>
         )}
         {canTransfer && (
-          <Button size="sm" variant="outline"
-            onClick={() => { if (confirm(`Transferir propriedade para ${member.name}?`)) transferMut.mutate(); }}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              if (confirm(`Transferir propriedade para ${member.name}?`))
+                transferMut.mutate();
+            }}
+          >
             <Crown className="mr-1 h-3 w-3" /> Tornar dono
           </Button>
         )}
         {canRemove && (
-          <Button size="sm" variant="ghost"
-            onClick={() => { if (confirm(`Remover ${member.name} do grupo?`)) removeMut.mutate(); }}>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => {
+              if (confirm(`Remover ${member.name} do grupo?`))
+                removeMut.mutate();
+            }}
+          >
             <Trash2 className="h-3 w-3" />
           </Button>
         )}
@@ -505,7 +716,10 @@ function HistoryTab({ group }: { group: Group }) {
   const [participantId, setParticipantId] = useState("");
   const [page, setPage] = useState(1);
 
-  const gamesQ = useQuery({ queryKey: ["games-all"], queryFn: () => api.games.list({ limit: 100 }) });
+  const gamesQ = useQuery({
+    queryKey: ["games-all"],
+    queryFn: () => api.games.list({ limit: 100 }),
+  });
   const membersQ = useQuery({
     queryKey: ["members", group.id],
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
@@ -530,52 +744,103 @@ function HistoryTab({ group }: { group: Group }) {
         <CardContent className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1">
             <Label className="text-xs">De</Label>
-            <Input type="date" value={from} onChange={(e) => { setFrom(e.target.value); setPage(1); }} />
+            <Input
+              type="date"
+              value={from}
+              onChange={(e) => {
+                setFrom(e.target.value);
+                setPage(1);
+              }}
+            />
           </div>
           <div className="space-y-1">
             <Label className="text-xs">Até</Label>
-            <Input type="date" value={to} onChange={(e) => { setTo(e.target.value); setPage(1); }} />
+            <Input
+              type="date"
+              value={to}
+              onChange={(e) => {
+                setTo(e.target.value);
+                setPage(1);
+              }}
+            />
           </div>
           <div className="space-y-1">
             <Label className="text-xs">Jogo</Label>
-            <Select value={gameId || "ALL"} onValueChange={(v) => { setGameId(v === "ALL" ? "" : v); setPage(1); }}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={gameId || "ALL"}
+              onValueChange={(v) => {
+                setGameId(v === "ALL" ? "" : v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">Todos</SelectItem>
-                {gamesQ.data?.games.map((g) => <SelectItem key={g.id} value={g.id}>{g.title}</SelectItem>)}
+                {gamesQ.data?.games.map((g) => (
+                  <SelectItem key={g.id} value={g.id}>
+                    {g.title}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1">
             <Label className="text-xs">Participante</Label>
-            <Select value={participantId || "ALL"}
-              onValueChange={(v) => { setParticipantId(v === "ALL" ? "" : v); setPage(1); }}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+            <Select
+              value={participantId || "ALL"}
+              onValueChange={(v) => {
+                setParticipantId(v === "ALL" ? "" : v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">Todos</SelectItem>
-                {membersQ.data?.members.map((m) => <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>)}
+                {membersQ.data?.members.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </CardContent>
       </Card>
 
-      {historyQ.isLoading && <p className="text-sm text-muted-foreground">Carregando...</p>}
+      {historyQ.isLoading && (
+        <p className="text-sm text-muted-foreground">Carregando...</p>
+      )}
       {historyQ.data?.historyItems.length === 0 && (
-        <p className="text-sm text-muted-foreground">Nenhuma partida concluída ainda.</p>
+        <p className="text-sm text-muted-foreground">
+          Nenhuma partida concluída ainda.
+        </p>
       )}
       <div className="space-y-2">
         {historyQ.data?.historyItems.map((it) => (
           <Card key={it.id}>
             <CardContent className="flex items-center gap-3 p-3">
               {it.game.coverUrl ? (
-                <img src={it.game.coverUrl} alt="" className="h-12 w-12 rounded object-cover" />
-              ) : <div className="h-12 w-12 rounded bg-muted" />}
+                <img
+                  src={it.game.coverUrl}
+                  alt=""
+                  className="h-12 w-12 rounded object-cover"
+                />
+              ) : (
+                <div className="h-12 w-12 rounded bg-muted" />
+              )}
               <div className="flex-1">
                 <div className="font-medium">{it.game.title}</div>
                 <div className="text-xs text-muted-foreground">
-                  Concluído em {it.completedAt ? new Date(it.completedAt).toLocaleString("pt-BR") : "-"}
-                  {" · "}{it.participantIds.length} participante(s)
+                  Concluído em{" "}
+                  {it.completedAt
+                    ? new Date(it.completedAt).toLocaleString("pt-BR")
+                    : "-"}
+                  {" · "}
+                  {it.participantIds.length} participante(s)
                 </div>
               </div>
               <Badge variant="outline">{it.voteCount} voto(s)</Badge>
@@ -586,13 +851,25 @@ function HistoryTab({ group }: { group: Group }) {
 
       {historyQ.data && historyQ.data.meta.totalPages > 1 && (
         <div className="flex items-center justify-center gap-3">
-          <Button variant="outline" size="sm" disabled={page <= 1}
-            onClick={() => setPage((p) => p - 1)}>Anterior</Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page <= 1}
+            onClick={() => setPage((p) => p - 1)}
+          >
+            Anterior
+          </Button>
           <span className="text-sm text-muted-foreground">
             {historyQ.data.meta.page} / {historyQ.data.meta.totalPages}
           </span>
-          <Button variant="outline" size="sm" disabled={page >= historyQ.data.meta.totalPages}
-            onClick={() => setPage((p) => p + 1)}>Próxima</Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={page >= historyQ.data.meta.totalPages}
+            onClick={() => setPage((p) => p + 1)}
+          >
+            Próxima
+          </Button>
         </div>
       )}
     </div>
@@ -608,7 +885,8 @@ function SettingsTab({ group }: { group: Group }) {
   const [description, setDescription] = useState(group.description ?? "");
 
   const updateMut = useMutation({
-    mutationFn: () => api.groups.update(group.id, { name, description: description || null }),
+    mutationFn: () =>
+      api.groups.update(group.id, { name, description: description || null }),
     onSuccess: () => {
       toast.success("Grupo atualizado.");
       qc.invalidateQueries({ queryKey: ["group", group.id] });
@@ -631,18 +909,34 @@ function SettingsTab({ group }: { group: Group }) {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader><CardTitle>Informações do grupo</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Informações do grupo</CardTitle>
+        </CardHeader>
         <CardContent>
-          <form onSubmit={(e) => { e.preventDefault(); updateMut.mutate(); }} className="space-y-4">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              updateMut.mutate();
+            }}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label>Nome</Label>
-              <Input required minLength={3} maxLength={80} value={name}
-                onChange={(e) => setName(e.target.value)} />
+              <Input
+                required
+                minLength={3}
+                maxLength={80}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Descrição</Label>
-              <Textarea maxLength={500} value={description}
-                onChange={(e) => setDescription(e.target.value)} />
+              <Textarea
+                maxLength={500}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </div>
             <Button type="submit" disabled={updateMut.isPending}>
               {updateMut.isPending ? "Salvando..." : "Salvar alterações"}
@@ -652,14 +946,22 @@ function SettingsTab({ group }: { group: Group }) {
       </Card>
       {isOwner && (
         <Card className="border-destructive/50">
-          <CardHeader><CardTitle className="text-destructive">Zona de perigo</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-destructive">Zona de perigo</CardTitle>
+          </CardHeader>
           <CardContent>
             <p className="mb-3 text-sm text-muted-foreground">
-              Inativar o grupo remove todas as associações ativas. Esta ação não pode ser desfeita
-              pela interface.
+              Inativar o grupo remove todas as associações ativas. Esta ação não
+              pode ser desfeita pela interface.
             </p>
-            <Button variant="destructive" disabled={deleteMut.isPending}
-              onClick={() => { if (confirm(`Inativar o grupo "${group.name}"?`)) deleteMut.mutate(); }}>
+            <Button
+              variant="destructive"
+              disabled={deleteMut.isPending}
+              onClick={() => {
+                if (confirm(`Inativar o grupo "${group.name}"?`))
+                  deleteMut.mutate();
+              }}
+            >
               Inativar grupo
             </Button>
           </CardContent>

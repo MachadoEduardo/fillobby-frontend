@@ -1,12 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { api, ApiError } from "@/lib/api";
+import { AuthShell } from "@/components/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Gamepad2 } from "lucide-react";
+import { api, ApiError } from "@/lib/api";
 
 export const Route = createFileRoute("/register")({
   head: () => ({ meta: [{ title: "Criar conta — Fillobby" }] }),
@@ -36,50 +35,63 @@ function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted px-4 py-12">
-      <div className="w-full max-w-md">
-        <Link to="/" className="mb-6 flex items-center justify-center gap-2 text-lg font-bold">
-          <Gamepad2 className="h-6 w-6 text-primary" /> Fillobby
+    <AuthShell
+      title="Crie sua conta"
+      description="Comece a organizar as partidas do seu grupo."
+    >
+      <form onSubmit={onSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="name">Nome</Label>
+          <Input
+            id="name"
+            required
+            minLength={2}
+            maxLength={80}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">E-mail</Label>
+          <Input
+            id="email"
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="email"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Senha</Label>
+          <Input
+            id="password"
+            type="password"
+            required
+            minLength={8}
+            maxLength={72}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
+          />
+          <p className="text-xs text-muted-foreground">
+            Mínimo 8 caracteres, com letra maiúscula, minúscula e número.
+          </p>
+        </div>
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading ? "Cadastrando..." : "Criar conta"}
+        </Button>
+      </form>
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Já tem conta?{" "}
+        <Link
+          to="/login"
+          className="font-semibold text-primary hover:underline"
+        >
+          Entrar
         </Link>
-        <Card>
-          <CardHeader>
-            <CardTitle>Criar conta</CardTitle>
-            <CardDescription>Crie sua conta para começar a organizar partidas.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <Input id="name" required minLength={2} maxLength={80} value={name}
-                  onChange={(e) => setName(e.target.value)} autoComplete="name" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input id="email" type="email" required value={email}
-                  onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <Input id="password" type="password" required minLength={8} maxLength={72}
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="new-password" />
-                <p className="text-xs text-muted-foreground">
-                  Mínimo 8 caracteres, com letra maiúscula, minúscula e número.
-                </p>
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Cadastrando..." : "Criar conta"}
-              </Button>
-            </form>
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Já tem conta?{" "}
-              <Link to="/login" className="font-medium text-primary hover:underline">
-                Entrar
-              </Link>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+      </p>
+    </AuthShell>
   );
 }
