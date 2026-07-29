@@ -1,0 +1,1 @@
+export const GROUP_LIVE_REFRESH_MS = 10_000;

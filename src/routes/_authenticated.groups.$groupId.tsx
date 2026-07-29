@@ -10,6 +10,7 @@ import {
 } from "@/lib/api";
 import type { Group, Member, QueueItem, QueueStatus } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
+import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,6 +68,8 @@ function GroupDetailPage() {
   const groupQ = useQuery({
     queryKey: ["group", groupId],
     queryFn: () => api.groups.get(groupId),
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
   });
 
   if (groupQ.isLoading)
@@ -214,6 +217,8 @@ function QueueTab({ group }: { group: Group }) {
   const listQ = useQuery({
     queryKey: ["queue", group.id],
     queryFn: () => api.queue.list(group.id, { limit: 50, sort: "votes_desc" }),
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
   });
 
   return (
@@ -261,6 +266,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
     (item.status === "WAITING_PLAYERS" || item.status === "READY");
   const [selectOpen, setSelectOpen] = useState(false);
   const [voted, setVoted] = useState<boolean | null>(null); // optimistic UI hint
+  const hasVoted = voted ?? item.viewerHasVoted;
 
   function invalidate() {
     qc.invalidateQueries({ queryKey: ["queue", group.id] });
@@ -378,7 +384,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
 
             <div className="flex flex-wrap items-center gap-2">
               {canVote &&
-                (voted === true ? (
+                (hasVoted ? (
                   <Button
                     size="sm"
                     variant="outline"
@@ -499,6 +505,8 @@ function ParticipantsDialog({
   const membersQ = useQuery({
     queryKey: ["members", group.id],
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
     enabled: open,
   });
   const [selected, setSelected] = useState<string[]>(item.participantIds);
@@ -644,6 +652,8 @@ function MembersTab({ group }: { group: Group }) {
   const membersQ = useQuery({
     queryKey: ["members", group.id],
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
   });
   const isAdmin = group.role === "OWNER" || group.role === "ADMIN";
   const removedQ = useQuery({
@@ -651,6 +661,8 @@ function MembersTab({ group }: { group: Group }) {
     queryFn: () =>
       api.groups.listMembers(group.id, { limit: 100, status: "REMOVED" }),
     enabled: isAdmin,
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
   });
   return (
     <div className="space-y-6">
@@ -844,6 +856,8 @@ function HistoryTab({ group }: { group: Group }) {
   const membersQ = useQuery({
     queryKey: ["members", group.id],
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
   });
 
   const historyQ = useQuery({
@@ -857,6 +871,8 @@ function HistoryTab({ group }: { group: Group }) {
         page,
         limit: 20,
       }),
+    refetchInterval: GROUP_LIVE_REFRESH_MS,
+    refetchIntervalInBackground: false,
   });
 
   return (

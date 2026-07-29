@@ -88,6 +88,7 @@ export interface QueueItem {
   suggestedBy: UserSummary;
   status: QueueStatus;
   voteCount: number;
+  viewerHasVoted: boolean;
   participantIds: string[];
   participants: UserSummary[];
   readyUserIds: string[];
