@@ -244,10 +244,9 @@ export const api = {
         { method: "POST" },
       ),
     restoreMember: (groupId: string, userId: string) =>
-      request<Member>(
-        `/api/v1/groups/${groupId}/members/${userId}/restore`,
-        { method: "POST" },
-      ),
+      request<Member>(`/api/v1/groups/${groupId}/members/${userId}/restore`, {
+        method: "POST",
+      }),
     transferOwner: (groupId: string, newOwnerId: string) =>
       request<Group>(`/api/v1/groups/${groupId}/transfer-owner`, {
         method: "POST",

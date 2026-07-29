@@ -89,6 +89,7 @@ export interface QueueItem {
   status: QueueStatus;
   voteCount: number;
   participantIds: string[];
+  participants: UserSummary[];
   readyUserIds: string[];
   completedAt: string | null;
   createdAt: string;

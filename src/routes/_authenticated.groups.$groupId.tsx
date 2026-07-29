@@ -35,6 +35,11 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
+  HistoryParticipants,
+  QueueParticipants,
+  VotersRoster,
+} from "@/components/groups/people-roster";
+import {
   ArrowLeft,
   Gamepad2,
   Copy,
@@ -260,6 +265,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
   function invalidate() {
     qc.invalidateQueries({ queryKey: ["queue", group.id] });
     qc.invalidateQueries({ queryKey: ["history", group.id] });
+    qc.invalidateQueries({ queryKey: ["votes", group.id, item.id] });
   }
 
   const voteMut = useMutation({
@@ -348,14 +354,27 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
             </div>
             <div className="text-xs text-muted-foreground">
               Sugerido por {item.suggestedBy.name} · {item.voteCount} voto(s)
-              {item.participantIds.length > 0 && (
-                <>
-                  {" "}
-                  · {item.readyUserIds.length}/{item.participantIds.length}{" "}
-                  prontos
-                </>
-              )}
             </div>
+
+            {(item.participants.length > 0 ||
+              canVote ||
+              item.voteCount > 0) && (
+              <div className="grid gap-2 pt-1 lg:grid-cols-2">
+                {item.participants.length > 0 && (
+                  <QueueParticipants
+                    participants={item.participants}
+                    readyUserIds={item.readyUserIds}
+                  />
+                )}
+                {(canVote || item.voteCount > 0) && (
+                  <VotersRoster
+                    groupId={group.id}
+                    itemId={item.id}
+                    voteCount={item.voteCount}
+                  />
+                )}
+              </div>
+            )}
 
             <div className="flex flex-wrap items-center gap-2">
               {canVote &&
@@ -670,7 +689,9 @@ function RemovedMemberRow({ member, group }: { member: Member; group: Group }) {
     },
     onError: (error) =>
       toast.error(
-        error instanceof ApiError ? error.message : "Não foi possível restaurar.",
+        error instanceof ApiError
+          ? error.message
+          : "Não foi possível restaurar.",
       ),
   });
 
@@ -922,28 +943,31 @@ function HistoryTab({ group }: { group: Group }) {
       <div className="space-y-2">
         {historyQ.data?.historyItems.map((it) => (
           <Card key={it.id}>
-            <CardContent className="flex items-center gap-3 p-3">
-              {it.game.coverUrl ? (
-                <img
-                  src={it.game.coverUrl}
-                  alt=""
-                  className="h-12 w-12 rounded object-cover"
-                />
-              ) : (
-                <div className="h-12 w-12 rounded bg-muted" />
-              )}
-              <div className="flex-1">
-                <div className="font-medium">{it.game.title}</div>
-                <div className="text-xs text-muted-foreground">
-                  Concluído em{" "}
-                  {it.completedAt
-                    ? new Date(it.completedAt).toLocaleString("pt-BR")
-                    : "-"}
-                  {" · "}
-                  {it.participantIds.length} participante(s)
+            <CardContent className="space-y-3 p-3">
+              <div className="flex items-center gap-3">
+                {it.game.coverUrl ? (
+                  <img
+                    src={it.game.coverUrl}
+                    alt=""
+                    className="h-12 w-12 rounded object-cover"
+                  />
+                ) : (
+                  <div className="flex h-12 w-12 items-center justify-center rounded bg-muted text-muted-foreground">
+                    <Gamepad2 className="h-5 w-5" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{it.game.title}</div>
+                  <div className="text-xs text-muted-foreground">
+                    Concluído em{" "}
+                    {it.completedAt
+                      ? new Date(it.completedAt).toLocaleString("pt-BR")
+                      : "-"}
+                  </div>
                 </div>
+                <Badge variant="outline">{it.voteCount} voto(s)</Badge>
               </div>
-              <Badge variant="outline">{it.voteCount} voto(s)</Badge>
+              <HistoryParticipants participants={it.participants} />
             </CardContent>
           </Card>
         ))}
