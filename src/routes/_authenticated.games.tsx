@@ -324,12 +324,21 @@ function CreateGameDialog() {
   const mutation = useMutation({
     mutationFn: (data: Parameters<typeof api.games.create>[0]) =>
       api.games.create(data),
-    onSuccess: () => {
-      toast.success("Jogo cadastrado!");
+    onSuccess: ({ reactivated }) => {
+      toast.success(
+        reactivated ? "Jogo existente reativado!" : "Jogo cadastrado!",
+      );
       qc.invalidateQueries({ queryKey: ["games"] });
       setOpen(false);
     },
-    onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
+    onError: (e) =>
+      toast.error(
+        e instanceof ApiError && e.code === "GAME_ALREADY_EXISTS"
+          ? "Este jogo já está cadastrado no catálogo."
+          : e instanceof ApiError
+            ? e.message
+            : "Erro ao cadastrar jogo.",
+      ),
   });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -342,7 +351,8 @@ function CreateGameDialog() {
         <DialogHeader>
           <DialogTitle>Cadastrar jogo</DialogTitle>
           <DialogDescription>
-            O título é normalizado e deve ser único.
+            O título é normalizado e deve ser único. Se um jogo inativo já
+            existir, ele será reativado.
           </DialogDescription>
         </DialogHeader>
         <GameForm

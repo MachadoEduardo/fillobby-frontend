@@ -1,5 +1,6 @@
 import type {
   ApiErrorPayload,
+  CreateGameResult,
   Game,
   Group,
   Member,
@@ -275,7 +276,11 @@ export const api = {
       maxPlayers?: number | null;
       coverUrl?: string | null;
       description?: string | null;
-    }) => request<Game>("/api/v1/games", { method: "POST", body: input }),
+    }) =>
+      request<CreateGameResult>("/api/v1/games", {
+        method: "POST",
+        body: input,
+      }),
     get: (gameId: string) => request<Game>(`/api/v1/games/${gameId}`),
     update: (
       gameId: string,

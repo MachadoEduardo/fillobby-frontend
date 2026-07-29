@@ -73,6 +73,11 @@ export interface Game {
   updatedAt: string;
 }
 
+export interface CreateGameResult {
+  game: Game;
+  reactivated: boolean;
+}
+
 export interface QueueGame {
   id: string;
   title: string;
