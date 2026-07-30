@@ -30,6 +30,7 @@ export interface PublicUser {
   name: string;
   email: string;
   avatarUrl: string | null;
+  preferredPlatforms: Platform[];
 }
 
 export interface UserSummary {

@@ -155,7 +155,10 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
       message: `Erro ${response.status}.`,
       details: [],
     };
-    if (response.status === 401 && auth) {
+    const isInvalidSession =
+      payload.code === "AUTH_TOKEN_REQUIRED" ||
+      payload.code === "AUTH_TOKEN_INVALID";
+    if (response.status === 401 && auth && isInvalidSession) {
       setStoredToken(null);
       setStoredUser(null);
       unauthorizedListeners.forEach((cb) => cb());
@@ -196,6 +199,11 @@ export const api = {
       request<PublicUser>("/api/v1/profile/password", {
         method: "PATCH",
         body: input,
+      }),
+    updatePreferences: (preferredPlatforms: Platform[]) =>
+      request<PublicUser>("/api/v1/profile/preferences", {
+        method: "PATCH",
+        body: { preferredPlatforms },
       }),
     uploadAvatar: (file: File) =>
       request<PublicUser>("/api/v1/profile/avatar", {
