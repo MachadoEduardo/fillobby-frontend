@@ -200,17 +200,13 @@ function RoleBadge({ role }: { role: "OWNER" | "ADMIN" | "MEMBER" }) {
 /* ============ QUEUE TAB ============ */
 
 const QUEUE_STATUS_VARIANT: Record<QueueStatus, string> = {
-  SUGGESTED:
-    "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100",
-  VOTING: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100",
-  WAITING_PLAYERS:
-    "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100",
-  READY:
-    "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100",
-  PLAYING:
-    "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-100",
-  COMPLETED: "bg-muted text-muted-foreground",
-  CANCELLED: "bg-destructive/10 text-destructive",
+  SUGGESTED: "bg-status-suggested/12 text-status-suggested",
+  VOTING: "bg-status-voting/12 text-status-voting",
+  WAITING_PLAYERS: "bg-status-waiting/12 text-status-waiting",
+  READY: "bg-status-ready/12 text-status-ready",
+  PLAYING: "bg-status-playing/12 text-status-playing",
+  COMPLETED: "bg-status-completed/12 text-status-completed",
+  CANCELLED: "bg-status-cancelled/12 text-status-cancelled",
 };
 
 function QueueTab({ group }: { group: Group }) {

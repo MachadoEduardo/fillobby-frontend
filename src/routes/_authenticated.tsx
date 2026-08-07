@@ -6,7 +6,7 @@ import {
   useRouterState,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Gamepad2, Library, LogOut, UserRound, Users } from "lucide-react";
+import { Library, LogOut, UserRound, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { resolveApiAssetUrl } from "@/lib/api";
@@ -48,15 +48,11 @@ function AuthenticatedLayout() {
 
   return (
     <div className="app-page min-h-screen">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r bg-card p-4 md:flex">
-        <Link
-          to="/groups"
-          className="flex items-center gap-3 px-2 py-2 text-lg font-semibold"
-        >
-          <span className="brand-mark h-9 w-9">
-            <Gamepad2 className="h-5 w-5" />
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-sidebar-border bg-sidebar p-4 text-sidebar-foreground md:flex">
+        <Link to="/groups" className="px-2 py-2">
+          <span className="brand-wordmark text-sidebar-foreground">
+            Fillobby
           </span>
-          Fillobby
         </Link>
 
         <nav className="mt-8 space-y-1">
@@ -68,8 +64,8 @@ function AuthenticatedLayout() {
                 to={to}
                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                   active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "border-l-2 border-signal bg-sidebar-accent text-sidebar-accent-foreground"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground"
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -79,11 +75,11 @@ function AuthenticatedLayout() {
           })}
         </nav>
 
-        <div className="mt-auto border-t pt-4">
+        <div className="mt-auto border-t border-sidebar-border pt-4">
           <div className="flex items-center gap-3 px-2">
             <Link
               to="/profile"
-              className="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 hover:text-primary"
+              className="flex min-w-0 flex-1 items-center gap-3 rounded-lg py-1 hover:text-signal"
               title="Editar perfil"
             >
               <Avatar className="h-9 w-9">
@@ -97,12 +93,15 @@ function AuthenticatedLayout() {
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{user?.name}</p>
-                <p className="text-xs text-muted-foreground">Editar perfil</p>
+                <p className="text-xs text-sidebar-foreground/50">
+                  Editar perfil
+                </p>
               </div>
             </Link>
             <Button
               variant="ghost"
               size="icon"
+              className="text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground"
               onClick={handleLogout}
               title="Sair"
             >
@@ -115,14 +114,8 @@ function AuthenticatedLayout() {
       <div className="md:pl-60">
         <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur md:hidden">
           <div className="flex items-center justify-between gap-3 px-4 py-3">
-            <Link
-              to="/groups"
-              className="flex items-center gap-2.5 font-semibold"
-            >
-              <span className="brand-mark h-9 w-9">
-                <Gamepad2 className="h-5 w-5" />
-              </span>
-              Fillobby
+            <Link to="/groups" className="inline-flex">
+              <span className="brand-wordmark">Fillobby</span>
             </Link>
             <nav className="flex items-center gap-1">
               <Link

@@ -10,8 +10,8 @@
  * The @theme inline block maps CSS custom properties to Tailwind utility
  * classes (e.g. --color-primary -> bg-primary, text-primary).
  *
- * The :root and .dark blocks define the actual color values using oklch.
- * All colors MUST use oklch format.
+ * The :root and .dark blocks define the actual color values in hexadecimal.
+ * Keep hexadecimal as the project standard so the palette remains easy to read.
  *
  * To add a new semantic color:
  * 1. Add the variable to :root (light value) and .dark (dark value)
@@ -59,77 +59,112 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-signal: var(--signal);
+  --color-signal-foreground: var(--signal-foreground);
+  --color-status-suggested: var(--status-suggested);
+  --color-status-voting: var(--status-voting);
+  --color-status-waiting: var(--status-waiting);
+  --color-status-ready: var(--status-ready);
+  --color-status-playing: var(--status-playing);
+  --color-status-completed: var(--status-completed);
+  --color-status-cancelled: var(--status-cancelled);
+  --font-sans: "Archivo", "Segoe UI", sans-serif;
+  --font-mono: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.975 0.004 286);
-  --foreground: oklch(0.21 0.025 278);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.205 0.035 278);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.205 0.035 278);
-  --primary: oklch(0.48 0.18 288);
-  --primary-foreground: oklch(0.99 0.004 285);
-  --secondary: oklch(0.95 0.012 288);
-  --secondary-foreground: oklch(0.35 0.06 286);
-  --muted: oklch(0.95 0.006 286);
-  --muted-foreground: oklch(0.5 0.025 278);
-  --accent: oklch(0.94 0.018 288);
-  --accent-foreground: oklch(0.32 0.055 282);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.89 0.01 286);
-  --input: oklch(0.86 0.012 286);
-  --ring: oklch(0.58 0.15 288);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.984 0.003 247.858);
-  --sidebar-foreground: oklch(0.129 0.042 264.695);
-  --sidebar-primary: oklch(0.208 0.042 265.755);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.968 0.007 247.896);
-  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
-  --sidebar-border: oklch(0.929 0.013 255.508);
-  --sidebar-ring: oklch(0.704 0.04 256.788);
+  --radius: 0.75rem;
+  --background: #f5f1e8;
+  --foreground: #202a2e;
+  --card: #fffdf8;
+  --card-foreground: #202a2e;
+  --popover: #fffdf8;
+  --popover-foreground: #202a2e;
+  --primary: #17313a;
+  --primary-foreground: #f5f1e8;
+  --secondary: #e5ebe7;
+  --secondary-foreground: #17313a;
+  --muted: #ebe8df;
+  --muted-foreground: #5d696c;
+  --accent: #f2d9cc;
+  --accent-foreground: #672b19;
+  --destructive: #b63f3a;
+  --destructive-foreground: #fff8f5;
+  --border: #d8ddd8;
+  --input: #c5cdc8;
+  --ring: #d8663b;
+  --brand: #17313a;
+  --brand-foreground: #f5f1e8;
+  --signal: #d8663b;
+  --signal-foreground: #17313a;
+  --status-suggested: #647174;
+  --status-voting: #3f6f8c;
+  --status-waiting: #946516;
+  --status-ready: #58734b;
+  --status-playing: #b94f2e;
+  --status-completed: #65716f;
+  --status-cancelled: #b63f3a;
+  --chart-1: #d8663b;
+  --chart-2: #4f7d83;
+  --chart-3: #17313a;
+  --chart-4: #ba8b32;
+  --chart-5: #718057;
+  --sidebar: #17313a;
+  --sidebar-foreground: #f5f1e8;
+  --sidebar-primary: #d8663b;
+  --sidebar-primary-foreground: #17313a;
+  --sidebar-accent: #284850;
+  --sidebar-accent-foreground: #fffdf8;
+  --sidebar-border: #31515a;
+  --sidebar-ring: #d8663b;
 }
 
 .dark {
-  --background: oklch(0.15 0.03 285);
-  --foreground: oklch(0.96 0.01 285);
-  --card: oklch(0.205 0.035 282 / 94%);
-  --card-foreground: oklch(0.984 0.003 247.858);
-  --popover: oklch(0.208 0.042 265.755);
-  --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.7 0.18 292);
-  --primary-foreground: oklch(0.16 0.03 285);
-  --secondary: oklch(0.279 0.041 260.031);
-  --secondary-foreground: oklch(0.984 0.003 247.858);
-  --muted: oklch(0.279 0.041 260.031);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.279 0.041 260.031);
-  --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.18 292);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
-  --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-accent: oklch(0.279 0.041 260.031);
-  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --background: #0f1c21;
+  --foreground: #f3eee4;
+  --card: #17272d;
+  --card-foreground: #f3eee4;
+  --popover: #17272d;
+  --popover-foreground: #f3eee4;
+  --primary: #e27a50;
+  --primary-foreground: #13282f;
+  --secondary: #243a41;
+  --secondary-foreground: #f3eee4;
+  --muted: #23353b;
+  --muted-foreground: #aab7b5;
+  --accent: #3b302c;
+  --accent-foreground: #f6c5af;
+  --destructive: #df6a61;
+  --destructive-foreground: #211513;
+  --border: #30434a;
+  --input: #40545a;
+  --ring: #e27a50;
+  --brand: #f3eee4;
+  --brand-foreground: #0f1c21;
+  --signal: #e27a50;
+  --signal-foreground: #13282f;
+  --status-suggested: #aab7b5;
+  --status-voting: #8db7d0;
+  --status-waiting: #d9ad57;
+  --status-ready: #9bb489;
+  --status-playing: #f0936d;
+  --status-completed: #aab7b5;
+  --status-cancelled: #ef8a82;
+  --chart-1: #e27a50;
+  --chart-2: #74a2a6;
+  --chart-3: #aac2c1;
+  --chart-4: #d3a84d;
+  --chart-5: #93a472;
+  --sidebar: #13252b;
+  --sidebar-foreground: #f3eee4;
+  --sidebar-primary: #e27a50;
+  --sidebar-primary-foreground: #13282f;
+  --sidebar-accent: #28434b;
+  --sidebar-accent-foreground: #fffdf8;
+  --sidebar-border: #35515a;
+  --sidebar-ring: #e27a50;
 }
 
 @layer base {
@@ -141,15 +176,14 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     min-width: 320px;
-    font-family:
-      Inter, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-family: "Archivo", "Segoe UI", sans-serif;
+    font-feature-settings: "ss02", "cv02";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   ::selection {
-    background: oklch(0.72 0.14 292 / 35%);
+    background: #d8663b4d;
   }
 
   button,
@@ -159,26 +193,39 @@
 }
 
 @layer components {
-  .brand-mark {
-    display: inline-flex;
-    height: 2.25rem;
-    width: 2.25rem;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.5rem;
-    color: white;
-    background: var(--primary);
+  .brand-wordmark {
+    color: var(--brand);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.04em;
   }
 
   .app-page {
     background: var(--background);
+    background-image:
+      linear-gradient(#17313a08 1px, transparent 1px),
+      linear-gradient(90deg, #17313a08 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 
   .page-heading {
     font-size: clamp(1.65rem, 3vw, 2.15rem);
     line-height: 1.12;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  .eyebrow {
+    color: var(--signal);
+    font-family: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
+    font-size: 0.75rem;
     font-weight: 600;
-    letter-spacing: -0.025em;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mono-data {
+    font-family: "Roboto Mono", "SFMono-Regular", Consolas, monospace;
   }
 }
 
