@@ -1,11 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
-import { Camera, Gamepad2, ShieldCheck, Trash2, UserRound } from "lucide-react";
+import {
+  Camera,
+  Gamepad2,
+  Palette,
+  ShieldCheck,
+  Trash2,
+  UserRound,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -13,6 +21,7 @@ import { Label } from "@/components/ui/label";
 import { api, ApiError, resolveApiAssetUrl } from "@/lib/api";
 import { PLATFORMS, type ErrorDetail, type Platform } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
+import { useTheme } from "@/lib/theme-context";
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -38,6 +47,7 @@ export const Route = createFileRoute("/_authenticated/profile")({
 
 function ProfilePage() {
   const { user, updateUser } = useAuth();
+  const { theme } = useTheme();
   const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(user?.name ?? "");
@@ -206,10 +216,11 @@ function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
       <div>
-        <h1 className="page-heading">Meu perfil</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="eyebrow">Sua presença no lobby</p>
+        <h1 className="page-heading mt-2">Meu perfil</h1>
+        <p className="mt-2 max-w-xl text-sm text-muted-foreground">
           Atualize como você aparece para os outros membros dos seus grupos.
         </p>
         {(user.preferredPlatforms ?? []).length > 0 && (
@@ -227,98 +238,131 @@ function ProfilePage() {
         )}
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Foto de perfil</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <Avatar className="h-20 w-20">
+      <section className="relative overflow-hidden rounded-3xl bg-brand px-6 py-7 text-brand-foreground sm:px-8">
+        <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full border border-white/8" />
+        <div className="pointer-events-none absolute -right-3 -top-8 h-36 w-36 rounded-full border border-signal/45" />
+        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center">
+          <Avatar className="h-24 w-24 border-4 border-white/10">
             <AvatarImage
               src={resolveApiAssetUrl(user.avatarUrl)}
               alt={user.name}
             />
-            <AvatarFallback>
-              <UserRound className="h-7 w-7 text-muted-foreground" />
+            <AvatarFallback className="bg-white/8">
+              <UserRound className="h-8 w-8 text-brand-foreground/45" />
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1">
-            <p className="text-sm font-semibold">Escolha uma imagem</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              JPEG, PNG ou WebP, com no máximo 2 MB.
+          <div>
+            <p className="eyebrow text-signal">Identidade pública</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-[-0.04em]">
+              {user.name}
+            </h2>
+            <p className="mt-1 text-sm text-brand-foreground/55">
+              {user.email}
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={ACCEPTED_AVATAR_TYPES.join(",")}
-                className="sr-only"
-                onChange={handleAvatarChange}
-              />
-              <Button
-                type="button"
-                variant="outline"
-                disabled={uploading || removing}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                <Camera />
-                {uploading
-                  ? "Enviando..."
-                  : user.avatarUrl
-                    ? "Trocar foto"
-                    : "Enviar foto"}
-              </Button>
-              {user.avatarUrl && (
+          </div>
+        </div>
+      </section>
+
+      <div className="grid items-start gap-4 lg:grid-cols-[0.85fr_1.15fr]">
+        <div className="space-y-4">
+          <Card className="border-brand/12 shadow-[0_14px_40px_-34px_#17313a]">
+            <CardHeader>
+              <CardTitle>Foto de perfil</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Use JPEG, PNG ou WebP, com no máximo 2 MB.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPTED_AVATAR_TYPES.join(",")}
+                  className="sr-only"
+                  onChange={handleAvatarChange}
+                />
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   disabled={uploading || removing}
-                  onClick={handleAvatarRemoval}
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  <Trash2 />
-                  {removing ? "Removendo..." : "Remover"}
+                  <Camera />
+                  {uploading
+                    ? "Enviando..."
+                    : user.avatarUrl
+                      ? "Trocar foto"
+                      : "Enviar foto"}
                 </Button>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                {user.avatarUrl && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    disabled={uploading || removing}
+                    onClick={handleAvatarRemoval}
+                  >
+                    <Trash2 />
+                    {removing ? "Removendo..." : "Remover"}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Informações pessoais</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleProfileSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="profile-name">Nome</Label>
-              <Input
-                id="profile-name"
-                required
-                minLength={2}
-                maxLength={80}
-                value={name}
-                onChange={(event) => setName(event.target.value)}
-                autoComplete="name"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="profile-email">E-mail</Label>
-              <Input id="profile-email" value={user.email} disabled />
-              <p className="text-xs text-muted-foreground">
-                A alteração de e-mail ainda não está disponível.
+          <Card className="border-brand/12 shadow-[0_14px_40px_-34px_#17313a]">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="h-4 w-4 text-signal" /> Aparência
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Tema {theme === "dark" ? "escuro" : "claro"} em uso neste
+                dispositivo.
               </p>
-            </div>
-            <Button
-              type="submit"
-              disabled={saving || name.trim() === user.name}
-            >
-              {saving ? "Salvando..." : "Salvar alterações"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+              <ThemeToggle className="mt-4 border border-input" />
+            </CardContent>
+          </Card>
+        </div>
 
-      <Card>
+        <Card className="border-brand/12 shadow-[0_14px_40px_-34px_#17313a]">
+          <CardHeader>
+            <CardTitle>Informações pessoais</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleProfileSubmit} className="space-y-7">
+              <div className="space-y-2">
+                <Label htmlFor="profile-name">Nome</Label>
+                <Input
+                  id="profile-name"
+                  required
+                  minLength={2}
+                  maxLength={80}
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  autoComplete="name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="profile-email">E-mail</Label>
+                <Input id="profile-email" value={user.email} disabled />
+                <p className="text-xs text-muted-foreground">
+                  A alteração de e-mail ainda não está disponível.
+                </p>
+              </div>
+              <Button
+                type="submit"
+                className="bg-signal text-signal-foreground hover:bg-signal/90"
+                disabled={saving || name.trim() === user.name}
+              >
+                {saving ? "Salvando..." : "Salvar alterações"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-brand/12 shadow-[0_14px_40px_-34px_#17313a]">
         <CardHeader>
           <CardTitle>Plataformas preferidas</CardTitle>
           <p className="text-sm text-muted-foreground">
@@ -335,7 +379,7 @@ function ProfilePage() {
                   <Label
                     key={platform}
                     htmlFor={`platform-${platform}`}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50 has-[[data-state=checked]]:border-primary/40 has-[[data-state=checked]]:bg-primary/5"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-4 transition-colors hover:bg-muted/50 has-[[data-state=checked]]:border-signal/45 has-[[data-state=checked]]:bg-signal/8"
                   >
                     <Checkbox
                       id={`platform-${platform}`}
@@ -350,6 +394,7 @@ function ProfilePage() {
             </div>
             <Button
               type="submit"
+              className="bg-signal text-signal-foreground hover:bg-signal/90"
               disabled={
                 preferencesSaving ||
                 (preferredPlatforms.length ===
@@ -365,10 +410,10 @@ function ProfilePage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-brand/12 shadow-[0_14px_40px_-34px_#17313a]">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="rounded-lg bg-primary/10 p-2 text-primary">
+            <div className="rounded-lg bg-signal/12 p-2 text-signal">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
@@ -484,7 +529,11 @@ function ProfilePage() {
                 </p>
               )}
             </div>
-            <Button type="submit" disabled={passwordSaving}>
+            <Button
+              type="submit"
+              className="bg-signal text-signal-foreground hover:bg-signal/90"
+              disabled={passwordSaving}
+            >
               {passwordSaving ? "Atualizando..." : "Atualizar senha"}
             </Button>
           </form>

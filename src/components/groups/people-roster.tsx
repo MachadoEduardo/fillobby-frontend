@@ -47,7 +47,7 @@ const STATE_CONTENT: Record<
   ready: {
     label: "Pronto",
     icon: CheckCircle2,
-    className: "text-emerald-600 dark:text-emerald-400",
+    className: "text-status-ready",
   },
   waiting: {
     label: "Aguardando",
@@ -57,7 +57,7 @@ const STATE_CONTENT: Record<
   voted: {
     label: "Votou",
     icon: ThumbsUp,
-    className: "text-primary",
+    className: "text-status-voting",
   },
   played: {
     label: "Participou",
@@ -189,9 +189,9 @@ function PeopleRoster({
 
   return (
     <Collapsible open={open} onOpenChange={onOpenChange}>
-      <div className="overflow-hidden rounded-lg border bg-muted/20">
-        <CollapsibleTrigger className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-muted/50">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+      <div className="overflow-hidden rounded-lg border border-brand/10 bg-card">
+        <CollapsibleTrigger className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-muted/35">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/7 text-brand">
             <Users className="h-4 w-4" />
           </span>
           <span className="min-w-0 flex-1">
@@ -244,7 +244,7 @@ export function QueueParticipants({
   participants: UserSummary[];
   readyUserIds: string[];
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const readyIds = new Set(readyUserIds);
   const people = participants.map<RosterPerson>((user) => ({
     user,

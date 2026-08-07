@@ -2,6 +2,7 @@ import { createFileRoute, Link, Navigate } from "@tanstack/react-router";
 import { ArrowRight, Check, Gamepad2, ThumbsUp, Users } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -28,6 +29,7 @@ function Landing() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
           <span className="brand-wordmark">Fillobby</span>
           <div className="flex gap-2">
+            <ThemeToggle compact />
             <Button asChild variant="ghost">
               <Link to="/login">Entrar</Link>
             </Button>

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { Library, LogOut, UserRound, Users } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { resolveApiAssetUrl } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
@@ -75,7 +76,8 @@ function AuthenticatedLayout() {
           })}
         </nav>
 
-        <div className="mt-auto border-t border-sidebar-border pt-4">
+        <div className="mt-auto space-y-3 border-t border-sidebar-border pt-4">
+          <ThemeToggle className="text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground" />
           <div className="flex items-center gap-3 px-2">
             <Link
               to="/profile"
@@ -118,6 +120,7 @@ function AuthenticatedLayout() {
               <span className="brand-wordmark">Fillobby</span>
             </Link>
             <nav className="flex items-center gap-1">
+              <ThemeToggle compact />
               <Link
                 to="/profile"
                 title="Editar perfil"

@@ -11,6 +11,7 @@ import {
 import type { Group, Member, QueueItem, QueueStatus } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
 import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,6 +57,7 @@ import {
   Trash2,
   LogOut,
   RotateCw,
+  Clock3,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/groups/$groupId")({
@@ -87,50 +89,90 @@ function GroupDetailPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-start gap-3">
-        <Button asChild variant="ghost" size="icon">
-          <Link to="/groups">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div className="flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="page-heading">{group.name}</h1>
-            <RoleBadge role={group.role} />
+      <section className="relative overflow-hidden rounded-3xl bg-brand px-5 py-6 text-brand-foreground sm:px-7 sm:py-8">
+        <div className="pointer-events-none absolute -right-20 -top-28 h-72 w-72 rounded-full border border-white/8" />
+        <div className="pointer-events-none absolute -right-6 -top-10 h-40 w-40 rounded-full border border-signal/45" />
+        <div className="relative flex flex-wrap items-start gap-4">
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="shrink-0 text-brand-foreground/65 hover:bg-white/8 hover:text-brand-foreground"
+          >
+            <Link to="/groups" aria-label="Voltar para grupos">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/8 font-mono text-lg font-semibold tracking-tight text-signal">
+            {group.name.slice(0, 2).toLocaleUpperCase("pt-BR")}
           </div>
-          {group.description && (
-            <p className="text-sm text-muted-foreground">{group.description}</p>
-          )}
-          {group.inviteCode && (
-            <div className="mt-2 flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">
-                Código de convite:
-              </span>
-              <code className="rounded-lg border border-primary/15 bg-primary/7 px-2.5 py-1 text-sm font-semibold tracking-wider text-primary">
-                {group.inviteCode}
-              </code>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  navigator.clipboard.writeText(group.inviteCode!);
-                  toast.success("Código copiado!");
-                }}
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow text-signal">Lobby do grupo</p>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <h1 className="text-3xl font-bold tracking-[-0.045em] sm:text-4xl">
+                {group.name}
+              </h1>
+              <RoleBadge role={group.role} />
             </div>
-          )}
+            {group.description && (
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-brand-foreground/65">
+                {group.description}
+              </p>
+            )}
+            {group.inviteCode && (
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <span className="text-xs text-brand-foreground/50">
+                  Convite
+                </span>
+                <code className="mono-data rounded-lg border border-white/12 bg-white/8 px-3 py-1.5 text-sm font-semibold tracking-[0.16em] text-brand-foreground">
+                  {group.inviteCode}
+                </code>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-brand-foreground/65 hover:bg-white/8 hover:text-brand-foreground"
+                  onClick={() => {
+                    navigator.clipboard.writeText(group.inviteCode!);
+                    toast.success("Código copiado!");
+                  }}
+                >
+                  <Copy className="h-3 w-3" /> Copiar
+                </Button>
+              </div>
+            )}
+          </div>
+          {group.role !== "OWNER" && <LeaveGroupButton group={group} />}
         </div>
-        {group.role !== "OWNER" && <LeaveGroupButton group={group} />}
-      </div>
+      </section>
 
       <Tabs defaultValue="queue">
-        <TabsList className="h-auto flex-wrap">
-          <TabsTrigger value="queue">Fila</TabsTrigger>
-          <TabsTrigger value="members">Membros</TabsTrigger>
-          <TabsTrigger value="history">Histórico</TabsTrigger>
-          {isAdmin && <TabsTrigger value="settings">Configurações</TabsTrigger>}
+        <TabsList className="h-auto w-full justify-start gap-5 overflow-x-auto rounded-none border-b bg-transparent p-0">
+          <TabsTrigger
+            value="queue"
+            className="rounded-none border-b-2 border-transparent px-1 py-3 data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+          >
+            Fila
+          </TabsTrigger>
+          <TabsTrigger
+            value="members"
+            className="rounded-none border-b-2 border-transparent px-1 py-3 data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+          >
+            Membros
+          </TabsTrigger>
+          <TabsTrigger
+            value="history"
+            className="rounded-none border-b-2 border-transparent px-1 py-3 data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+          >
+            Histórico
+          </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger
+              value="settings"
+              className="rounded-none border-b-2 border-transparent px-1 py-3 data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:shadow-none"
+            >
+              Configurações
+            </TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="queue" className="mt-6">
           <QueueTab group={group} />
@@ -168,8 +210,9 @@ function LeaveGroupButton({ group }: { group: Group }) {
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="sm"
+      className="text-brand-foreground/55 hover:bg-white/8 hover:text-brand-foreground"
       disabled={mutation.isPending}
       onClick={() => {
         if (confirm(`Sair de "${group.name}"?`)) mutation.mutate();
@@ -184,7 +227,7 @@ function LeaveGroupButton({ group }: { group: Group }) {
 function RoleBadge({ role }: { role: "OWNER" | "ADMIN" | "MEMBER" }) {
   if (role === "OWNER")
     return (
-      <Badge className="gap-1">
+      <Badge className="gap-1 border-transparent bg-signal text-signal-foreground shadow-none">
         <Crown className="h-3 w-3" /> Dono
       </Badge>
     );
@@ -209,6 +252,81 @@ const QUEUE_STATUS_VARIANT: Record<QueueStatus, string> = {
   CANCELLED: "bg-status-cancelled/12 text-status-cancelled",
 };
 
+const QUEUE_FLOW: Array<{ status: QueueStatus; label: string }> = [
+  { status: "SUGGESTED", label: "Sugestão" },
+  { status: "VOTING", label: "Votação" },
+  { status: "WAITING_PLAYERS", label: "Jogadores" },
+  { status: "READY", label: "Pronto" },
+  { status: "PLAYING", label: "Jogando" },
+];
+
+const QUEUE_STATUS_MESSAGE: Record<QueueStatus, string> = {
+  SUGGESTED: "Aguardando o grupo abrir a votação.",
+  VOTING: "A escolha está com o grupo. Registre seu voto.",
+  WAITING_PLAYERS: "Participantes selecionados estão confirmando prontidão.",
+  READY: "A galera está pronta para começar.",
+  PLAYING: "Partida em andamento.",
+  COMPLETED: "Partida concluída e registrada no histórico.",
+  CANCELLED: "Este item foi cancelado.",
+};
+
+function QueueProgress({ status }: { status: QueueStatus }) {
+  const currentIndex = QUEUE_FLOW.findIndex((step) => step.status === status);
+
+  if (status === "COMPLETED" || status === "CANCELLED") return null;
+
+  return (
+    <div
+      className="grid grid-cols-5"
+      aria-label={`Etapa atual: ${QUEUE_STATUS_LABEL[status]}`}
+    >
+      {QUEUE_FLOW.map((step, index) => {
+        const reached = index <= currentIndex;
+        const current = index === currentIndex;
+
+        return (
+          <div key={step.status} className="relative pt-5 text-center">
+            {index > 0 && (
+              <span
+                className={cn(
+                  "absolute left-0 top-[0.45rem] h-px w-1/2",
+                  reached ? "bg-brand/45" : "bg-border",
+                )}
+              />
+            )}
+            {index < QUEUE_FLOW.length - 1 && (
+              <span
+                className={cn(
+                  "absolute right-0 top-[0.45rem] h-px w-1/2",
+                  index < currentIndex ? "bg-brand/45" : "bg-border",
+                )}
+              />
+            )}
+            <span
+              className={cn(
+                "absolute left-1/2 top-0 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-4 border-card",
+                current
+                  ? "bg-signal ring-2 ring-signal/20"
+                  : reached
+                    ? "bg-brand"
+                    : "bg-border",
+              )}
+            />
+            <span
+              className={cn(
+                "hidden text-[0.65rem] font-medium sm:block",
+                current ? "text-foreground" : "text-muted-foreground",
+              )}
+            >
+              {step.label}
+            </span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function QueueTab({ group }: { group: Group }) {
   const listQ = useQuery({
     queryKey: ["queue", group.id],
@@ -218,11 +336,17 @@ function QueueTab({ group }: { group: Group }) {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          Itens ativos da fila do grupo.
-        </p>
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="eyebrow">Decisão em andamento</p>
+          <h2 className="mt-2 text-2xl font-bold tracking-[-0.035em]">
+            Próximos jogos
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Vote, reúna os participantes e leve a escolha até a partida.
+          </p>
+        </div>
         <SuggestGameDialog groupId={group.id} />
       </div>
 
@@ -235,20 +359,40 @@ function QueueTab({ group }: { group: Group }) {
         </p>
       )}
       {listQ.data?.queueItems.length === 0 && (
-        <div className="rounded-xl border border-dashed bg-card p-10 text-center text-sm text-muted-foreground">
-          Nenhum item na fila. Sugira um jogo para começar!
+        <div className="rounded-2xl border border-dashed border-brand/20 bg-card px-6 py-14 text-center">
+          <span className="mono-data text-4xl font-semibold text-signal/55">
+            01
+          </span>
+          <h3 className="mt-3 text-lg font-semibold">A fila está livre</h3>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+            Sugira o primeiro jogo e dê ao grupo um ponto de partida para a
+            próxima sessão.
+          </p>
         </div>
       )}
       <div className="space-y-3">
-        {listQ.data?.queueItems.map((item) => (
-          <QueueItemCard key={item.id} item={item} group={group} />
+        {listQ.data?.queueItems.map((item, index) => (
+          <QueueItemCard
+            key={item.id}
+            item={item}
+            group={group}
+            position={index + 1}
+          />
         ))}
       </div>
     </div>
   );
 }
 
-function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
+function QueueItemCard({
+  item,
+  group,
+  position,
+}: {
+  item: QueueItem;
+  group: Group;
+  position: number;
+}) {
   const { user } = useAuth();
   const qc = useQueryClient();
   const isAdmin = group.role === "OWNER" || group.role === "ADMIN";
@@ -319,49 +463,87 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
   });
 
   return (
-    <Card className="transition-colors hover:border-primary/30">
-      <CardContent className="p-4">
-        <div className="flex gap-4">
-          {item.game.coverUrl ? (
-            <img
-              src={item.game.coverUrl}
-              alt={item.game.title}
-              className="h-24 w-24 shrink-0 rounded-lg object-cover"
-            />
-          ) : (
-            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              <Gamepad2 className="h-6 w-6" />
-            </div>
-          )}
-          <div className="flex-1 space-y-2">
-            <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
-                <h3 className="font-semibold">{item.game.title}</h3>
-                <div className="mt-1 flex flex-wrap gap-1">
-                  {item.game.platforms.map((p) => (
-                    <Badge key={p} variant="secondary" className="text-xs">
-                      {p}
-                    </Badge>
-                  ))}
-                  {item.game.maxPlayers && (
-                    <Badge variant="outline" className="text-xs">
-                      até {item.game.maxPlayers} jogadores
-                    </Badge>
-                  )}
-                </div>
+    <Card className="overflow-hidden border-brand/12 shadow-[0_14px_40px_-34px_#17313a] transition-colors hover:border-brand/25">
+      <div className="border-b bg-muted/25 px-4 py-3 sm:px-5">
+        <QueueProgress status={item.status} />
+      </div>
+      <CardContent className="p-0">
+        <div className="grid grid-cols-[5.25rem_1fr] sm:grid-cols-[8rem_1fr]">
+          <div className="border-r bg-muted/35 p-3 sm:p-4">
+            <span className="mono-data block text-xs font-semibold text-muted-foreground">
+              {String(position).padStart(2, "0")}
+            </span>
+            {item.game.coverUrl ? (
+              <img
+                src={item.game.coverUrl}
+                alt={item.game.title}
+                className="mt-3 aspect-[4/5] w-full rounded-lg object-cover"
+              />
+            ) : (
+              <div className="mt-3 flex aspect-[4/5] w-full items-center justify-center rounded-lg bg-brand/8 text-muted-foreground">
+                <Gamepad2 className="h-6 w-6" />
+              </div>
+            )}
+          </div>
+
+          <div className="min-w-0 p-4 sm:p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h3 className="text-lg font-bold tracking-[-0.025em]">
+                  {item.game.title}
+                </h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Sugerido por {item.suggestedBy.name}
+                </p>
               </div>
               <Badge className={QUEUE_STATUS_VARIANT[item.status]}>
                 {QUEUE_STATUS_LABEL[item.status]}
               </Badge>
             </div>
-            <div className="text-xs text-muted-foreground">
-              Sugerido por {item.suggestedBy.name} · {item.voteCount} voto(s)
+
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {item.game.platforms.map((platform) => (
+                <Badge key={platform} variant="secondary" className="text-xs">
+                  {platform}
+                </Badge>
+              ))}
+              {item.game.maxPlayers && (
+                <Badge variant="outline" className="text-xs">
+                  até {item.game.maxPlayers} jogadores
+                </Badge>
+              )}
+            </div>
+
+            <div className="mt-4 flex items-start gap-2 border-l-2 border-signal/55 pl-3 text-sm text-muted-foreground">
+              <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
+              <span>{QUEUE_STATUS_MESSAGE[item.status]}</span>
+            </div>
+
+            <div className="mt-4 flex flex-wrap gap-2">
+              <div className="flex items-center gap-2 rounded-lg bg-muted/55 px-3 py-2">
+                <ThumbsUp className="h-4 w-4 text-status-voting" />
+                <span className="mono-data text-sm font-semibold">
+                  {item.voteCount}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  {item.voteCount === 1 ? "voto" : "votos"}
+                </span>
+              </div>
+              {item.participants.length > 0 && (
+                <div className="flex items-center gap-2 rounded-lg bg-muted/55 px-3 py-2">
+                  <Users className="h-4 w-4 text-status-ready" />
+                  <span className="mono-data text-sm font-semibold">
+                    {item.readyUserIds.length}/{item.participants.length}
+                  </span>
+                  <span className="text-xs text-muted-foreground">prontos</span>
+                </div>
+              )}
             </div>
 
             {(item.participants.length > 0 ||
               canVote ||
               item.voteCount > 0) && (
-              <div className="grid gap-2 pt-1 lg:grid-cols-2">
+              <div className="mt-4 grid gap-2 lg:grid-cols-2">
                 {item.participants.length > 0 && (
                   <QueueParticipants
                     participants={item.participants}
@@ -378,7 +560,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
               </div>
             )}
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="mt-5 flex flex-wrap items-center gap-2 border-t pt-4">
               {canVote &&
                 (hasVoted ? (
                   <Button
@@ -392,10 +574,11 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
                 ) : (
                   <Button
                     size="sm"
+                    className="bg-signal text-signal-foreground hover:bg-signal/90"
                     disabled={voteMut.isPending}
                     onClick={() => voteMut.mutate()}
                   >
-                    <ThumbsUp className="mr-1 h-3 w-3" /> Votar
+                    <ThumbsUp className="mr-1 h-3 w-3" /> Votar neste jogo
                   </Button>
                 ))}
 
@@ -412,6 +595,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
                 ) : (
                   <Button
                     size="sm"
+                    className="bg-status-ready text-white hover:bg-status-ready/90"
                     disabled={readyMut.isPending}
                     onClick={() => readyMut.mutate()}
                   >
@@ -425,23 +609,23 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
                   variant="outline"
                   onClick={() => setSelectOpen(true)}
                 >
-                  <Users className="mr-1 h-3 w-3" /> Participantes
+                  <Users className="mr-1 h-3 w-3" /> Selecionar participantes
                 </Button>
               )}
 
               {isAdmin && item.status === "SUGGESTED" && (
                 <Button
                   size="sm"
-                  variant="outline"
                   disabled={transMut.isPending}
                   onClick={() => transMut.mutate("VOTING")}
                 >
-                  Iniciar votação
+                  <ThumbsUp className="mr-1 h-3 w-3" /> Iniciar votação
                 </Button>
               )}
               {isAdmin && item.status === "READY" && (
                 <Button
                   size="sm"
+                  className="bg-signal text-signal-foreground hover:bg-signal/90"
                   disabled={transMut.isPending}
                   onClick={() => transMut.mutate("PLAYING")}
                 >
@@ -454,7 +638,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
                   disabled={transMut.isPending}
                   onClick={() => transMut.mutate("COMPLETED")}
                 >
-                  <Check className="mr-1 h-3 w-3" /> Concluir
+                  <Check className="mr-1 h-3 w-3" /> Concluir partida
                 </Button>
               )}
               {isAdmin &&
@@ -463,6 +647,7 @@ function QueueItemCard({ item, group }: { item: QueueItem; group: Group }) {
                   <Button
                     size="sm"
                     variant="ghost"
+                    className="sm:ml-auto"
                     disabled={cancelMut.isPending}
                     onClick={() => {
                       if (confirm("Cancelar este item?")) cancelMut.mutate();

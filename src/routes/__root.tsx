@@ -11,6 +11,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth";
+import { ThemeProvider } from "../lib/theme";
+import { themeInitializationScript } from "../lib/theme-script";
 import { Toaster } from "../components/ui/sonner";
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
@@ -123,8 +125,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{ __html: themeInitializationScript }}
+        />
         <HeadContent />
       </head>
       <body>
@@ -140,10 +145,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Outlet />
-        <Toaster richColors position="top-right" />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Outlet />
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

@@ -18,14 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  ChevronRight,
-  Crown,
-  KeyRound,
-  Plus,
-  Shield,
-  Users,
-} from "lucide-react";
+import { ArrowUpRight, Crown, KeyRound, Plus, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/groups/")({
   head: () => ({ meta: [{ title: "Grupos — Fillobby" }] }),
@@ -40,15 +33,16 @@ function GroupsPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="page-heading">Meus grupos</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Crie um novo grupo ou entre em um existente com um código de
-            convite.
+          <p className="eyebrow">Seus lobbies</p>
+          <h1 className="page-heading mt-2">Onde a galera se encontra</h1>
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            Retome uma decisão em andamento ou abra espaço para a próxima
+            partida.
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <JoinGroupDialog />
           <CreateGroupDialog />
         </div>
@@ -64,33 +58,52 @@ function GroupsPage() {
       )}
 
       {data && data.groups.length === 0 && (
-        <div className="rounded-xl border border-dashed bg-card p-12 text-center">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <Users className="h-7 w-7" />
-          </div>
-          <h3 className="mt-3 text-lg font-medium">Nenhum grupo ainda</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Crie um novo grupo ou entre com um código de convite.
+        <div className="rounded-2xl border border-dashed border-brand/20 bg-card px-6 py-14 text-center">
+          <span className="mono-data text-4xl font-semibold text-signal/55">
+            00
+          </span>
+          <h3 className="mt-3 text-lg font-semibold">Nenhum lobby aberto</h3>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+            Crie um grupo para reunir seus amigos ou use o código de um convite
+            que você recebeu.
           </p>
         </div>
       )}
 
-      <div className="space-y-2">
-        {data?.groups.map((g) => (
-          <Link key={g.id} to="/groups/$groupId" params={{ groupId: g.id }}>
-            <Card className="group transition-colors hover:border-primary/40">
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:text-primary">
-                  <Users className="h-5 w-5" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        {data?.groups.map((group, index) => (
+          <Link
+            key={group.id}
+            to="/groups/$groupId"
+            params={{ groupId: group.id }}
+            className="group"
+          >
+            <Card className="h-full overflow-hidden border-brand/12 shadow-[0_14px_40px_-34px_#17313a] transition-all group-hover:-translate-y-0.5 group-hover:border-brand/30">
+              <CardContent className="flex min-h-52 flex-col p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand font-mono text-sm font-semibold text-brand-foreground">
+                    {group.name.slice(0, 2).toLocaleUpperCase("pt-BR")}
+                  </div>
+                  <span className="mono-data text-xs text-muted-foreground/65">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
                 </div>
-                <div className="min-w-0 flex-1">
-                  <h2 className="truncate font-semibold">{g.name}</h2>
-                  <p className="mt-1 truncate text-sm text-muted-foreground">
-                    {g.description || "Sem descrição."}
+                <div className="mt-5 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h2 className="truncate text-lg font-bold tracking-[-0.025em]">
+                      {group.name}
+                    </h2>
+                    <RoleBadge role={group.role} />
+                  </div>
+                  <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+                    {group.description ||
+                      "Um espaço para o grupo escolher e organizar a próxima partida."}
                   </p>
                 </div>
-                <RoleBadge role={g.role} />
-                <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
+                <div className="mt-5 flex items-center justify-between border-t pt-4 text-sm font-semibold">
+                  <span>Abrir lobby</span>
+                  <ArrowUpRight className="h-4 w-4 text-signal transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </div>
               </CardContent>
             </Card>
           </Link>
@@ -103,7 +116,7 @@ function GroupsPage() {
 function RoleBadge({ role }: { role: "OWNER" | "ADMIN" | "MEMBER" }) {
   if (role === "OWNER")
     return (
-      <Badge className="gap-1">
+      <Badge className="gap-1 border-transparent bg-signal text-signal-foreground shadow-none">
         <Crown className="h-3 w-3" /> Dono
       </Badge>
     );
@@ -142,7 +155,7 @@ function CreateGroupDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-signal text-signal-foreground hover:bg-signal/90">
           <Plus className="mr-2 h-4 w-4" /> Novo grupo
         </Button>
       </DialogTrigger>

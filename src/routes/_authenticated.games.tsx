@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Search, Pencil, Trash2 } from "lucide-react";
+import { Gamepad2, Pencil, Plus, Search, Trash2, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/games")({
   head: () => ({ meta: [{ title: "Jogos — Fillobby" }] }),
@@ -53,17 +53,19 @@ function GamesPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="page-heading">Catálogo de jogos</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Cadastre jogos para usar na fila dos grupos.
+          <p className="eyebrow">Biblioteca compartilhada</p>
+          <h1 className="page-heading mt-2">Catálogo de jogos</h1>
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            Descubra o que já está disponível ou adicione uma nova opção para as
+            filas dos seus grupos.
           </p>
         </div>
         <CreateGameDialog />
       </div>
 
-      <div className="flex flex-wrap gap-2 rounded-xl border bg-card p-3">
+      <div className="flex flex-wrap gap-2 rounded-2xl border border-brand/12 bg-card p-3 shadow-[0_14px_40px_-36px_#17313a]">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -106,9 +108,46 @@ function GamesPage() {
         </p>
       )}
 
+      {query.data && (
+        <div className="flex items-center justify-between gap-3">
+          <p className="mono-data text-xs text-muted-foreground">
+            {String(query.data.meta.total).padStart(2, "0")}{" "}
+            {query.data.meta.total === 1
+              ? "jogo encontrado"
+              : "jogos encontrados"}
+          </p>
+          {(search || platform !== "ALL") && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSearch("");
+                setPlatform("ALL");
+                setPage(1);
+              }}
+            >
+              Limpar filtros
+            </Button>
+          )}
+        </div>
+      )}
+
+      {query.data?.games.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-brand/20 bg-card px-6 py-14 text-center">
+          <span className="mono-data text-4xl font-semibold text-signal/55">
+            00
+          </span>
+          <h3 className="mt-3 text-lg font-semibold">Nenhum jogo por aqui</h3>
+          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+            Ajuste os filtros ou cadastre uma opção para ampliar a biblioteca do
+            grupo.
+          </p>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {query.data?.games.map((g) => (
-          <GameCard key={g.id} game={g} />
+        {query.data?.games.map((game, index) => (
+          <GameCard key={game.id} game={game} position={index + 1} />
         ))}
       </div>
 
@@ -139,7 +178,7 @@ function GamesPage() {
   );
 }
 
-function GameCard({ game }: { game: Game }) {
+function GameCard({ game, position }: { game: Game; position: number }) {
   const { user } = useAuth();
   const isAuthor = user?.id === game.createdById;
   const qc = useQueryClient();
@@ -155,16 +194,25 @@ function GameCard({ game }: { game: Game }) {
   });
 
   return (
-    <Card className="group overflow-hidden transition-colors hover:border-primary/40">
-      {game.coverUrl && (
-        <img
-          src={game.coverUrl}
-          alt={game.title}
-          className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        />
-      )}
-      <CardContent className="p-4">
-        <h3 className="line-clamp-1 font-bold tracking-tight transition-colors group-hover:text-primary">
+    <Card className="group overflow-hidden border-brand/12 shadow-[0_14px_40px_-34px_#17313a] transition-all hover:-translate-y-0.5 hover:border-brand/30">
+      <div className="relative overflow-hidden bg-brand">
+        {game.coverUrl ? (
+          <img
+            src={game.coverUrl}
+            alt={game.title}
+            className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="flex aspect-[16/10] w-full items-center justify-center bg-brand text-brand-foreground/35">
+            <Gamepad2 className="h-9 w-9" />
+          </div>
+        )}
+        <span className="mono-data absolute left-3 top-3 rounded-md bg-brand/85 px-2 py-1 text-[0.65rem] font-semibold text-brand-foreground backdrop-blur">
+          {String(position).padStart(2, "0")}
+        </span>
+      </div>
+      <CardContent className="flex min-h-48 flex-col p-4">
+        <h3 className="line-clamp-1 text-lg font-bold tracking-[-0.025em] transition-colors group-hover:text-signal">
           {game.title}
         </h3>
         <div className="mt-2 flex flex-wrap gap-1">
@@ -174,16 +222,18 @@ function GameCard({ game }: { game: Game }) {
             </Badge>
           ))}
           {game.maxPlayers && (
-            <Badge variant="outline">até {game.maxPlayers} jogadores</Badge>
+            <Badge variant="outline" className="gap-1">
+              <Users className="h-3 w-3" /> até {game.maxPlayers}
+            </Badge>
           )}
         </div>
         {game.description && (
-          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+          <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
             {game.description}
           </p>
         )}
         {isAuthor && (
-          <div className="mt-3 flex gap-2">
+          <div className="mt-auto flex gap-2 border-t pt-4">
             <Button
               size="sm"
               variant="outline"
@@ -343,7 +393,7 @@ function CreateGameDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>
+        <Button className="bg-signal text-signal-foreground hover:bg-signal/90">
           <Plus className="mr-2 h-4 w-4" /> Novo jogo
         </Button>
       </DialogTrigger>

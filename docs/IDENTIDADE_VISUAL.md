@@ -131,4 +131,21 @@ A primeira etapa da fundação visual foi iniciada em agosto de 2026:
 - os estados da fila deixaram de usar cores genéricas, incluindo o antigo violeta de “Jogando”;
 - pontos de branding exibem somente o nome Fillobby até a entrega da logo oficial.
 
-O próximo recorte recomendado é o redesenho do detalhe de grupo: cabeçalho, trilho de progresso da fila e cartão de jogo. Ele deve ser validado antes de propagar a estrutura para catálogo, perfil e estados vazios.
+O núcleo da experiência também recebeu a segunda etapa:
+
+- o detalhe do grupo agora funciona como um lobby, com identificação, convite e ações contextualizadas;
+- a navegação interna usa abas lineares em vez de um seletor genérico;
+- cada jogo apresenta posição, mensagem da etapa, votos, prontidão e um trilho de `Sugestão` até `Jogando`;
+- votos e participantes permanecem visíveis de forma compacta e podem ser expandidos;
+- ações principais mudam de ênfase conforme votação, prontidão e início da partida.
+
+A terceira etapa propagou o sistema para as demais áreas principais:
+
+- a lista de grupos apresenta cada lobby por iniciais, posição e papel do usuário;
+- o catálogo ganhou hierarquia editorial, capas consistentes, contagem de resultados e estados vazios;
+- o perfil reúne identidade pública, foto, informações pessoais e preferência visual;
+- o tema claro permanece como padrão, o usuário pode alternar para o escuro e a escolha fica salva no dispositivo;
+- o controle de tema está disponível na landing, autenticação, navegação e perfil;
+- painéis Azul Lobby preservam a mesma identidade nos dois temas.
+
+O próximo recorte recomendado é uma rodada de validação visual e responsiva com dados reais, seguida pelo refinamento de membros, histórico, configurações e diálogos. Depois disso, devem ser tratados favicon, imagens sociais e a aplicação da logo oficial quando ela estiver disponível.

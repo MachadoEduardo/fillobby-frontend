@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 type AuthShellProps = {
   title: string;
@@ -49,7 +50,8 @@ export function AuthShell({ title, description, children }: AuthShellProps) {
         </p>
       </aside>
 
-      <main className="flex items-center justify-center px-5 py-12 sm:px-8">
+      <main className="relative flex items-center justify-center px-5 py-12 sm:px-8">
+        <ThemeToggle compact className="absolute right-4 top-4" />
         <div className="page-enter w-full max-w-sm">
           <Link to="/" className="mb-10 inline-flex lg:hidden">
             <span className="brand-wordmark">Fillobby</span>
