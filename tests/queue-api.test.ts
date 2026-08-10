@@ -8,7 +8,10 @@ describe("queue API", () => {
   });
 
   it("lists a group's queue with sorting and pagination", async () => {
-    const response = { queueItems: [], meta: { page: 1, limit: 50, total: 0, totalPages: 0 } };
+    const response = {
+      queueItems: [],
+      meta: { page: 1, limit: 50, total: 0, totalPages: 0 },
+    };
     const fetchMock = vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ data: response }), {
         status: 200,
@@ -21,7 +24,9 @@ describe("queue API", () => {
       api.queue.list("group-1", { limit: 50, sort: "votes_desc" }),
     ).resolves.toEqual(response);
     expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/groups/group-1/queue?limit=50&sort=votes_desc"),
+      expect.stringContaining(
+        "/api/v1/groups/group-1/queue?limit=50&sort=votes_desc",
+      ),
       expect.objectContaining({ method: "GET" }),
     );
   });
@@ -56,7 +61,9 @@ describe("queue API", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(api.queue.transition("group-1", "queue-1", "PLAYING")).resolves.toEqual(item);
+    await expect(
+      api.queue.transition("group-1", "queue-1", "PLAYING"),
+    ).resolves.toEqual(item);
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/v1/groups/group-1/queue/queue-1/status"),
       expect.objectContaining({

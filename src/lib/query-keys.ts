@@ -15,11 +15,8 @@ export const queryKeys = {
   games: {
     root: () => ["games"] as const,
     all: () => ["games-all"] as const,
-    list: (filters: {
-      search?: string;
-      platform?: string;
-      page?: number;
-    }) => ["games", filters] as const,
+    list: (filters: { search?: string; platform?: string; page?: number }) =>
+      ["games", filters] as const,
   },
   votes: {
     list: (groupId: string, itemId: string) =>
