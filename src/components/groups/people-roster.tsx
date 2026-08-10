@@ -12,6 +12,7 @@ import {
 import { api, ApiError, resolveApiAssetUrl } from "@/lib/api";
 import type { UserSummary } from "@/lib/api-types";
 import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
+import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -299,7 +300,7 @@ export function VotersRoster({
 }) {
   const [open, setOpen] = useState(false);
   const query = useQuery({
-    queryKey: ["votes", groupId, itemId],
+    queryKey: queryKeys.votes.list(groupId, itemId),
     queryFn: () => api.votes.list(groupId, itemId, { limit: 100 }),
     enabled: open,
     refetchInterval: open ? GROUP_LIVE_REFRESH_MS : false,
