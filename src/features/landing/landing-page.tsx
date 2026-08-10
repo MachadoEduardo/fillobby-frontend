@@ -1,9 +1,39 @@
 import { Link, Navigate } from "@tanstack/react-router";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Gamepad2 } from "lucide-react";
+import { FaPlaystation, FaSteam, FaWindows, FaXbox } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import MoltenMetal from "@/components/backgrounds/molten-metal";
+import { LogoLoop, type LogoItem } from "@/components/landing/logo-loop";
+
+const platformLogos: LogoItem[] = [
+  {
+    node: <FaWindows />,
+    title: "PC",
+    ariaLabel: "PC",
+  },
+  {
+    node: <FaXbox />,
+    title: "Xbox",
+    ariaLabel: "Xbox",
+  },
+  {
+    node: <FaPlaystation />,
+    title: "PlayStation",
+    ariaLabel: "PlayStation",
+  },
+  {
+    node: <Gamepad2 />,
+    title: "Nintendo Switch",
+    ariaLabel: "Nintendo Switch",
+  },
+  {
+    node: <FaSteam />,
+    title: "Steam",
+    ariaLabel: "Steam",
+  },
+];
 
 export function LandingPage() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -41,7 +71,7 @@ export function LandingPage() {
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#F5F1E8]/72 sm:text-lg">
                 Organize a fila, reúna os votos e descubra quem está pronto para
-                jogar — tudo no mesmo lobby.
+                jogar, tudo no mesmo lobby.
               </p>
               <div className="mt-7 flex flex-wrap justify-center gap-3">
                 <Button
@@ -66,6 +96,18 @@ export function LandingPage() {
                 <Check className="h-4 w-4 text-[#23B5D3]" />
                 Convide a galera por código
               </p>
+              <LogoLoop
+                logos={platformLogos}
+                speed={52}
+                logoHeight={28}
+                gap={56}
+                hoverSpeed={0}
+                fadeOut
+                fadeOutColor="#0F1C21"
+                scaleOnHover
+                ariaLabel="Plataformas em que o grupo pode jogar"
+                className="mx-auto max-w-5xl px-5 sm:px-6 mt-12 sm:mt-16 lg:mt-20"
+              />
             </div>
           </div>
         </section>
