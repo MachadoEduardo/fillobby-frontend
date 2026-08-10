@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import { PLATFORMS, type Game, type Platform } from "@/lib/api-types";
+import { queryKeys } from "@/lib/query-keys";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,7 +42,7 @@ function GamesPage() {
   const [page, setPage] = useState(1);
 
   const query = useQuery({
-    queryKey: ["games", { search, platform, page }],
+    queryKey: queryKeys.games.list({ search, platform, page }),
     queryFn: () =>
       api.games.list({
         search: search || undefined,
@@ -188,7 +189,7 @@ function GameCard({ game, position }: { game: Game; position: number }) {
     mutationFn: () => api.games.deactivate(game.id),
     onSuccess: () => {
       toast.success("Jogo inativado.");
-      qc.invalidateQueries({ queryKey: ["games"] });
+      qc.invalidateQueries({ queryKey: queryKeys.games.root() });
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
@@ -378,7 +379,7 @@ function CreateGameDialog() {
       toast.success(
         reactivated ? "Jogo existente reativado!" : "Jogo cadastrado!",
       );
-      qc.invalidateQueries({ queryKey: ["games"] });
+      qc.invalidateQueries({ queryKey: queryKeys.games.root() });
       setOpen(false);
     },
     onError: (e) =>
@@ -430,7 +431,7 @@ function EditGameDialog({
       api.games.update(game.id, data),
     onSuccess: () => {
       toast.success("Jogo atualizado.");
-      qc.invalidateQueries({ queryKey: ["games"] });
+      qc.invalidateQueries({ queryKey: queryKeys.games.root() });
       onOpenChange(false);
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),

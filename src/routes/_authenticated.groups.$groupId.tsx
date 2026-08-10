@@ -11,6 +11,7 @@ import {
 import type { Group, Member, QueueItem, QueueStatus } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
 import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
+import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +69,7 @@ export const Route = createFileRoute("/_authenticated/groups/$groupId")({
 function GroupDetailPage() {
   const { groupId } = Route.useParams();
   const groupQ = useQuery({
-    queryKey: ["group", groupId],
+    queryKey: queryKeys.group.detail(groupId),
     queryFn: () => api.groups.get(groupId),
     refetchInterval: GROUP_LIVE_REFRESH_MS,
     refetchIntervalInBackground: false,
@@ -200,8 +201,8 @@ function LeaveGroupButton({ group }: { group: Group }) {
     mutationFn: () => api.groups.leave(group.id),
     onSuccess: () => {
       toast.success("Você saiu do grupo.");
-      qc.removeQueries({ queryKey: ["group", group.id] });
-      qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.removeQueries({ queryKey: queryKeys.group.detail(group.id) });
+      qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
       navigate({ to: "/groups" });
     },
     onError: (error) =>
@@ -329,7 +330,7 @@ function QueueProgress({ status }: { status: QueueStatus }) {
 
 function QueueTab({ group }: { group: Group }) {
   const listQ = useQuery({
-    queryKey: ["queue", group.id],
+    queryKey: queryKeys.queue.list(group.id),
     queryFn: () => api.queue.list(group.id, { limit: 50, sort: "votes_desc" }),
     refetchInterval: GROUP_LIVE_REFRESH_MS,
     refetchIntervalInBackground: false,
@@ -409,9 +410,9 @@ function QueueItemCard({
   const hasVoted = voted ?? item.viewerHasVoted;
 
   function invalidate() {
-    qc.invalidateQueries({ queryKey: ["queue", group.id] });
-    qc.invalidateQueries({ queryKey: ["history", group.id] });
-    qc.invalidateQueries({ queryKey: ["votes", group.id, item.id] });
+    qc.invalidateQueries({ queryKey: queryKeys.queue.list(group.id) });
+    qc.invalidateQueries({ queryKey: queryKeys.history.root(group.id) });
+    qc.invalidateQueries({ queryKey: queryKeys.votes.list(group.id, item.id) });
   }
 
   const voteMut = useMutation({
@@ -684,7 +685,7 @@ function ParticipantsDialog({
   onOpenChange: (v: boolean) => void;
 }) {
   const membersQ = useQuery({
-    queryKey: ["members", group.id],
+    queryKey: queryKeys.members.list(group.id),
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
     refetchInterval: GROUP_LIVE_REFRESH_MS,
     refetchIntervalInBackground: false,
@@ -696,7 +697,7 @@ function ParticipantsDialog({
     mutationFn: () => api.queue.setParticipants(group.id, item.id, selected),
     onSuccess: () => {
       toast.success("Participantes atualizados.");
-      qc.invalidateQueries({ queryKey: ["queue", group.id] });
+      qc.invalidateQueries({ queryKey: queryKeys.queue.list(group.id) });
       onOpenChange(false);
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
@@ -758,7 +759,7 @@ function SuggestGameDialog({ groupId }: { groupId: string }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const gamesQ = useQuery({
-    queryKey: ["games", { search, page: 1 }],
+    queryKey: queryKeys.games.list({ search, page: 1 }),
     queryFn: () => api.games.list({ search: search || undefined, limit: 30 }),
     enabled: open,
   });
@@ -767,7 +768,7 @@ function SuggestGameDialog({ groupId }: { groupId: string }) {
     mutationFn: (gameId: string) => api.queue.create(groupId, gameId),
     onSuccess: () => {
       toast.success("Jogo adicionado à fila!");
-      qc.invalidateQueries({ queryKey: ["queue", groupId] });
+      qc.invalidateQueries({ queryKey: queryKeys.queue.list(groupId) });
       setOpen(false);
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
@@ -831,14 +832,14 @@ function SuggestGameDialog({ groupId }: { groupId: string }) {
 
 function MembersTab({ group }: { group: Group }) {
   const membersQ = useQuery({
-    queryKey: ["members", group.id],
+    queryKey: queryKeys.members.list(group.id),
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
     refetchInterval: GROUP_LIVE_REFRESH_MS,
     refetchIntervalInBackground: false,
   });
   const isAdmin = group.role === "OWNER" || group.role === "ADMIN";
   const removedQ = useQuery({
-    queryKey: ["members", group.id, "removed"],
+    queryKey: queryKeys.members.removed(group.id),
     queryFn: () =>
       api.groups.listMembers(group.id, { limit: 100, status: "REMOVED" }),
     enabled: isAdmin,
@@ -878,7 +879,7 @@ function RemovedMemberRow({ member, group }: { member: Member; group: Group }) {
     mutationFn: () => api.groups.restoreMember(group.id, member.id),
     onSuccess: () => {
       toast.success("Membro restaurado.");
-      qc.invalidateQueries({ queryKey: ["members", group.id] });
+      qc.invalidateQueries({ queryKey: queryKeys.members.list(group.id) });
     },
     onError: (error) =>
       toast.error(
@@ -928,9 +929,9 @@ function MemberRow({ member, group }: { member: Member; group: Group }) {
   const canTransfer = isOwner && !isSelf && member.role !== "OWNER";
 
   function invalidate() {
-    qc.invalidateQueries({ queryKey: ["members", group.id] });
-    qc.invalidateQueries({ queryKey: ["group", group.id] });
-    qc.invalidateQueries({ queryKey: ["groups"] });
+    qc.invalidateQueries({ queryKey: queryKeys.members.list(group.id) });
+    qc.invalidateQueries({ queryKey: queryKeys.group.detail(group.id) });
+    qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
   }
 
   const roleMut = useMutation({
@@ -1031,18 +1032,24 @@ function HistoryTab({ group }: { group: Group }) {
   const [page, setPage] = useState(1);
 
   const gamesQ = useQuery({
-    queryKey: ["games-all"],
+    queryKey: queryKeys.games.all(),
     queryFn: () => api.games.list({ limit: 100 }),
   });
   const membersQ = useQuery({
-    queryKey: ["members", group.id],
+    queryKey: queryKeys.members.list(group.id),
     queryFn: () => api.groups.listMembers(group.id, { limit: 100 }),
     refetchInterval: GROUP_LIVE_REFRESH_MS,
     refetchIntervalInBackground: false,
   });
 
   const historyQ = useQuery({
-    queryKey: ["history", group.id, { from, to, gameId, participantId, page }],
+    queryKey: queryKeys.history.list(group.id, {
+      from,
+      to,
+      gameId,
+      participantId,
+      page,
+    }),
     queryFn: () =>
       api.history.list(group.id, {
         from: from || undefined,
@@ -1210,8 +1217,8 @@ function SettingsTab({ group }: { group: Group }) {
       api.groups.update(group.id, { name, description: description || null }),
     onSuccess: () => {
       toast.success("Grupo atualizado.");
-      qc.invalidateQueries({ queryKey: ["group", group.id] });
-      qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: queryKeys.group.detail(group.id) });
+      qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
   });
@@ -1219,7 +1226,7 @@ function SettingsTab({ group }: { group: Group }) {
     mutationFn: () => api.groups.deactivate(group.id),
     onSuccess: () => {
       toast.success("Grupo inativado.");
-      qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
       navigate({ to: "/groups" });
     },
     onError: (e) => toast.error(e instanceof ApiError ? e.message : "Erro."),
@@ -1228,8 +1235,8 @@ function SettingsTab({ group }: { group: Group }) {
     mutationFn: () => api.groups.regenerateInvite(group.id),
     onSuccess: () => {
       toast.success("Código de convite renovado.");
-      qc.invalidateQueries({ queryKey: ["group", group.id] });
-      qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: queryKeys.group.detail(group.id) });
+      qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
     },
     onError: (error) =>
       toast.error(

@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
+import { queryKeys } from "@/lib/query-keys";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/_authenticated/groups/")({
 
 function GroupsPage() {
   const { data, isLoading, error } = useQuery({
-    queryKey: ["groups"],
+    queryKey: queryKeys.groups.all(),
     queryFn: () => api.groups.list({ limit: 50 }),
   });
 
@@ -139,7 +140,7 @@ function CreateGroupDialog() {
       api.groups.create({ name, description: description || null }),
     onSuccess: () => {
       toast.success("Grupo criado!");
-      qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
       setOpen(false);
       setName("");
       setDescription("");
@@ -206,7 +207,7 @@ function JoinGroupDialog() {
     mutationFn: () => api.groups.join({ inviteCode: code }),
     onSuccess: () => {
       toast.success("Você entrou no grupo!");
-      qc.invalidateQueries({ queryKey: ["groups"] });
+      qc.invalidateQueries({ queryKey: queryKeys.groups.all() });
       setOpen(false);
       setCode("");
     },
