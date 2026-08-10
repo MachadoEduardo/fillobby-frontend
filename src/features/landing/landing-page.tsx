@@ -42,29 +42,35 @@ export function LandingPage() {
 
   return (
     <div className="app-page min-h-screen">
-      <header className="border-b border-brand/10 bg-background/90 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
-          <span className="brand-wordmark">Fillobby</span>
-          <div className="flex gap-2">
-            <ThemeToggle compact />
-            <Button asChild variant="ghost">
-              <Link to="/login">Entrar</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/register">Criar conta</Link>
-            </Button>
-          </div>
-        </div>
-      </header>
-
       <main>
         <section className="w-full">
-          <div className="relative isolate flex min-h-[calc(100svh-4.3125rem)] items-center justify-center overflow-hidden bg-[#0F1C21] text-[#F5F1E8]">
+          <div className="relative isolate flex min-h-screen flex-col overflow-hidden bg-[#0F1C21] text-[#F5F1E8]">
             <MoltenMetal className="pointer-events-none absolute inset-0" />
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_18%,#17313A1A_0%,#0F1C213D_42%,#0F1C217A_100%)]" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(to_bottom,#0F1C2100,#0F1C2166_100%)]" />
 
-            <div className="page-enter relative z-10 mx-auto flex max-w-4xl flex-col items-center px-5 py-12 text-center sm:px-8">
+            <header className="relative z-10">
+              <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6">
+                <span className="brand-wordmark text-white">Fillobby</span>
+                <div className="flex gap-2">
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className="text-white hover:bg-white/10 hover:text-white"
+                  >
+                    <Link to="/login">Entrar</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="bg-[#23B5D3] text-white hover:bg-[#23B5D3]/90 hover:text-white"
+                  >
+                    <Link to="/register">Criar conta</Link>
+                  </Button>
+                </div>
+              </div>
+            </header>
+
+            <div className="page-enter relative z-10 mx-auto flex flex-1 max-w-4xl flex-col items-center justify-center px-5 py-12 text-center sm:px-8">
               <p className="eyebrow text-[#23B5D3]">O lobby antes da partida</p>
               <h1 className="mt-5 text-4xl font-bold leading-[0.96] tracking-[-0.055em] text-balance sm:text-6xl lg:text-7xl">
                 Seus amigos. Seus jogos. Uma escolha simples.
