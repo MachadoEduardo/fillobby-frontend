@@ -41,7 +41,7 @@ function passwordErrorsFrom(details: ErrorDetail[]): PasswordErrors {
 }
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  head: () => ({ meta: [{ title: "Meu perfil — Fillobby" }] }),
+  head: () => ({ meta: [{ title: "Meu perfil | Fillobby" }] }),
   component: ProfilePage,
 });
 

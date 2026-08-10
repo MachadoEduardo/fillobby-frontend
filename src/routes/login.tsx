@@ -9,7 +9,7 @@ import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({ meta: [{ title: "Entrar — Fillobby" }] }),
+  head: () => ({ meta: [{ title: "Entrar | Fillobby" }] }),
   component: LoginPage,
 });
 

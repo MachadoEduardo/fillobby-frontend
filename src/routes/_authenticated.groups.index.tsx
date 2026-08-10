@@ -21,7 +21,7 @@ import {
 import { ArrowUpRight, Crown, KeyRound, Plus, Shield } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/groups/")({
-  head: () => ({ meta: [{ title: "Grupos — Fillobby" }] }),
+  head: () => ({ meta: [{ title: "Grupos | Fillobby" }] }),
   component: GroupsPage,
 });
 

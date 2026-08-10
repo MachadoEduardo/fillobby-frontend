@@ -61,7 +61,7 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/groups/$groupId")({
-  head: ({ params }) => ({ meta: [{ title: `Grupo — Fillobby` }] }),
+  head: ({ params }) => ({ meta: [{ title: `Grupo | Fillobby` }] }),
   component: GroupDetailPage,
 });
 

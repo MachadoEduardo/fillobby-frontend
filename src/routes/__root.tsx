@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       meta: [
         { charSet: "utf-8" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
-        { title: "Fillobby — Fila compartilhada de jogos" },
+        { title: "Fillobby | Fila compartilhada de jogos" },
         {
           name: "description",
           content:
@@ -91,7 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         },
         {
           property: "og:title",
-          content: "Fillobby — Fila compartilhada de jogos",
+          content: "Fillobby | Fila compartilhada de jogos",
         },
         {
           property: "og:description",

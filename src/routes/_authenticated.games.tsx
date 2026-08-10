@@ -31,7 +31,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Gamepad2, Pencil, Plus, Search, Trash2, Users } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/games")({
-  head: () => ({ meta: [{ title: "Jogos — Fillobby" }] }),
+  head: () => ({ meta: [{ title: "Jogos | Fillobby" }] }),
   component: GamesPage,
 });
 

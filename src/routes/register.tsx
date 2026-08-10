@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { api, ApiError } from "@/lib/api";
 
 export const Route = createFileRoute("/register")({
-  head: () => ({ meta: [{ title: "Criar conta — Fillobby" }] }),
+  head: () => ({ meta: [{ title: "Criar conta | Fillobby" }] }),
   component: RegisterPage,
 });
 
