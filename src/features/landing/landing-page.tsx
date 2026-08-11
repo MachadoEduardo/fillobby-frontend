@@ -70,20 +70,20 @@ export function LandingPage() {
               </div>
             </header>
 
-            <div className="page-enter relative z-10 mx-auto flex flex-1 max-w-4xl flex-col items-center justify-center px-5 py-12 text-center sm:px-8">
+            <div className="page-enter relative z-10 mx-auto flex w-full min-w-0 max-w-4xl flex-1 flex-col items-center justify-center px-5 py-12 text-center sm:px-8">
               <p className="eyebrow text-[#23B5D3]">O lobby antes da partida</p>
-              <h1 className="mt-5 text-4xl font-bold leading-[0.96] tracking-[-0.055em] text-balance sm:text-6xl lg:text-7xl">
+              <h1 className="mt-5 max-w-[16ch] text-4xl font-bold leading-[0.96] tracking-[-0.055em] text-balance sm:max-w-none sm:text-6xl lg:text-7xl">
                 Seus amigos. Seus jogos. Uma escolha simples.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#F5F1E8]/72 sm:text-lg">
                 Organize a fila, reúna os votos e descubra quem está pronto para
                 jogar, tudo no mesmo lobby.
               </p>
-              <div className="mt-7 flex flex-wrap justify-center gap-3">
+              <div className="mt-7 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
                 <Button
                   asChild
                   size="lg"
-                  className="bg-[#23B5D3] text-[#17313A] hover:bg-[#3B8AC9]"
+                  className="w-full bg-[#23B5D3] text-[#17313A] hover:bg-[#3B8AC9] sm:w-auto"
                 >
                   <Link to="/register">
                     Criar meu grupo <ArrowRight />
@@ -93,7 +93,7 @@ export function LandingPage() {
                   asChild
                   size="lg"
                   variant="outline"
-                  className="border-[#F5F1E8]/28 bg-[#0F1C21]/35 text-[#F5F1E8] hover:bg-[#F5F1E8]/10 hover:text-[#F5F1E8]"
+                  className="w-full border-[#F5F1E8]/28 bg-[#0F1C21]/35 text-[#F5F1E8] hover:bg-[#F5F1E8]/10 hover:text-[#F5F1E8] sm:w-auto"
                 >
                   <Link to="/login">Já tenho uma conta</Link>
                 </Button>
@@ -112,7 +112,7 @@ export function LandingPage() {
                 fadeOutColor="#0F1C21"
                 scaleOnHover
                 ariaLabel="Plataformas em que o grupo pode jogar"
-                className="mx-auto max-w-5xl px-5 sm:px-6 mt-12 sm:mt-16 lg:mt-20"
+                className="mx-auto mt-12 w-full min-w-0 max-w-5xl sm:mt-16 lg:mt-20"
               />
             </div>
           </div>
