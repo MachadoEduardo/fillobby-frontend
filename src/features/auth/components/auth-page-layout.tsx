@@ -3,11 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import DarkVeil from "@/components/DarkVeil";
 import FadeContent from "@/components/FadeContent";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 type AuthPageLayoutProps = {
   title: string;
   description: string;
+  mobileEyebrow: string;
   children: ReactNode;
   footer: ReactNode;
 };
@@ -21,20 +21,21 @@ const lobbyBenefits = [
 export function AuthPageLayout({
   title,
   description,
+  mobileEyebrow,
   children,
   footer,
 }: AuthPageLayoutProps) {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0F1C21] text-[#F5F1E8]">
+    <div className="relative min-h-screen overflow-x-hidden bg-[#0F1C21] text-[#F5F1E8]">
       <div className="pointer-events-none absolute inset-0 opacity-70">
         <DarkVeil
           hueShift={0}
           noiseIntensity={0.015}
           scanlineIntensity={0.02}
           scanlineFrequency={0.004}
-          speed={0.24}
-          warpAmount={0.18}
-          resolutionScale={0.90}
+          speed={0.64}
+          warpAmount={0.28}
+          resolutionScale={0.9}
           respectReducedMotion
         />
       </div>
@@ -90,7 +91,7 @@ export function AuthPageLayout({
           >
             <header>
               <p className="eyebrow text-[#23B5D3] lg:hidden">
-                Bem-vindo de volta
+                {mobileEyebrow}
               </p>
               <h1
                 id="auth-title"
