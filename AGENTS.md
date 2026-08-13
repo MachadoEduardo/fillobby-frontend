@@ -7,6 +7,7 @@
 
 - Keep domain-specific components inside their respective `src/features` domain. Reserve `src/components` for primitives and components shared across multiple domains.
 - Use the semantic Tailwind/CSS tokens defined in `src/styles.css` for colors, surfaces, borders, radii and interaction states. Do not hardcode visual values inside components. When the design system lacks a necessary value, add or refine a semantic token before using it.
+- Keep loading, empty, success and error feedback clear, contextual and actionable. User-facing messages must use plain Brazilian Portuguese and must not expose HTTP status codes, internal error codes, stack traces or other implementation details.
 
 ## Commit handoff
 
