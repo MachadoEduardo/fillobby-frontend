@@ -23,6 +23,7 @@ export function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
@@ -38,11 +39,19 @@ export function RegisterPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSubmitting(true);
     setFieldErrors({});
 
+    if (password !== confirmPassword) {
+      setFieldErrors({
+        confirmPassword: ["A confirmação da senha não confere."],
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
     try {
-      await api.auth.register({ name, email, password });
+      await api.auth.register({ name, email, password, confirmPassword });
       toast.success("Conta criada! Faça login para continuar.");
       navigate({ to: "/login" });
     } catch (error) {
@@ -120,10 +129,26 @@ export function RegisterPage() {
           onChange={(event) => {
             setPassword(event.target.value);
             clearFieldError("password");
+            clearFieldError("confirmPassword");
           }}
           autoComplete="new-password"
           helpText="Mínimo 8 caracteres, com letra maiúscula, minúscula e número."
           errors={fieldErrors.password}
+        />
+        <AuthFormField
+          id="confirm-password"
+          label="Confirmar senha"
+          type="password"
+          required
+          minLength={8}
+          maxLength={72}
+          value={confirmPassword}
+          onChange={(event) => {
+            setConfirmPassword(event.target.value);
+            clearFieldError("confirmPassword");
+          }}
+          autoComplete="new-password"
+          errors={fieldErrors.confirmPassword}
         />
         <Button
           type="submit"

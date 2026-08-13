@@ -93,4 +93,34 @@ describe("API client", () => {
       }),
     );
   });
+
+  it("sends the password confirmation when registering", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ data: user }), {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api.auth.register({
+      name: user.name,
+      email: user.email,
+      password: "Password123",
+      confirmPassword: "Password123",
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/api/v1/auth/register"),
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          password: "Password123",
+          confirmPassword: "Password123",
+        }),
+      }),
+    );
+  });
 });

@@ -172,7 +172,12 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
 // ============ AUTH ============
 export const api = {
   auth: {
-    register: (input: { name: string; email: string; password: string }) =>
+    register: (input: {
+      name: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+    }) =>
       request<PublicUser>("/api/v1/auth/register", {
         method: "POST",
         body: input,
