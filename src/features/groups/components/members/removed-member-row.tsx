@@ -3,7 +3,8 @@ import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { api, ApiError, resolveApiAssetUrl } from "@/lib/api";
+import { getGroupActionErrorMessage } from "@/features/groups/group-errors";
+import { api, resolveApiAssetUrl } from "@/lib/api";
 import type { Group, Member } from "@/lib/api-types";
 import { queryKeys } from "@/lib/query-keys";
 
@@ -25,9 +26,10 @@ export function RemovedMemberRow({
     },
     onError: (error) =>
       toast.error(
-        error instanceof ApiError
-          ? error.message
-          : "Não foi possível restaurar.",
+        getGroupActionErrorMessage(
+          error,
+          "Não foi possível restaurar o acesso agora. Tente novamente em alguns instantes.",
+        ),
       ),
   });
 

@@ -2,6 +2,7 @@ import { Crown, Trash2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ConfirmGroupActionDialog } from "@/features/groups/components/confirm-group-action-dialog";
 import {
   Select,
   SelectContent,
@@ -49,6 +50,7 @@ export function MemberRow({ member, group }: { member: Member; group: Group }) {
         {canChangeRole && (
           <Select
             value={member.role === "ADMIN" ? "ADMIN" : "MEMBER"}
+            disabled={actions.changeRole.isPending}
             onValueChange={(role) =>
               actions.changeRole.mutate(role as "ADMIN" | "MEMBER")
             }
@@ -63,32 +65,39 @@ export function MemberRow({ member, group }: { member: Member; group: Group }) {
           </Select>
         )}
         {canTransfer && (
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={actions.transferOwnership.isPending}
-            onClick={() => {
-              if (confirm(`Transferir propriedade para ${member.name}?`)) {
-                actions.transferOwnership.mutate();
-              }
-            }}
-          >
-            <Crown className="mr-1 h-3 w-3" /> Tornar dono
-          </Button>
+          <ConfirmGroupActionDialog
+            trigger={
+              <Button size="sm" variant="outline">
+                <Crown /> Tornar dono
+              </Button>
+            }
+            title={`Transferir o grupo para ${member.name}?`}
+            description="Essa pessoa passará a controlar o grupo e você deixará de ser o proprietário. A transferência exige uma nova ação dela para ser desfeita."
+            confirmLabel="Transferir grupo"
+            pendingLabel="Transferindo grupo..."
+            pending={actions.transferOwnership.isPending}
+            onConfirm={() => actions.transferOwnership.mutateAsync()}
+          />
         )}
         {canRemove && (
-          <Button
-            size="sm"
-            variant="ghost"
-            disabled={actions.remove.isPending}
-            onClick={() => {
-              if (confirm(`Remover ${member.name} do grupo?`)) {
-                actions.remove.mutate();
-              }
-            }}
-          >
-            <Trash2 className="h-3 w-3" />
-          </Button>
+          <ConfirmGroupActionDialog
+            trigger={
+              <Button
+                size="sm"
+                variant="ghost"
+                aria-label={`Remover ${member.name}`}
+              >
+                <Trash2 />
+              </Button>
+            }
+            title={`Remover ${member.name}?`}
+            description="A pessoa perderá o acesso ao grupo e às ações do lobby. Um administrador poderá restaurar o acesso depois."
+            confirmLabel="Remover membro"
+            pendingLabel="Removendo membro..."
+            pending={actions.remove.isPending}
+            confirmVariant="destructive"
+            onConfirm={() => actions.remove.mutateAsync()}
+          />
         )}
       </CardContent>
     </Card>

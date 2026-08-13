@@ -9,7 +9,8 @@ import {
   UserRound,
   Users,
 } from "lucide-react";
-import { api, ApiError, resolveApiAssetUrl } from "@/lib/api";
+import { getGroupLoadErrorMessage } from "@/features/groups/group-errors";
+import { api, resolveApiAssetUrl } from "@/lib/api";
 import type { UserSummary } from "@/lib/api-types";
 import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
 import { queryKeys } from "@/lib/query-keys";
@@ -270,7 +271,7 @@ export function HistoryParticipants({
 }: {
   participants: UserSummary[];
 }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const people = participants.map<RosterPerson>((user) => ({
     user,
     state: "played",
@@ -313,9 +314,7 @@ export function VotersRoster({
       state: "voted",
     })) ?? [];
   const errorMessage = query.error
-    ? query.error instanceof ApiError
-      ? query.error.message
-      : "Não foi possível carregar os votos."
+    ? getGroupLoadErrorMessage(query.error, "votos")
     : undefined;
 
   return (

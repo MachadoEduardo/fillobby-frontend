@@ -8,6 +8,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ConfirmGroupActionDialog } from "@/features/groups/components/confirm-group-action-dialog";
 import type { Group, QueueItem } from "@/lib/api-types";
 import { useQueueItemActions } from "@/features/groups/hooks/use-queue-item-actions";
 
@@ -114,17 +115,22 @@ export function QueueItemActions({
       {isAdmin &&
         item.status !== "COMPLETED" &&
         item.status !== "CANCELLED" && (
-          <Button
-            size="sm"
-            variant="ghost"
-            className="sm:ml-auto"
-            disabled={actions.cancel.isPending}
-            onClick={() => {
-              if (confirm("Cancelar este item?")) actions.cancel.mutate();
-            }}
-          >
-            <Trash2 className="mr-1 h-3 w-3" /> Cancelar
-          </Button>
+          <div className="sm:ml-auto">
+            <ConfirmGroupActionDialog
+              trigger={
+                <Button size="sm" variant="ghost">
+                  <Trash2 /> Cancelar
+                </Button>
+              }
+              title={`Cancelar ${item.game.title}?`}
+              description="O jogo sairá da decisão em andamento e não poderá receber novos votos ou participantes."
+              confirmLabel="Cancelar sugestão"
+              pendingLabel="Cancelando sugestão..."
+              pending={actions.cancel.isPending}
+              confirmVariant="destructive"
+              onConfirm={() => actions.cancel.mutateAsync()}
+            />
+          </div>
         )}
     </div>
   );

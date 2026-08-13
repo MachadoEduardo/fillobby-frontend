@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
+import { getGroupActionErrorMessage } from "@/features/groups/group-errors";
 import { api, ApiError } from "@/lib/api";
 import type { QueueItem } from "@/lib/api-types";
 import { queryKeys } from "@/lib/query-keys";
@@ -34,7 +35,7 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
         setOptimisticVote(true);
         return;
       }
-      toast.error(error instanceof ApiError ? error.message : "Erro ao votar.");
+      toast.error(getQueueActionError(error));
     },
   });
 
@@ -49,30 +50,27 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
         setOptimisticVote(false);
         return;
       }
-      toast.error(error instanceof ApiError ? error.message : "Erro.");
+      toast.error(getQueueActionError(error));
     },
   });
 
   const markReady = useMutation({
     mutationFn: () => api.queue.markReady(groupId, item.id),
     onSuccess: invalidateRelatedQueries,
-    onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+    onError: (error) => toast.error(getQueueActionError(error)),
   });
 
   const unmarkReady = useMutation({
     mutationFn: () => api.queue.unmarkReady(groupId, item.id),
     onSuccess: invalidateRelatedQueries,
-    onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+    onError: (error) => toast.error(getQueueActionError(error)),
   });
 
   const transition = useMutation({
     mutationFn: (status: QueueTransition) =>
       api.queue.transition(groupId, item.id, status),
     onSuccess: invalidateRelatedQueries,
-    onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+    onError: (error) => toast.error(getQueueActionError(error)),
   });
 
   const cancel = useMutation({
@@ -81,8 +79,7 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
       toast.success("Item cancelado.");
       invalidateRelatedQueries();
     },
-    onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+    onError: (error) => toast.error(getQueueActionError(error)),
   });
 
   return {
@@ -94,4 +91,11 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
     transition,
     cancel,
   };
+}
+
+function getQueueActionError(error: unknown) {
+  return getGroupActionErrorMessage(
+    error,
+    "Não foi possível atualizar a fila agora. Tente novamente em alguns instantes.",
+  );
 }

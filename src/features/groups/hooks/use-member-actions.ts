@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { api, ApiError } from "@/lib/api";
+import { getGroupActionErrorMessage } from "@/features/groups/group-errors";
+import { api } from "@/lib/api";
 import type { Group, Member } from "@/lib/api-types";
 import { queryKeys } from "@/lib/query-keys";
 
@@ -25,7 +26,12 @@ export function useMemberActions(group: Group, member: Member) {
       invalidateRelatedQueries();
     },
     onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+      toast.error(
+        getGroupActionErrorMessage(
+          error,
+          "Não foi possível alterar a permissão agora. Tente novamente em alguns instantes.",
+        ),
+      ),
   });
 
   const remove = useMutation({
@@ -35,7 +41,12 @@ export function useMemberActions(group: Group, member: Member) {
       invalidateRelatedQueries();
     },
     onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+      toast.error(
+        getGroupActionErrorMessage(
+          error,
+          "Não foi possível remover o membro agora. Tente novamente em alguns instantes.",
+        ),
+      ),
   });
 
   const transferOwnership = useMutation({
@@ -45,7 +56,12 @@ export function useMemberActions(group: Group, member: Member) {
       invalidateRelatedQueries();
     },
     onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro."),
+      toast.error(
+        getGroupActionErrorMessage(
+          error,
+          "Não foi possível transferir o grupo agora. Tente novamente em alguns instantes.",
+        ),
+      ),
   });
 
   return { changeRole, remove, transferOwnership };
