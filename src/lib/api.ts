@@ -131,7 +131,7 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   } catch (err) {
     throw new ApiError(0, {
       code: "NETWORK_ERROR",
-      message: "Não foi possível conectar à API. Verifique sua conexão.",
+      message: "Não foi possível conectar. Verifique sua conexão.",
       details: [],
     });
   }
