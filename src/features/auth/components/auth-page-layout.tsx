@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import DarkVeil from "@/features/auth/components/dark-veil";
-import FadeContent from "@/features/auth/components/fade-content";
+import FadeContent from "@/components/fade-content";
 
 type AuthPageLayoutProps = {
   title: string;

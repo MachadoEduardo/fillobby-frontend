@@ -1,5 +1,7 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import { CircleAlert, UsersRound } from "lucide-react";
+import type { ReactNode } from "react";
+import FadeContent from "@/components/fade-content";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Group, PaginationMeta } from "@/lib/api-types";
@@ -22,51 +24,72 @@ export function GroupsList({ query }: GroupsListProps) {
 
   if (query.error) {
     return (
-      <div className="rounded-xl border bg-card/70 px-5 py-8 text-center">
-        <CircleAlert className="mx-auto h-6 w-6 text-destructive" />
-        <h2 className="mt-3 font-semibold">
-          Não foi possível carregar seus grupos
-        </h2>
-        <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
-          {query.error instanceof ApiError
-            ? query.error.message
-            : "Tente novamente em alguns instantes."}
-        </p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="mt-5 bg-transparent"
-          onClick={() => void query.refetch()}
-        >
-          Tentar novamente
-        </Button>
-      </div>
+      <GroupsContentFade>
+        <div className="rounded-xl border bg-card/70 px-5 py-8 text-center">
+          <CircleAlert className="mx-auto h-6 w-6 text-destructive" />
+          <h2 className="mt-3 font-semibold">
+            Não foi possível carregar seus grupos
+          </h2>
+          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+            {query.error instanceof ApiError
+              ? query.error.message
+              : "Tente novamente em alguns instantes."}
+          </p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-5 bg-transparent"
+            onClick={() => void query.refetch()}
+          >
+            Tentar novamente
+          </Button>
+        </div>
+      </GroupsContentFade>
     );
   }
 
   if (!query.data) return null;
 
   if (query.data.groups.length === 0) {
-    return <EmptyGroups />;
+    return (
+      <GroupsContentFade>
+        <EmptyGroups />
+      </GroupsContentFade>
+    );
   }
 
   return (
-    <section aria-labelledby="groups-list-heading">
-      <div className="mb-4 flex items-center justify-between gap-4">
-        <h2 id="groups-list-heading" className="text-sm font-semibold">
-          Grupos disponíveis
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          {query.data.meta.total}{" "}
-          {query.data.meta.total === 1 ? "grupo" : "grupos"}
-        </p>
-      </div>
-      <div className="grid gap-3 lg:grid-cols-2">
-        {query.data.groups.map((group) => (
-          <GroupCard key={group.id} group={group} />
-        ))}
-      </div>
-    </section>
+    <GroupsContentFade>
+      <section aria-labelledby="groups-list-heading">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <h2 id="groups-list-heading" className="text-sm font-semibold">
+            Grupos disponíveis
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {query.data.meta.total}{" "}
+            {query.data.meta.total === 1 ? "grupo" : "grupos"}
+          </p>
+        </div>
+        <div className="grid gap-3 lg:grid-cols-2">
+          {query.data.groups.map((group) => (
+            <GroupCard key={group.id} group={group} />
+          ))}
+        </div>
+      </section>
+    </GroupsContentFade>
+  );
+}
+
+function GroupsContentFade({ children }: { children: ReactNode }) {
+  return (
+    <FadeContent
+      duration={470}
+      initialOpacity={0}
+      threshold={0.05}
+      respectReducedMotion
+    >
+      {children}
+    </FadeContent>
   );
 }
 
