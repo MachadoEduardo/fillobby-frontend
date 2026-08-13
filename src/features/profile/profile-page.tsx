@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { api, ApiError, resolveApiAssetUrl } from "@/lib/api";
 import { PLATFORMS, type ErrorDetail, type Platform } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
@@ -422,9 +423,8 @@ export function ProfilePage() {
           <form onSubmit={handlePasswordSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="current-password">Senha atual</Label>
-              <Input
+              <PasswordInput
                 id="current-password"
-                type="password"
                 required
                 value={currentPassword}
                 onChange={(event) =>
@@ -454,9 +454,8 @@ export function ProfilePage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="new-password">Nova senha</Label>
-              <Input
+              <PasswordInput
                 id="new-password"
-                type="password"
                 required
                 minLength={8}
                 maxLength={72}
@@ -491,9 +490,8 @@ export function ProfilePage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirmar nova senha</Label>
-              <Input
+              <PasswordInput
                 id="confirm-password"
-                type="password"
                 required
                 minLength={8}
                 maxLength={72}
