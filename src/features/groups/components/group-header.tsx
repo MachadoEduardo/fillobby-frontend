@@ -1,12 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Copy, Crown, LogOut, Shield } from "lucide-react";
+import { ArrowLeft, Copy, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
-import type { Group, GroupRole } from "@/lib/api-types";
+import type { Group } from "@/lib/api-types";
 import { queryKeys } from "@/lib/query-keys";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RoleBadge } from "@/features/groups/components/role-badge";
 
 export function GroupHeader({ group }: { group: Group }) {
   const inviteCode = group.inviteCode;
@@ -66,24 +66,6 @@ export function GroupHeader({ group }: { group: Group }) {
       </div>
     </section>
   );
-}
-
-export function RoleBadge({ role }: { role: GroupRole }) {
-  if (role === "OWNER") {
-    return (
-      <Badge className="gap-1 border-transparent bg-signal text-signal-foreground shadow-none">
-        <Crown className="h-3 w-3" /> Dono
-      </Badge>
-    );
-  }
-  if (role === "ADMIN") {
-    return (
-      <Badge variant="secondary" className="gap-1">
-        <Shield className="h-3 w-3" /> Admin
-      </Badge>
-    );
-  }
-  return <Badge variant="outline">Membro</Badge>;
 }
 
 function LeaveGroupButton({ group }: { group: Group }) {
