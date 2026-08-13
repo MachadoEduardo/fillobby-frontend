@@ -1,6 +1,7 @@
 import { useEffect, useRef, type FC } from "react";
 import { Mesh, Program, Renderer, Triangle } from "ogl";
 
+/** Background React Bits usado exclusivamente pela landing page. */
 export type MoltenMetalColorMode = "molten" | "ember" | "frost";
 
 export interface MoltenMetalProps {

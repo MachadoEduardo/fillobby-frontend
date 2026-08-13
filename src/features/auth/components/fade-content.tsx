@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/** Transição React Bits usada exclusivamente pelo fluxo de autenticação. */
 interface FadeContentProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   container?: Element | string | null;

@@ -74,6 +74,7 @@ void main(){
 }
 `;
 
+/** Background React Bits usado exclusivamente pelo layout de autenticação. */
 type Props = {
   hueShift?: number;
   noiseIntensity?: number;

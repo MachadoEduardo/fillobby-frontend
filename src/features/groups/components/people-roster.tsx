@@ -23,6 +23,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 
+/** Estados de participação exibidos exclusivamente nos fluxos de grupos. */
 type PersonState = "ready" | "waiting" | "voted" | "played";
 
 interface RosterPerson {

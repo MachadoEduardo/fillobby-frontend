@@ -11,6 +11,7 @@ import {
 } from "react";
 import { cn } from "@/lib/utils";
 
+/** Faixa animada de plataformas usada na apresentação da landing page. */
 export type LogoItem =
   | {
       node: ReactNode;

@@ -4,8 +4,11 @@ import { FaPlaystation, FaSteam, FaWindows, FaXbox } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import MoltenMetal from "@/components/backgrounds/molten-metal";
-import { LogoLoop, type LogoItem } from "@/components/landing/logo-loop";
+import {
+  LogoLoop,
+  type LogoItem,
+} from "@/features/landing/components/logo-loop";
+import MoltenMetal from "@/features/landing/components/molten-metal";
 
 const platformLogos: LogoItem[] = [
   {
