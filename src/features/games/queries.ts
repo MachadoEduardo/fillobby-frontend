@@ -17,5 +17,6 @@ export function gamesListQuery(filters: {
         page: filters.page,
         limit: 20,
       }),
+    placeholderData: (previousData) => previousData,
   });
 }
