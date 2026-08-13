@@ -7,7 +7,7 @@ export function GroupsPage() {
   const groupsQuery = useQuery(groupsListQuery());
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <GroupsPageHeader />
       <GroupsList query={groupsQuery} />
     </div>

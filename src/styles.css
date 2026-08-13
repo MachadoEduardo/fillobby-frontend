@@ -63,6 +63,7 @@
   --color-brand-foreground: var(--brand-foreground);
   --color-signal: var(--signal);
   --color-signal-foreground: var(--signal-foreground);
+  --color-atmosphere: var(--atmosphere);
   --color-status-suggested: var(--status-suggested);
   --color-status-voting: var(--status-voting);
   --color-status-waiting: var(--status-waiting);
@@ -82,23 +83,24 @@
   --card-foreground: #202a2e;
   --popover: #fffdf8;
   --popover-foreground: #202a2e;
-  --primary: #130645;
-  --primary-foreground: #f5f1e8;
+  --primary: #23b5d3;
+  --primary-foreground: #0f1c21;
   --secondary: #e5ebe7;
   --secondary-foreground: #17313a;
   --muted: #ebe8df;
   --muted-foreground: #5d696c;
-  --accent: #f2d9cc;
-  --accent-foreground: #672b19;
+  --accent: #e9e4f1;
+  --accent-foreground: #202a2e;
   --destructive: #b63f3a;
   --destructive-foreground: #fff8f5;
   --border: #d8ddd8;
   --input: #c5cdc8;
-  --ring: #d8663b;
+  --ring: #23b5d3;
   --brand: #17313a;
   --brand-foreground: #f5f1e8;
-  --signal: #d8663b;
-  --signal-foreground: #17313a;
+  --signal: #23b5d3;
+  --signal-foreground: #0f1c21;
+  --atmosphere: #735a8f;
   --status-suggested: #647174;
   --status-voting: #3f6f8c;
   --status-waiting: #946516;
@@ -106,7 +108,7 @@
   --status-playing: #b94f2e;
   --status-completed: #65716f;
   --status-cancelled: #b63f3a;
-  --chart-1: #d8663b;
+  --chart-1: #23b5d3;
   --chart-2: #4f7d83;
   --chart-3: #17313a;
   --chart-4: #ba8b32;
@@ -123,28 +125,29 @@
 
 .dark {
   --background: #0f1c21;
-  --foreground: #f3eee4;
-  --card: #17272d;
-  --card-foreground: #f3eee4;
-  --popover: #17272d;
-  --popover-foreground: #f3eee4;
+  --foreground: #f5f1e8;
+  --card: #13282f;
+  --card-foreground: #f5f1e8;
+  --popover: #13282f;
+  --popover-foreground: #f5f1e8;
   --primary: #23b5d3;
   --primary-foreground: #13282f;
   --secondary: #243a41;
-  --secondary-foreground: #f3eee4;
+  --secondary-foreground: #f5f1e8;
   --muted: #23353b;
   --muted-foreground: #aab7b5;
-  --accent: #3b302c;
-  --accent-foreground: #f6c5af;
+  --accent: #241b3d;
+  --accent-foreground: #f5f1e8;
   --destructive: #df6a61;
   --destructive-foreground: #211513;
   --border: #30434a;
   --input: #40545a;
-  --ring: #e27a50;
-  --brand: #17313a;
-  --brand-foreground: #f3eee4;
-  --signal: #e27a50;
-  --signal-foreground: #13282f;
+  --ring: #23b5d3;
+  --brand: #13282f;
+  --brand-foreground: #f5f1e8;
+  --signal: #23b5d3;
+  --signal-foreground: #0f1c21;
+  --atmosphere: #735a8f;
   --status-suggested: #aab7b5;
   --status-voting: #8db7d0;
   --status-waiting: #d9ad57;
@@ -152,7 +155,7 @@
   --status-playing: #f0936d;
   --status-completed: #aab7b5;
   --status-cancelled: #ef8a82;
-  --chart-1: #e27a50;
+  --chart-1: #23b5d3;
   --chart-2: #74a2a6;
   --chart-3: #aac2c1;
   --chart-4: #d3a84d;
@@ -183,7 +186,7 @@
   }
 
   ::selection {
-    background: #d8663b4d;
+    background: color-mix(in srgb, var(--signal) 30%, transparent);
   }
 
   button,
@@ -202,16 +205,11 @@
 
   .app-page {
     background: var(--background);
-    background-image:
-      linear-gradient(#17313a08 1px, transparent 1px),
-      linear-gradient(90deg, #17313a08 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .dark .app-page {
-    background-image:
-      linear-gradient(#f3eee408 1px, transparent 1px),
-      linear-gradient(90deg, #f3eee408 1px, transparent 1px);
+    background-image: radial-gradient(
+      circle at 88% 4%,
+      color-mix(in srgb, var(--atmosphere) 14%, transparent),
+      transparent 30rem
+    );
   }
 
   .page-heading {

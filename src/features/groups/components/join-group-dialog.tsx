@@ -44,8 +44,8 @@ export function JoinGroupDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <KeyRound className="mr-2 h-4 w-4" /> Entrar por código
+        <Button variant="outline" className="w-full bg-transparent sm:w-auto">
+          <KeyRound /> Entrar por código
         </Button>
       </DialogTrigger>
       <DialogContent>

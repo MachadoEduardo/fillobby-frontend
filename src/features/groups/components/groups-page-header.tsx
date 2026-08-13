@@ -3,18 +3,21 @@ import { JoinGroupDialog } from "@/features/groups/components/join-group-dialog"
 
 export function GroupsPageHeader() {
   return (
-    <div className="flex flex-wrap items-end justify-between gap-4">
-      <div>
-        <p className="eyebrow">Seus lobbies</p>
-        <h1 className="page-heading mt-2">Onde a galera se encontra</h1>
-        <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-          Retome uma decisão em andamento ou abra espaço para a próxima partida.
+    <header className="flex flex-col gap-6 border-b pb-8 sm:flex-row sm:items-end sm:justify-between">
+      <div className="max-w-2xl">
+        <p className="text-sm font-medium text-muted-foreground">
+          Seus lobbies
+        </p>
+        <h1 className="page-heading mt-2">Seus grupos</h1>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+          Continue uma decisão em andamento ou reúna a galera para a próxima
+          partida.
         </p>
       </div>
-      <div className="flex flex-wrap gap-2">
+      <div className="grid gap-2 sm:flex sm:shrink-0">
         <JoinGroupDialog />
         <CreateGroupDialog />
       </div>
-    </div>
+    </header>
   );
 }

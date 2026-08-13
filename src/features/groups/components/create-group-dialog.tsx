@@ -48,8 +48,8 @@ export function CreateGroupDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-signal text-signal-foreground hover:bg-signal/90">
-          <Plus className="mr-2 h-4 w-4" /> Novo grupo
+        <Button className="w-full sm:w-auto">
+          <Plus /> Novo grupo
         </Button>
       </DialogTrigger>
       <DialogContent>
