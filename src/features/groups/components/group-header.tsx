@@ -30,8 +30,7 @@ export function GroupHeader({ group }: { group: Group }) {
           {group.name.slice(0, 2).toLocaleUpperCase("pt-BR")}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="eyebrow text-signal">Lobby do grupo</p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-3xl font-bold tracking-[-0.045em] sm:text-4xl">
               {group.name}
             </h1>
