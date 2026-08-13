@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Group } from "@/lib/api-types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HistoryTab } from "@/features/groups/components/history/history-tab";
@@ -6,14 +7,25 @@ import { QueueTab } from "@/features/groups/components/queue/queue-tab";
 import { SettingsTab } from "@/features/groups/components/settings/settings-tab";
 
 const TAB_TRIGGER_CLASS =
-  "rounded-none border-b-2 border-transparent px-1 py-3 data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:shadow-none";
+  "shrink-0 rounded-none border-b-2 border-transparent px-1 py-3 data-[state=active]:border-signal data-[state=active]:bg-transparent data-[state=active]:shadow-none";
+
+type GroupTab = "queue" | "members" | "history" | "settings";
 
 export function GroupDetailTabs({ group }: { group: Group }) {
   const canManageGroup = group.role === "OWNER" || group.role === "ADMIN";
+  const [activeTab, setActiveTab] = useState<GroupTab>("queue");
+  const visibleActiveTab =
+    !canManageGroup && activeTab === "settings" ? "queue" : activeTab;
 
   return (
-    <Tabs defaultValue="queue">
-      <TabsList className="h-auto w-full justify-start gap-5 overflow-x-auto rounded-none border-b bg-transparent p-0">
+    <Tabs
+      value={visibleActiveTab}
+      onValueChange={(value) => setActiveTab(value as GroupTab)}
+    >
+      <TabsList
+        aria-label="Seções do grupo"
+        className="sticky top-0 z-10 h-auto w-full justify-start gap-5 overflow-x-auto rounded-none border-b bg-background/95 p-0 backdrop-blur"
+      >
         <TabsTrigger value="queue" className={TAB_TRIGGER_CLASS}>
           Fila
         </TabsTrigger>
