@@ -51,14 +51,9 @@ export function GamesFilters({
         </div>
         <Select
           value={platform}
-          onValueChange={(value) =>
-            onPlatformChange(value as GamesPlatformFilter)
-          }
+          onValueChange={(value) => onPlatformChange(value as GamesPlatformFilter)}
         >
-          <SelectTrigger
-            className="h-10 bg-card"
-            aria-label="Filtrar por plataforma"
-          >
+          <SelectTrigger className="h-10 bg-card" aria-label="Filtrar por plataforma">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

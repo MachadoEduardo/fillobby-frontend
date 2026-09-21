@@ -1,18 +1,12 @@
 import { Clock3, Gamepad2, ThumbsUp, Users } from "lucide-react";
 import { useState } from "react";
-import {
-  QueueParticipants,
-  VotersRoster,
-} from "@/features/groups/components/people-roster";
+import { QueueParticipants, VotersRoster } from "@/features/groups/components/people-roster";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ParticipantsDialog } from "@/features/groups/components/queue/participants-dialog";
 import { QueueItemActions } from "@/features/groups/components/queue/queue-item-actions";
 import { QueueProgress } from "@/features/groups/components/queue/queue-progress";
-import {
-  QUEUE_STATUS_MESSAGE,
-  QUEUE_STATUS_VARIANT,
-} from "@/features/groups/constants/queue";
+import { QUEUE_STATUS_MESSAGE, QUEUE_STATUS_VARIANT } from "@/features/groups/constants/queue";
 import { QUEUE_STATUS_LABEL } from "@/lib/api";
 import type { Group, QueueItem } from "@/lib/api-types";
 import { useAuth } from "@/lib/auth";
@@ -32,9 +26,7 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
   const canVote = item.status === "VOTING";
   const canSelectParticipants =
     isAdmin && (item.status === "VOTING" || item.status === "WAITING_PLAYERS");
-  const canReady =
-    isParticipant &&
-    (item.status === "WAITING_PLAYERS" || item.status === "READY");
+  const canReady = isParticipant && (item.status === "WAITING_PLAYERS" || item.status === "READY");
 
   return (
     <Card className="overflow-hidden border-brand/12 shadow-[0_14px_40px_-34px_#17313a] transition-colors hover:border-brand/25">
@@ -63,9 +55,7 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
           <div className="min-w-0 p-4 sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0">
-                <h3 className="text-lg font-bold tracking-tight">
-                  {item.game.title}
-                </h3>
+                <h3 className="text-lg font-bold tracking-tight">{item.game.title}</h3>
                 <p className="mt-1 text-xs text-muted-foreground">
                   Sugerido por {item.suggestedBy.name}
                 </p>
@@ -96,9 +86,7 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
             <div className="mt-4 flex flex-wrap gap-2">
               <div className="flex items-center gap-2 rounded-lg bg-muted/55 px-3 py-2">
                 <ThumbsUp className="h-4 w-4 text-status-voting" />
-                <span className="mono-data text-sm font-semibold">
-                  {item.voteCount}
-                </span>
+                <span className="mono-data text-sm font-semibold">{item.voteCount}</span>
                 <span className="text-xs text-muted-foreground">
                   {item.voteCount === 1 ? "voto" : "votos"}
                 </span>
@@ -114,9 +102,7 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
               )}
             </div>
 
-            {(item.participants.length > 0 ||
-              canVote ||
-              item.voteCount > 0) && (
+            {(item.participants.length > 0 || canVote || item.voteCount > 0) && (
               <div className="mt-4 grid gap-2 lg:grid-cols-2">
                 {item.participants.length > 0 && (
                   <QueueParticipants
@@ -125,11 +111,7 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
                   />
                 )}
                 {(canVote || item.voteCount > 0) && (
-                  <VotersRoster
-                    groupId={group.id}
-                    itemId={item.id}
-                    voteCount={item.voteCount}
-                  />
+                  <VotersRoster groupId={group.id} itemId={item.id} voteCount={item.voteCount} />
                 )}
               </div>
             )}

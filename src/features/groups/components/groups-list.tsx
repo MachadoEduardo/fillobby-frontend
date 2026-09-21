@@ -27,9 +27,7 @@ export function GroupsList({ query }: GroupsListProps) {
       <GroupsContentFade>
         <div className="rounded-xl border bg-card/70 px-5 py-8 text-center">
           <CircleAlert className="mx-auto h-6 w-6 text-destructive" />
-          <h2 className="mt-3 font-semibold">
-            Não foi possível carregar seus grupos
-          </h2>
+          <h2 className="mt-3 font-semibold">Não foi possível carregar seus grupos</h2>
           <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
             {query.error instanceof ApiError
               ? query.error.message
@@ -66,8 +64,7 @@ export function GroupsList({ query }: GroupsListProps) {
             Grupos disponíveis
           </h2>
           <p className="text-sm text-muted-foreground">
-            {query.data.meta.total}{" "}
-            {query.data.meta.total === 1 ? "grupo" : "grupos"}
+            {query.data.meta.total} {query.data.meta.total === 1 ? "grupo" : "grupos"}
           </p>
         </div>
         <div className="grid gap-3 lg:grid-cols-2">
@@ -82,12 +79,7 @@ export function GroupsList({ query }: GroupsListProps) {
 
 function GroupsContentFade({ children }: { children: ReactNode }) {
   return (
-    <FadeContent
-      duration={470}
-      initialOpacity={0}
-      threshold={0.05}
-      respectReducedMotion
-    >
+    <FadeContent duration={470} initialOpacity={0} threshold={0.05} respectReducedMotion>
       {children}
     </FadeContent>
   );
@@ -101,8 +93,7 @@ function EmptyGroups() {
       </div>
       <h2 className="mt-4 text-lg font-semibold">Nenhum grupo por aqui</h2>
       <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-        Crie um grupo para reunir seus amigos ou use o código de um convite que
-        você recebeu.
+        Crie um grupo para reunir seus amigos ou use o código de um convite que você recebeu.
       </p>
     </div>
   );

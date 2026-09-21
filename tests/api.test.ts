@@ -81,9 +81,10 @@ describe("API client", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(
-      api.auth.login({ email: user.email, password: "Password123" }),
-    ).resolves.toEqual({ token: "token-123", user });
+    await expect(api.auth.login({ email: user.email, password: "Password123" })).resolves.toEqual({
+      token: "token-123",
+      user,
+    });
 
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/v1/auth/login"),

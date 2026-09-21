@@ -67,8 +67,7 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
   });
 
   const transition = useMutation({
-    mutationFn: (status: QueueTransition) =>
-      api.queue.transition(groupId, item.id, status),
+    mutationFn: (status: QueueTransition) => api.queue.transition(groupId, item.id, status),
     onSuccess: invalidateRelatedQueries,
     onError: (error) => toast.error(getQueueActionError(error)),
   });

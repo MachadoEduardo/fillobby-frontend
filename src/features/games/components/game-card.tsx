@@ -40,9 +40,7 @@ export function GameCard({ game }: GameCardProps) {
       </div>
 
       <CardContent className="flex flex-1 flex-col p-5">
-        <h3 className="line-clamp-2 text-lg font-semibold leading-snug">
-          {game.title}
-        </h3>
+        <h3 className="line-clamp-2 text-lg font-semibold leading-snug">{game.title}</h3>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {game.platforms.map((platform) => (
             <Badge key={platform} variant="secondary">

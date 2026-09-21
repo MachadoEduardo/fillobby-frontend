@@ -11,9 +11,7 @@ export function GamesPage() {
   const [platform, setPlatform] = useState<GamesPlatformFilter>("ALL");
   const [page, setPage] = useState(1);
   const deferredSearch = useDeferredValue(search.trim());
-  const gamesQuery = useQuery(
-    gamesListQuery({ search: deferredSearch, platform, page }),
-  );
+  const gamesQuery = useQuery(gamesListQuery({ search: deferredSearch, platform, page }));
   const hasActiveFilters = Boolean(search.trim()) || platform !== "ALL";
 
   function clearFilters() {

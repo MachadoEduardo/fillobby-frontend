@@ -1,12 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Library,
-  LogOut,
-  UserRound,
-  Users,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Library, LogOut, UserRound, Users } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -58,12 +51,7 @@ export function AppShell({ user, onLogout, children }: AppShellProps) {
       />
       <MobileNavigation pathname={pathname} user={user} onLogout={onLogout} />
 
-      <div
-        className={cn(
-          "transition-[padding] duration-200",
-          collapsed ? "md:pl-20" : "md:pl-64",
-        )}
-      >
+      <div className={cn("transition-[padding] duration-200", collapsed ? "md:pl-20" : "md:pl-64")}>
         <main className="page-enter mx-auto max-w-6xl px-4 py-8 pb-24 sm:px-6 sm:py-10 sm:pb-24 md:pb-10">
           {children}
         </main>
@@ -81,13 +69,7 @@ type DesktopSidebarProps = NavigationProps & {
   onToggle: () => void;
 };
 
-function DesktopSidebar({
-  pathname,
-  user,
-  onLogout,
-  collapsed,
-  onToggle,
-}: DesktopSidebarProps) {
+function DesktopSidebar({ pathname, user, onLogout, collapsed, onToggle }: DesktopSidebarProps) {
   const profileActive = isRouteActive(pathname, "/profile");
 
   return (
@@ -108,15 +90,10 @@ function DesktopSidebar({
             to="/groups"
             className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:ring-offset-2 focus-visible:ring-offset-sidebar"
           >
-            <span className="brand-wordmark text-sidebar-foreground">
-              Fillobby
-            </span>
+            <span className="brand-wordmark text-sidebar-foreground">Fillobby</span>
           </Link>
         )}
-        <Tooltip
-          content={collapsed ? "Expandir menu" : "Recolher menu"}
-          enabled={collapsed}
-        >
+        <Tooltip content={collapsed ? "Expandir menu" : "Recolher menu"} enabled={collapsed}>
           <Button
             type="button"
             variant="ghost"
@@ -133,9 +110,7 @@ function DesktopSidebar({
 
       <nav className="flex-1 px-3 py-6" aria-label="Navegação principal">
         {!collapsed && (
-          <p className="px-3 pb-3 text-xs font-medium text-sidebar-foreground/45">
-            Seu lobby
-          </p>
+          <p className="px-3 pb-3 text-xs font-medium text-sidebar-foreground/45">Seu lobby</p>
         )}
         <div className="space-y-1">
           {navigationItems.map((item) => (
@@ -160,12 +135,7 @@ function DesktopSidebar({
           />
         </Tooltip>
 
-        <div
-          className={cn(
-            "mt-2 flex items-center",
-            collapsed ? "flex-col gap-1" : "gap-1",
-          )}
-        >
+        <div className={cn("mt-2 flex items-center", collapsed ? "flex-col gap-1" : "gap-1")}>
           <Tooltip
             content="Perfil"
             enabled={collapsed}
@@ -176,9 +146,7 @@ function DesktopSidebar({
               aria-current={profileActive ? "page" : undefined}
               className={cn(
                 "flex min-w-0 items-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-                collapsed
-                  ? "h-11 w-full justify-center"
-                  : "flex-1 gap-3 px-3 py-2",
+                collapsed ? "h-11 w-full justify-center" : "flex-1 gap-3 px-3 py-2",
                 profileActive
                   ? "bg-sidebar-accent text-sidebar-foreground"
                   : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
@@ -188,19 +156,13 @@ function DesktopSidebar({
               {!collapsed && (
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">{user?.name}</p>
-                  <p className="text-xs text-sidebar-foreground/45">
-                    Editar perfil
-                  </p>
+                  <p className="text-xs text-sidebar-foreground/45">Editar perfil</p>
                 </div>
               )}
             </Link>
           </Tooltip>
 
-          <Tooltip
-            content="Sair"
-            enabled={collapsed}
-            className={collapsed ? "w-full" : undefined}
-          >
+          <Tooltip content="Sair" enabled={collapsed} className={collapsed ? "w-full" : undefined}>
             <Button
               variant="ghost"
               size="icon"
@@ -265,9 +227,7 @@ function MobileNavigation({ pathname, user, onLogout }: NavigationProps) {
             to="/groups"
             className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring"
           >
-            <span className="brand-wordmark text-sidebar-foreground">
-              Fillobby
-            </span>
+            <span className="brand-wordmark text-sidebar-foreground">Fillobby</span>
           </Link>
           <div className="flex items-center gap-1">
             <ThemeToggle
@@ -307,11 +267,7 @@ function MobileNavigation({ pathname, user, onLogout }: NavigationProps) {
                   : "text-sidebar-foreground/55 hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
               )}
             >
-              {to === "/profile" ? (
-                <UserAvatar user={user} compact />
-              ) : (
-                <Icon />
-              )}
+              {to === "/profile" ? <UserAvatar user={user} compact /> : <Icon />}
               <span>{label}</span>
             </Link>
           );
@@ -321,19 +277,10 @@ function MobileNavigation({ pathname, user, onLogout }: NavigationProps) {
   );
 }
 
-function UserAvatar({
-  user,
-  compact = false,
-}: {
-  user: PublicUser | null;
-  compact?: boolean;
-}) {
+function UserAvatar({ user, compact = false }: { user: PublicUser | null; compact?: boolean }) {
   return (
     <Avatar className={compact ? "h-5 w-5" : "h-9 w-9"}>
-      <AvatarImage
-        src={resolveApiAssetUrl(user?.avatarUrl)}
-        alt={user?.name ?? "Perfil"}
-      />
+      <AvatarImage src={resolveApiAssetUrl(user?.avatarUrl)} alt={user?.name ?? "Perfil"} />
       <AvatarFallback>
         <UserRound className={compact ? "h-3 w-3" : "h-4 w-4"} />
       </AvatarFallback>

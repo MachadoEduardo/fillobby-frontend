@@ -16,11 +16,7 @@ import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 
@@ -69,13 +65,7 @@ const STATE_CONTENT: Record<
   },
 };
 
-function PersonAvatar({
-  user,
-  className,
-}: {
-  user: UserSummary;
-  className?: string;
-}) {
+function PersonAvatar({ user, className }: { user: UserSummary; className?: string }) {
   return (
     <Avatar className={cn("h-8 w-8", className)}>
       <AvatarImage src={resolveApiAssetUrl(user.avatarUrl)} alt={user.name} />
@@ -98,10 +88,7 @@ function AvatarStack({ people }: { people: RosterPerson[] }) {
         <PersonAvatar
           key={user.id}
           user={user}
-          className={cn(
-            "h-7 w-7 border-2 border-background",
-            index > 0 && "-ml-2",
-          )}
+          className={cn("h-7 w-7 border-2 border-background", index > 0 && "-ml-2")}
         />
       ))}
       {remaining > 0 && (
@@ -118,10 +105,7 @@ function RosterRows({
   loading,
   errorMessage,
   emptyMessage,
-}: Pick<
-  PeopleRosterProps,
-  "people" | "loading" | "errorMessage" | "emptyMessage"
->) {
+}: Pick<PeopleRosterProps, "people" | "loading" | "errorMessage" | "emptyMessage">) {
   if (loading) {
     return (
       <div className="space-y-3 p-3">
@@ -153,15 +137,8 @@ function RosterRows({
         return (
           <div key={user.id} className="flex items-center gap-3 px-3 py-2.5">
             <PersonAvatar user={user} />
-            <span className="min-w-0 flex-1 truncate text-sm font-medium">
-              {user.name}
-            </span>
-            <span
-              className={cn(
-                "flex shrink-0 items-center gap-1.5 text-xs",
-                content.className,
-              )}
-            >
+            <span className="min-w-0 flex-1 truncate text-sm font-medium">{user.name}</span>
+            <span className={cn("flex shrink-0 items-center gap-1.5 text-xs", content.className)}>
               <StateIcon className="h-3.5 w-3.5" />
               {content.label}
             </span>
@@ -185,9 +162,7 @@ function PeopleRoster({
   const [search, setSearch] = useState("");
   const normalizedSearch = search.trim().toLocaleLowerCase("pt-BR");
   const filteredPeople = normalizedSearch
-    ? people.filter(({ user }) =>
-        user.name.toLocaleLowerCase("pt-BR").includes(normalizedSearch),
-      )
+    ? people.filter(({ user }) => user.name.toLocaleLowerCase("pt-BR").includes(normalizedSearch))
     : people;
 
   return (
@@ -199,9 +174,7 @@ function PeopleRoster({
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-medium">{title}</span>
-            <span className="block truncate text-xs text-muted-foreground">
-              {summary}
-            </span>
+            <span className="block truncate text-xs text-muted-foreground">{summary}</span>
           </span>
           <AvatarStack people={people} />
           <ChevronDown
@@ -230,9 +203,7 @@ function PeopleRoster({
             people={filteredPeople}
             loading={loading}
             errorMessage={errorMessage}
-            emptyMessage={
-              normalizedSearch ? "Nenhuma pessoa encontrada." : emptyMessage
-            }
+            emptyMessage={normalizedSearch ? "Nenhuma pessoa encontrada." : emptyMessage}
           />
         </CollapsibleContent>
       </div>
@@ -266,11 +237,7 @@ export function QueueParticipants({
   );
 }
 
-export function HistoryParticipants({
-  participants,
-}: {
-  participants: UserSummary[];
-}) {
+export function HistoryParticipants({ participants }: { participants: UserSummary[] }) {
   const [open, setOpen] = useState(false);
   const people = participants.map<RosterPerson>((user) => ({
     user,
@@ -280,9 +247,7 @@ export function HistoryParticipants({
   return (
     <PeopleRoster
       title="Participantes da partida"
-      summary={`${participants.length} ${
-        participants.length === 1 ? "jogador" : "jogadores"
-      }`}
+      summary={`${participants.length} ${participants.length === 1 ? "jogador" : "jogadores"}`}
       people={people}
       open={open}
       onOpenChange={setOpen}
@@ -313,9 +278,7 @@ export function VotersRoster({
       user: vote.user,
       state: "voted",
     })) ?? [];
-  const errorMessage = query.error
-    ? getGroupLoadErrorMessage(query.error, "votos")
-    : undefined;
+  const errorMessage = query.error ? getGroupLoadErrorMessage(query.error, "votos") : undefined;
 
   return (
     <PeopleRoster

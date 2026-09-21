@@ -20,9 +20,7 @@ describe("groups API", () => {
     );
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(api.groups.list({ page: 2, limit: 10 })).resolves.toEqual(
-      response,
-    );
+    await expect(api.groups.list({ page: 2, limit: 10 })).resolves.toEqual(response);
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("page=2&limit=10"),
       expect.objectContaining({ method: "GET" }),

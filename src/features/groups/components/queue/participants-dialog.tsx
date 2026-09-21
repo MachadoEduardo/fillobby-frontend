@@ -31,12 +31,7 @@ type ParticipantsDialogProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-export function ParticipantsDialog({
-  group,
-  item,
-  open,
-  onOpenChange,
-}: ParticipantsDialogProps) {
+export function ParticipantsDialog({ group, item, open, onOpenChange }: ParticipantsDialogProps) {
   const [selected, setSelected] = useState<string[]>(item.participantIds);
   const [operationError, setOperationError] = useState("");
   const queryClient = useQueryClient();
@@ -76,9 +71,7 @@ export function ParticipantsDialog({
     );
   }
 
-  const reachedLimit = Boolean(
-    item.game.maxPlayers && selected.length >= item.game.maxPlayers,
-  );
+  const reachedLimit = Boolean(item.game.maxPlayers && selected.length >= item.game.maxPlayers);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -88,9 +81,7 @@ export function ParticipantsDialog({
             <UsersRound className="h-5 w-5" />
           </div>
           <DialogTitle>Selecionar participantes</DialogTitle>
-          <DialogDescription>
-            Escolha quem participará de {item.game.title}.
-          </DialogDescription>
+          <DialogDescription>Escolha quem participará de {item.game.title}.</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 px-6 py-5">
           <div className="flex items-center justify-between gap-4 text-sm">
@@ -109,21 +100,14 @@ export function ParticipantsDialog({
             </p>
           )}
           {membersQuery.isLoading && (
-            <div
-              aria-label="Carregando membros"
-              aria-busy="true"
-              className="space-y-2"
-            >
+            <div aria-label="Carregando membros" aria-busy="true" className="space-y-2">
               {[0, 1, 2].map((entry) => (
                 <Skeleton key={entry} className="h-12 w-full rounded-lg" />
               ))}
             </div>
           )}
           {membersQuery.error && (
-            <div
-              role="alert"
-              className="space-y-3 rounded-lg border bg-muted/35 p-4 text-sm"
-            >
+            <div role="alert" className="space-y-3 rounded-lg border bg-muted/35 p-4 text-sm">
               <p className="text-muted-foreground">
                 {getGroupLoadErrorMessage(membersQuery.error, "membros")}
               </p>
@@ -146,16 +130,13 @@ export function ParticipantsDialog({
                 <Checkbox
                   checked={selected.includes(member.id)}
                   disabled={
-                    updateParticipants.isPending ||
-                    (reachedLimit && !selected.includes(member.id))
+                    updateParticipants.isPending || (reachedLimit && !selected.includes(member.id))
                   }
                   onCheckedChange={() => toggleParticipant(member.id)}
                 />
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={resolveApiAssetUrl(member.avatarUrl)} />
-                  <AvatarFallback>
-                    {member.name.slice(0, 2).toUpperCase()}
-                  </AvatarFallback>
+                  <AvatarFallback>{member.name.slice(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="text-sm">{member.name}</span>
               </label>
@@ -173,11 +154,7 @@ export function ParticipantsDialog({
         </div>
         <DialogFooter className="gap-2 border-t bg-muted/35 px-6 py-4 sm:space-x-0">
           <DialogClose asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={updateParticipants.isPending}
-            >
+            <Button type="button" variant="ghost" disabled={updateParticipants.isPending}>
               Cancelar
             </Button>
           </DialogClose>
@@ -185,12 +162,8 @@ export function ParticipantsDialog({
             disabled={updateParticipants.isPending || selected.length === 0}
             onClick={() => updateParticipants.mutate()}
           >
-            {updateParticipants.isPending && (
-              <LoaderCircle className="animate-spin" aria-hidden />
-            )}
-            {updateParticipants.isPending
-              ? "Salvando participantes..."
-              : "Salvar participantes"}
+            {updateParticipants.isPending && <LoaderCircle className="animate-spin" aria-hidden />}
+            {updateParticipants.isPending ? "Salvando participantes..." : "Salvar participantes"}
           </Button>
         </DialogFooter>
       </DialogContent>

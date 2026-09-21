@@ -23,9 +23,7 @@ export function LoginPage() {
       toast.success("Bem-vindo de volta!");
       navigate({ to: "/groups" });
     } catch (error) {
-      toast.error(
-        error instanceof ApiError ? error.message : "Erro ao entrar.",
-      );
+      toast.error(error instanceof ApiError ? error.message : "Erro ao entrar.");
     } finally {
       setIsSubmitting(false);
     }

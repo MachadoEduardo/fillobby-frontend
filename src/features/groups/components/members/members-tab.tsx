@@ -20,8 +20,7 @@ export function MembersTab({ group }: { group: Group }) {
   });
   const removedMembersQuery = useQuery({
     queryKey: queryKeys.members.removed(group.id),
-    queryFn: () =>
-      api.groups.listMembers(group.id, { limit: 100, status: "REMOVED" }),
+    queryFn: () => api.groups.listMembers(group.id, { limit: 100, status: "REMOVED" }),
     enabled: canManageMembers,
     refetchInterval: GROUP_LIVE_REFRESH_MS,
     refetchIntervalInBackground: false,
@@ -61,8 +60,8 @@ export function MembersTab({ group }: { group: Group }) {
             <UsersRound className="mx-auto h-6 w-6 text-muted-foreground" />
             <h3 className="mt-3 font-semibold">Nenhum membro encontrado</h3>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-              Atualize a página. Se o grupo continuar vazio, volte para seus
-              grupos e tente acessá-lo novamente.
+              Atualize a página. Se o grupo continuar vazio, volte para seus grupos e tente
+              acessá-lo novamente.
             </p>
           </div>
         )}
@@ -74,26 +73,24 @@ export function MembersTab({ group }: { group: Group }) {
           <Skeleton className="h-16 w-full rounded-xl" />
         </div>
       )}
-      {canManageMembers &&
-        removedMembersQuery.error &&
-        !removedMembersQuery.data && (
-          <div className="border-t pt-6">
-            <div className="flex flex-col gap-3 rounded-lg border bg-muted/35 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-              <span className="text-muted-foreground">
-                Não foi possível carregar os acessos removidos.
-              </span>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                disabled={removedMembersQuery.isFetching}
-                onClick={() => void removedMembersQuery.refetch()}
-              >
-                Tentar novamente
-              </Button>
-            </div>
+      {canManageMembers && removedMembersQuery.error && !removedMembersQuery.data && (
+        <div className="border-t pt-6">
+          <div className="flex flex-col gap-3 rounded-lg border bg-muted/35 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <span className="text-muted-foreground">
+              Não foi possível carregar os acessos removidos.
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              disabled={removedMembersQuery.isFetching}
+              onClick={() => void removedMembersQuery.refetch()}
+            >
+              Tentar novamente
+            </Button>
           </div>
-        )}
+        </div>
+      )}
       {canManageMembers && removedMembersQuery.data?.members.length ? (
         <div className="space-y-3 border-t pt-6">
           <div>
@@ -146,10 +143,7 @@ function MembersSkeleton() {
   return (
     <div aria-label="Carregando membros" aria-busy="true" className="space-y-3">
       {[0, 1, 2].map((item) => (
-        <div
-          key={item}
-          className="flex items-center gap-3 rounded-xl border bg-card/70 p-3"
-        >
+        <div key={item} className="flex items-center gap-3 rounded-xl border bg-card/70 p-3">
           <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-32" />

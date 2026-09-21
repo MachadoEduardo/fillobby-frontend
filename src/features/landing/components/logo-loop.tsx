@@ -51,9 +51,7 @@ function toCssLength(value: number | string | undefined) {
   return typeof value === "number" ? `${value}px` : value;
 }
 
-function isNodeLogo(
-  item: LogoItem,
-): item is Extract<LogoItem, { node: ReactNode }> {
+function isNodeLogo(item: LogoItem): item is Extract<LogoItem, { node: ReactNode }> {
   return "node" in item;
 }
 
@@ -103,15 +101,11 @@ export const LogoLoop = memo(function LogoLoop({
 
     const rect = sequence.getBoundingClientRect();
     const nextSize = isVertical ? rect.height : rect.width;
-    const viewport = isVertical
-      ? container.clientHeight
-      : container.clientWidth;
+    const viewport = isVertical ? container.clientHeight : container.clientWidth;
     if (nextSize <= 0 || viewport <= 0) return;
 
     setSequenceSize(Math.ceil(nextSize));
-    setCopyCount(
-      Math.max(MIN_COPIES, Math.ceil(viewport / nextSize) + COPY_HEADROOM),
-    );
+    setCopyCount(Math.max(MIN_COPIES, Math.ceil(viewport / nextSize) + COPY_HEADROOM));
   }, [isVertical]);
 
   useEffect(() => {
@@ -144,8 +138,7 @@ export const LogoLoop = memo(function LogoLoop({
       const smoothing = 1 - Math.exp(-elapsed / 0.25);
       velocityRef.current += (targetVelocity - velocityRef.current) * smoothing;
       offsetRef.current =
-        (((offsetRef.current + velocityRef.current * elapsed) % sequenceSize) +
-          sequenceSize) %
+        (((offsetRef.current + velocityRef.current * elapsed) % sequenceSize) + sequenceSize) %
         sequenceSize;
 
       track.style.transform = isVertical
@@ -191,18 +184,14 @@ export const LogoLoop = memo(function LogoLoop({
           draggable={false}
         />
       );
-      const label = isNodeLogo(item)
-        ? (item.ariaLabel ?? item.title)
-        : item.alt;
+      const label = isNodeLogo(item) ? (item.ariaLabel ?? item.title) : item.alt;
 
       return (
         <li
           key={key}
           className={cn(
             "group/logo-loop-item flex-none",
-            isVertical
-              ? "mb-[var(--logo-loop-gap)]"
-              : "mr-[var(--logo-loop-gap)]",
+            isVertical ? "mb-[var(--logo-loop-gap)]" : "mr-[var(--logo-loop-gap)]",
           )}
         >
           {item.href ? (
@@ -236,9 +225,7 @@ export const LogoLoop = memo(function LogoLoop({
           aria-hidden={copyIndex > 0}
           className={cn("flex items-center", isVertical && "flex-col")}
         >
-          {logos.map((logo, logoIndex) =>
-            renderLogo(logo, `${copyIndex}-${logoIndex}`),
-          )}
+          {logos.map((logo, logoIndex) => renderLogo(logo, `${copyIndex}-${logoIndex}`))}
         </ul>
       )),
     [copyCount, isVertical, logos, renderLogo],
@@ -257,11 +244,7 @@ export const LogoLoop = memo(function LogoLoop({
       ref={containerRef}
       role="region"
       aria-label={ariaLabel}
-      className={cn(
-        "relative overflow-hidden",
-        isVertical && "h-full",
-        className,
-      )}
+      className={cn("relative overflow-hidden", isVertical && "h-full", className)}
       style={containerStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

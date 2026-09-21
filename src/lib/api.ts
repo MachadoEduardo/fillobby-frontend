@@ -13,14 +13,10 @@ import type {
   Vote,
 } from "./api-types";
 
-const RAW_BASE =
-  (import.meta.env.VITE_API_URL as string | undefined) ??
-  "http://localhost:3000";
+const RAW_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:3000";
 export const API_BASE_URL = RAW_BASE.replace(/\/+$/, "");
 
-export function resolveApiAssetUrl(
-  value: string | null | undefined,
-): string | undefined {
+export function resolveApiAssetUrl(value: string | null | undefined): string | undefined {
   if (!value) return undefined;
   try {
     return new URL(value, `${API_BASE_URL}/`).toString();
@@ -104,18 +100,10 @@ interface ApiResponseEnvelope {
 }
 
 async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
-  const {
-    method = "GET",
-    body,
-    rawBody,
-    contentType,
-    query,
-    auth = true,
-  } = opts;
+  const { method = "GET", body, rawBody, contentType, query, auth = true } = opts;
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
-  if (rawBody !== undefined && contentType)
-    headers["Content-Type"] = contentType;
+  if (rawBody !== undefined && contentType) headers["Content-Type"] = contentType;
   if (auth) {
     const token = getStoredToken();
     if (token) headers["Authorization"] = `Bearer ${token}`;
@@ -156,8 +144,7 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
       details: [],
     };
     const isInvalidSession =
-      payload.code === "AUTH_TOKEN_REQUIRED" ||
-      payload.code === "AUTH_TOKEN_INVALID";
+      payload.code === "AUTH_TOKEN_REQUIRED" || payload.code === "AUTH_TOKEN_INVALID";
     if (response.status === 401 && auth && isInvalidSession) {
       setStoredToken(null);
       setStoredUser(null);
@@ -172,12 +159,7 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
 // ============ AUTH ============
 export const api = {
   auth: {
-    register: (input: {
-      name: string;
-      email: string;
-      password: string;
-      confirmPassword: string;
-    }) =>
+    register: (input: { name: string; email: string; password: string; confirmPassword: string }) =>
       request<PublicUser>("/api/v1/auth/register", {
         method: "POST",
         body: input,
@@ -216,8 +198,7 @@ export const api = {
         rawBody: file,
         contentType: file.type,
       }),
-    removeAvatar: () =>
-      request<PublicUser>("/api/v1/profile/avatar", { method: "DELETE" }),
+    removeAvatar: () => request<PublicUser>("/api/v1/profile/avatar", { method: "DELETE" }),
   },
 
   // ============ GROUPS ============
@@ -231,10 +212,7 @@ export const api = {
     join: (input: { inviteCode: string }) =>
       request<Group>("/api/v1/groups/join", { method: "POST", body: input }),
     get: (groupId: string) => request<Group>(`/api/v1/groups/${groupId}`),
-    update: (
-      groupId: string,
-      input: { name?: string; description?: string | null },
-    ) =>
+    update: (groupId: string, input: { name?: string; description?: string | null }) =>
       request<Group>(`/api/v1/groups/${groupId}`, {
         method: "PATCH",
         body: input,
@@ -247,10 +225,9 @@ export const api = {
       groupId: string,
       query?: { page?: number; limit?: number; status?: "ACTIVE" | "REMOVED" },
     ) =>
-      request<{ members: Member[]; meta: PaginationMeta }>(
-        `/api/v1/groups/${groupId}/members`,
-        { query },
-      ),
+      request<{ members: Member[]; meta: PaginationMeta }>(`/api/v1/groups/${groupId}/members`, {
+        query,
+      }),
     changeRole: (groupId: string, userId: string, role: "ADMIN" | "MEMBER") =>
       request<Member>(`/api/v1/groups/${groupId}/members/${userId}/role`, {
         method: "PATCH",
@@ -262,10 +239,9 @@ export const api = {
         { method: "DELETE" },
       ),
     leave: (groupId: string) =>
-      request<{ userId: string; status: "INACTIVE" }>(
-        `/api/v1/groups/${groupId}/leave`,
-        { method: "POST" },
-      ),
+      request<{ userId: string; status: "INACTIVE" }>(`/api/v1/groups/${groupId}/leave`, {
+        method: "POST",
+      }),
     restoreMember: (groupId: string, userId: string) =>
       request<Member>(`/api/v1/groups/${groupId}/members/${userId}/restore`, {
         method: "POST",
@@ -283,12 +259,7 @@ export const api = {
 
   // ============ GAMES ============
   games: {
-    list: (query?: {
-      search?: string;
-      platform?: Platform;
-      page?: number;
-      limit?: number;
-    }) =>
+    list: (query?: { search?: string; platform?: Platform; page?: number; limit?: number }) =>
       request<{ games: Game[]; meta: PaginationMeta }>("/api/v1/games", {
         query,
       }),
@@ -352,27 +323,16 @@ export const api = {
       request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}`, {
         method: "DELETE",
       }),
-    transition: (
-      groupId: string,
-      itemId: string,
-      status: "VOTING" | "PLAYING" | "COMPLETED",
-    ) =>
+    transition: (groupId: string, itemId: string, status: "VOTING" | "PLAYING" | "COMPLETED") =>
       request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/status`, {
         method: "PATCH",
         body: { status },
       }),
-    setParticipants: (
-      groupId: string,
-      itemId: string,
-      participantIds: string[],
-    ) =>
-      request<QueueItem>(
-        `/api/v1/groups/${groupId}/queue/${itemId}/participants`,
-        {
-          method: "PUT",
-          body: { participantIds },
-        },
-      ),
+    setParticipants: (groupId: string, itemId: string, participantIds: string[]) =>
+      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/participants`, {
+        method: "PUT",
+        body: { participantIds },
+      }),
     markReady: (groupId: string, itemId: string) =>
       request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, {
         method: "POST",
@@ -395,11 +355,7 @@ export const api = {
         `/api/v1/groups/${groupId}/queue/${itemId}/votes/me`,
         { method: "DELETE" },
       ),
-    list: (
-      groupId: string,
-      itemId: string,
-      query?: { page?: number; limit?: number },
-    ) =>
+    list: (groupId: string, itemId: string, query?: { page?: number; limit?: number }) =>
       request<{ votes: Vote[]; meta: PaginationMeta }>(
         `/api/v1/groups/${groupId}/queue/${itemId}/votes`,
         { query },

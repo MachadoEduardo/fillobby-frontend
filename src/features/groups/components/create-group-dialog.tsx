@@ -81,8 +81,7 @@ export function CreateGroupDialog() {
           </div>
           <DialogTitle className="text-xl">Criar um grupo</DialogTitle>
           <DialogDescription className="pt-1 leading-relaxed">
-            Dê um nome ao lobby. Você poderá convidar a galera assim que ele
-            estiver pronto.
+            Dê um nome ao lobby. Você poderá convidar a galera assim que ele estiver pronto.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} noValidate>
@@ -148,18 +147,12 @@ export function CreateGroupDialog() {
           </div>
           <DialogFooter className="gap-2 border-t bg-muted/35 px-6 py-4 sm:space-x-0">
             <DialogClose asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                disabled={createGroup.isPending}
-              >
+              <Button type="button" variant="ghost" disabled={createGroup.isPending}>
                 Cancelar
               </Button>
             </DialogClose>
             <Button type="submit" disabled={createGroup.isPending}>
-              {createGroup.isPending && (
-                <LoaderCircle className="animate-spin" aria-hidden />
-              )}
+              {createGroup.isPending && <LoaderCircle className="animate-spin" aria-hidden />}
               {createGroup.isPending ? "Criando grupo..." : "Criar grupo"}
             </Button>
           </DialogFooter>

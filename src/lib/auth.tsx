@@ -35,9 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [token, setToken] = useState<string | null>(() => getStoredToken());
   const [user, setUser] = useState<PublicUser | null>(() => getStoredUser());
-  const [isLoading, setIsLoading] = useState<boolean>(() =>
-    Boolean(getStoredToken()),
-  );
+  const [isLoading, setIsLoading] = useState<boolean>(() => Boolean(getStoredToken()));
 
   const logout = useCallback(() => {
     setStoredToken(null);

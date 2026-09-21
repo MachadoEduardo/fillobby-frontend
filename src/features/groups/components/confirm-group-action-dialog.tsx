@@ -60,9 +60,7 @@ export function ConfirmGroupActionDialog({
       <DialogContent className="max-w-md gap-0 bg-card p-0">
         <DialogHeader className="border-b px-6 py-5 pr-12 text-left">
           <DialogTitle className="text-xl">{title}</DialogTitle>
-          <DialogDescription className="pt-1 leading-relaxed">
-            {description}
-          </DialogDescription>
+          <DialogDescription className="pt-1 leading-relaxed">{description}</DialogDescription>
         </DialogHeader>
 
         {errorMessage && (

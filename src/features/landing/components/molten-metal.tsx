@@ -209,10 +209,7 @@ const MoltenMetal: FC<MoltenMetalProps> = ({
 
     const setSize = () => {
       const { width, height } = container.getBoundingClientRect();
-      renderer.setSize(
-        Math.max(1, Math.floor(width)),
-        Math.max(1, Math.floor(height)),
-      );
+      renderer.setSize(Math.max(1, Math.floor(width)), Math.max(1, Math.floor(height)));
       const resolution = program.uniforms.iResolution.value as Float32Array;
       resolution[0] = gl.drawingBufferWidth;
       resolution[1] = gl.drawingBufferHeight;
@@ -223,9 +220,7 @@ const MoltenMetal: FC<MoltenMetalProps> = ({
     resizeObserver.observe(container);
     setSize();
 
-    const reducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const targetMouse: [number, number] = [0.5, 0.5];
     const currentMouse: [number, number] = [0.5, 0.5];
     const handlePointerMove = (event: PointerEvent) => {
@@ -271,12 +266,7 @@ const MoltenMetal: FC<MoltenMetalProps> = ({
       animationFrame = 0;
     };
     const start = () => {
-      if (
-        !reducedMotion &&
-        isVisible &&
-        isPageVisible &&
-        animationFrame === 0
-      ) {
+      if (!reducedMotion && isVisible && isPageVisible && animationFrame === 0) {
         animationFrame = requestAnimationFrame(loop);
       }
     };
@@ -310,9 +300,7 @@ const MoltenMetal: FC<MoltenMetalProps> = ({
 
   useEffect(() => {
     const container = containerRef.current;
-    const uniforms = container
-      ? contexts.get(container)?.program.uniforms
-      : undefined;
+    const uniforms = container ? contexts.get(container)?.program.uniforms : undefined;
     if (!uniforms) return;
 
     uniforms.uSpeed.value = speed;

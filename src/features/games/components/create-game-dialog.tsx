@@ -28,11 +28,7 @@ export function CreateGameDialog({ children }: CreateGameDialogProps) {
   const createGame = useMutation({
     mutationFn: (values: GameFormValues) => api.games.create(values),
     onSuccess: ({ reactivated }) => {
-      toast.success(
-        reactivated
-          ? "O jogo voltou ao catálogo."
-          : "Jogo adicionado ao catálogo!",
-      );
+      toast.success(reactivated ? "O jogo voltou ao catálogo." : "Jogo adicionado ao catálogo!");
       void queryClient.invalidateQueries({ queryKey: queryKeys.games.root() });
       setOpen(false);
       resetMutation();
@@ -62,8 +58,7 @@ export function CreateGameDialog({ children }: CreateGameDialogProps) {
           </div>
           <DialogTitle className="text-xl">Adicionar jogo</DialogTitle>
           <DialogDescription className="pt-1 leading-relaxed">
-            Cadastre uma opção para que ela possa ser sugerida nas filas dos
-            grupos.
+            Cadastre uma opção para que ela possa ser sugerida nas filas dos grupos.
           </DialogDescription>
         </DialogHeader>
         <GameForm

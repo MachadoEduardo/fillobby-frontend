@@ -14,14 +14,10 @@ type GroupTab = "queue" | "members" | "history" | "settings";
 export function GroupDetailTabs({ group }: { group: Group }) {
   const canManageGroup = group.role === "OWNER" || group.role === "ADMIN";
   const [activeTab, setActiveTab] = useState<GroupTab>("queue");
-  const visibleActiveTab =
-    !canManageGroup && activeTab === "settings" ? "queue" : activeTab;
+  const visibleActiveTab = !canManageGroup && activeTab === "settings" ? "queue" : activeTab;
 
   return (
-    <Tabs
-      value={visibleActiveTab}
-      onValueChange={(value) => setActiveTab(value as GroupTab)}
-    >
+    <Tabs value={visibleActiveTab} onValueChange={(value) => setActiveTab(value as GroupTab)}>
       <TabsList
         aria-label="Seções do grupo"
         className="sticky top-0 z-10 h-auto w-full justify-start gap-5 overflow-x-auto rounded-none border-b bg-background/95 p-0 backdrop-blur"

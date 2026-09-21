@@ -8,12 +8,7 @@ type TooltipProps = {
   className?: string;
 };
 
-export function Tooltip({
-  content,
-  children,
-  enabled = true,
-  className,
-}: TooltipProps) {
+export function Tooltip({ content, children, enabled = true, className }: TooltipProps) {
   if (!enabled) return children;
 
   return (

@@ -99,10 +99,7 @@ export default function DarkVeil({
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (
-      respectReducedMotion &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (respectReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 
@@ -150,8 +147,7 @@ export default function DarkVeil({
     let frame = 0;
 
     const loop = () => {
-      program.uniforms.uTime.value =
-        ((performance.now() - start) / 1000) * speed;
+      program.uniforms.uTime.value = ((performance.now() - start) / 1000) * speed;
       program.uniforms.uHueShift.value = hueShift;
       program.uniforms.uNoise.value = noiseIntensity;
       program.uniforms.uScan.value = scanlineIntensity;

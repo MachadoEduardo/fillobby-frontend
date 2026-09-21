@@ -50,12 +50,7 @@ export function EditGameDialog({ game }: EditGameDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          className="bg-transparent"
-        >
+        <Button type="button" size="sm" variant="outline" className="bg-transparent">
           <Pencil /> Editar
         </Button>
       </DialogTrigger>

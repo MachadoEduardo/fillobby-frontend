@@ -1,11 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  AlertCircle,
-  Gamepad2,
-  LoaderCircle,
-  Plus,
-  Search,
-} from "lucide-react";
+import { AlertCircle, Gamepad2, LoaderCircle, Plus, Search } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -34,8 +28,7 @@ export function SuggestGameDialog({ groupId }: { groupId: string }) {
   const queryClient = useQueryClient();
   const gamesQuery = useQuery({
     queryKey: queryKeys.games.list({ search: deferredSearch, page: 1 }),
-    queryFn: () =>
-      api.games.list({ search: deferredSearch || undefined, limit: 30 }),
+    queryFn: () => api.games.list({ search: deferredSearch || undefined, limit: 30 }),
     enabled: open,
     placeholderData: (previousData) => previousData,
   });
@@ -112,21 +105,14 @@ export function SuggestGameDialog({ groupId }: { groupId: string }) {
           </div>
 
           {gamesQuery.isLoading && (
-            <div
-              aria-label="Carregando jogos"
-              aria-busy="true"
-              className="space-y-2"
-            >
+            <div aria-label="Carregando jogos" aria-busy="true" className="space-y-2">
               {[0, 1, 2, 3].map((item) => (
                 <Skeleton key={item} className="h-14 w-full rounded-lg" />
               ))}
             </div>
           )}
           {gamesQuery.error && !gamesQuery.data && (
-            <div
-              role="alert"
-              className="space-y-3 rounded-lg border bg-muted/35 p-4 text-sm"
-            >
+            <div role="alert" className="space-y-3 rounded-lg border bg-muted/35 p-4 text-sm">
               <p className="text-muted-foreground">
                 {getGroupLoadErrorMessage(gamesQuery.error, "jogos")}
               </p>
@@ -167,20 +153,14 @@ export function SuggestGameDialog({ groupId }: { groupId: string }) {
                     </span>
                   )}
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-medium">
-                      {game.title}
-                    </span>
+                    <span className="block truncate text-sm font-medium">{game.title}</span>
                     <span className="block truncate text-xs text-muted-foreground">
                       {game.platforms.join(" · ")}
                     </span>
                   </span>
-                  {suggestGame.isPending &&
-                    suggestGame.variables === game.id && (
-                      <LoaderCircle
-                        className="animate-spin"
-                        aria-label="Adicionando jogo"
-                      />
-                    )}
+                  {suggestGame.isPending && suggestGame.variables === game.id && (
+                    <LoaderCircle className="animate-spin" aria-label="Adicionando jogo" />
+                  )}
                 </button>
               );
             })}

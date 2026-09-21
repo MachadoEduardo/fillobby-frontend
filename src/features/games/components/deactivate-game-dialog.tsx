@@ -58,8 +58,7 @@ export function DeactivateGameDialog({ game }: DeactivateGameDialogProps) {
           </div>
           <DialogTitle className="text-xl">Remover do catálogo?</DialogTitle>
           <DialogDescription className="pt-1 leading-relaxed">
-            {game.title} deixará de aparecer nas buscas e não poderá ser
-            adicionado a novas filas.
+            {game.title} deixará de aparecer nas buscas e não poderá ser adicionado a novas filas.
           </DialogDescription>
         </DialogHeader>
 
@@ -80,11 +79,7 @@ export function DeactivateGameDialog({ game }: DeactivateGameDialogProps) {
 
         <DialogFooter className="gap-2 border-t bg-muted/35 px-6 py-4 sm:space-x-0">
           <DialogClose asChild>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={deactivateGame.isPending}
-            >
+            <Button type="button" variant="ghost" disabled={deactivateGame.isPending}>
               Cancelar
             </Button>
           </DialogClose>
@@ -94,9 +89,7 @@ export function DeactivateGameDialog({ game }: DeactivateGameDialogProps) {
             disabled={deactivateGame.isPending}
             onClick={() => deactivateGame.mutate()}
           >
-            {deactivateGame.isPending && (
-              <LoaderCircle className="animate-spin" aria-hidden />
-            )}
+            {deactivateGame.isPending && <LoaderCircle className="animate-spin" aria-hidden />}
             {deactivateGame.isPending ? "Removendo jogo..." : "Remover jogo"}
           </Button>
         </DialogFooter>

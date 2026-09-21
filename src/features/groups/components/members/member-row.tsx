@@ -33,16 +33,11 @@ export function MemberRow({ member, group }: { member: Member; group: Group }) {
       <CardContent className="flex flex-wrap items-center gap-3 p-3">
         <Avatar>
           <AvatarImage src={resolveApiAssetUrl(member.avatarUrl)} />
-          <AvatarFallback>
-            {member.name.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
+          <AvatarFallback>{member.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="font-medium">
-            {member.name}{" "}
-            {isSelf && (
-              <span className="text-xs text-muted-foreground">(você)</span>
-            )}
+            {member.name} {isSelf && <span className="text-xs text-muted-foreground">(você)</span>}
           </div>
           <div className="text-xs text-muted-foreground">{member.email}</div>
         </div>
@@ -51,9 +46,7 @@ export function MemberRow({ member, group }: { member: Member; group: Group }) {
           <Select
             value={member.role === "ADMIN" ? "ADMIN" : "MEMBER"}
             disabled={actions.changeRole.isPending}
-            onValueChange={(role) =>
-              actions.changeRole.mutate(role as "ADMIN" | "MEMBER")
-            }
+            onValueChange={(role) => actions.changeRole.mutate(role as "ADMIN" | "MEMBER")}
           >
             <SelectTrigger className="w-32.5">
               <SelectValue />
@@ -82,11 +75,7 @@ export function MemberRow({ member, group }: { member: Member; group: Group }) {
         {canRemove && (
           <ConfirmGroupActionDialog
             trigger={
-              <Button
-                size="sm"
-                variant="ghost"
-                aria-label={`Remover ${member.name}`}
-              >
+              <Button size="sm" variant="ghost" aria-label={`Remover ${member.name}`}>
                 <Trash2 />
               </Button>
             }

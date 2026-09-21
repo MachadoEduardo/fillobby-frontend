@@ -4,10 +4,7 @@ import { FaPlaystation, FaSteam, FaWindows, FaXbox } from "react-icons/fa6";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
-import {
-  LogoLoop,
-  type LogoItem,
-} from "@/features/landing/components/logo-loop";
+import { LogoLoop, type LogoItem } from "@/features/landing/components/logo-loop";
 import MoltenMetal from "@/features/landing/components/molten-metal";
 
 const platformLogos: LogoItem[] = [
@@ -79,8 +76,8 @@ export function LandingPage() {
                 Seus amigos. Seus jogos. Uma escolha simples.
               </h1>
               <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#F5F1E8]/72 sm:text-lg">
-                Organize a fila, reúna os votos e descubra quem está pronto para
-                jogar, tudo no mesmo lobby.
+                Organize a fila, reúna os votos e descubra quem está pronto para jogar, tudo no
+                mesmo lobby.
               </p>
               <div className="mt-7 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
                 <Button

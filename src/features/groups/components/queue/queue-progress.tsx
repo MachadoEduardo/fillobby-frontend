@@ -9,10 +9,7 @@ export function QueueProgress({ status }: { status: QueueStatus }) {
   if (status === "COMPLETED" || status === "CANCELLED") return null;
 
   return (
-    <div
-      className="grid grid-cols-5"
-      aria-label={`Etapa atual: ${QUEUE_STATUS_LABEL[status]}`}
-    >
+    <div className="grid grid-cols-5" aria-label={`Etapa atual: ${QUEUE_STATUS_LABEL[status]}`}>
       {QUEUE_FLOW.map((step, index) => {
         const reached = index <= currentIndex;
         const current = index === currentIndex;
@@ -38,11 +35,7 @@ export function QueueProgress({ status }: { status: QueueStatus }) {
             <span
               className={cn(
                 "absolute left-1/2 top-0 z-10 h-4 w-4 -translate-x-1/2 rounded-full border-4 border-card",
-                current
-                  ? "bg-signal ring-2 ring-signal/20"
-                  : reached
-                    ? "bg-brand"
-                    : "bg-border",
+                current ? "bg-signal ring-2 ring-signal/20" : reached ? "bg-brand" : "bg-border",
               )}
             />
             <span

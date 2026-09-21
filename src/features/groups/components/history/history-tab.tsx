@@ -1,12 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  ChevronRight,
-  CircleAlert,
-  Gamepad2,
-  LoaderCircle,
-  X,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleAlert, Gamepad2, LoaderCircle, X } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -92,12 +85,7 @@ export function HistoryTab({ group }: { group: Group }) {
           <div className="mb-3 flex items-center justify-between gap-4">
             <h3 className="text-sm font-semibold">Filtrar histórico</h3>
             {hasActiveFilters && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={clearFilters}
-              >
+              <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
                 <X /> Limpar
               </Button>
             )}
@@ -193,8 +181,8 @@ export function HistoryTab({ group }: { group: Group }) {
           )}
           {(gamesQuery.isError || membersQuery.isError) && (
             <p className="mt-3 text-xs text-muted-foreground">
-              Alguns filtros estão temporariamente indisponíveis. As datas
-              continuam funcionando normalmente.
+              Alguns filtros estão temporariamente indisponíveis. As datas continuam funcionando
+              normalmente.
             </p>
           )}
         </CardContent>
@@ -235,80 +223,63 @@ export function HistoryTab({ group }: { group: Group }) {
         </div>
       )}
 
-      {!invalidDateRange &&
-        historyQuery.data &&
-        historyQuery.data.historyItems.length > 0 && (
-          <section aria-labelledby="history-results-heading">
-            <div className="mb-3 flex items-center justify-between gap-4">
-              <div>
-                <h3
-                  id="history-results-heading"
-                  className="text-sm font-semibold"
-                >
-                  Resultados
-                </h3>
-                <span className="mt-1 block text-sm text-muted-foreground">
-                  {historyQuery.data.meta.total}{" "}
-                  {historyQuery.data.meta.total === 1 ? "partida" : "partidas"}
-                </span>
-              </div>
-              {historyQuery.isFetching && (
-                <span
-                  role="status"
-                  className="flex items-center gap-2 text-xs text-muted-foreground"
-                >
-                  <LoaderCircle
-                    className="h-3.5 w-3.5 animate-spin"
-                    aria-hidden
-                  />
-                  Atualizando resultados...
-                </span>
-              )}
+      {!invalidDateRange && historyQuery.data && historyQuery.data.historyItems.length > 0 && (
+        <section aria-labelledby="history-results-heading">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <div>
+              <h3 id="history-results-heading" className="text-sm font-semibold">
+                Resultados
+              </h3>
+              <span className="mt-1 block text-sm text-muted-foreground">
+                {historyQuery.data.meta.total}{" "}
+                {historyQuery.data.meta.total === 1 ? "partida" : "partidas"}
+              </span>
             </div>
-            <div className="space-y-2">
-              {historyQuery.data.historyItems.map((item) => (
-                <HistoryItem key={item.id} item={item} />
-              ))}
-            </div>
-          </section>
-        )}
+            {historyQuery.isFetching && (
+              <span role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
+                <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                Atualizando resultados...
+              </span>
+            )}
+          </div>
+          <div className="space-y-2">
+            {historyQuery.data.historyItems.map((item) => (
+              <HistoryItem key={item.id} item={item} />
+            ))}
+          </div>
+        </section>
+      )}
 
-      {!invalidDateRange &&
-        historyQuery.data &&
-        historyQuery.data.meta.totalPages > 1 && (
-          <nav
-            aria-label="Paginação do histórico"
-            className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row"
+      {!invalidDateRange && historyQuery.data && historyQuery.data.meta.totalPages > 1 && (
+        <nav
+          aria-label="Paginação do histórico"
+          className="flex flex-col items-center justify-center gap-3 pt-2 sm:flex-row"
+        >
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full bg-transparent sm:w-auto"
+            disabled={page <= 1 || historyQuery.isFetching}
+            onClick={() => setPage((current) => current - 1)}
           >
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="w-full bg-transparent sm:w-auto"
-              disabled={page <= 1 || historyQuery.isFetching}
-              onClick={() => setPage((current) => current - 1)}
-            >
-              <ChevronLeft /> Anterior
-            </Button>
-            <span className="text-sm text-muted-foreground" aria-live="polite">
-              Página {historyQuery.data.meta.page} de{" "}
-              {historyQuery.data.meta.totalPages}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="w-full bg-transparent sm:w-auto"
-              disabled={
-                page >= historyQuery.data.meta.totalPages ||
-                historyQuery.isFetching
-              }
-              onClick={() => setPage((current) => current + 1)}
-            >
-              Próxima <ChevronRight />
-            </Button>
-          </nav>
-        )}
+            <ChevronLeft /> Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground" aria-live="polite">
+            Página {historyQuery.data.meta.page} de {historyQuery.data.meta.totalPages}
+          </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full bg-transparent sm:w-auto"
+            disabled={page >= historyQuery.data.meta.totalPages || historyQuery.isFetching}
+            onClick={() => setPage((current) => current + 1)}
+          >
+            Próxima <ChevronRight />
+          </Button>
+        </nav>
+      )}
     </div>
   );
 }
@@ -381,16 +352,9 @@ function HistoryError({
 
 function HistorySkeleton() {
   return (
-    <div
-      aria-label="Carregando histórico"
-      aria-busy="true"
-      className="space-y-2"
-    >
+    <div aria-label="Carregando histórico" aria-busy="true" className="space-y-2">
       {[0, 1, 2].map((item) => (
-        <div
-          key={item}
-          className="flex items-center gap-3 rounded-xl border p-3"
-        >
+        <div key={item} className="flex items-center gap-3 rounded-xl border p-3">
           <Skeleton className="h-12 w-12 shrink-0 rounded-lg" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-40" />

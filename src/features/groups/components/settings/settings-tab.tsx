@@ -28,8 +28,7 @@ export function SettingsTab({ group }: { group: Group }) {
   const normalizedName = name.trim();
   const normalizedDescription = description.trim();
   const hasChanges =
-    normalizedName !== group.name ||
-    normalizedDescription !== (group.description ?? "");
+    normalizedName !== group.name || normalizedDescription !== (group.description ?? "");
 
   useEffect(() => {
     setName(group.name);
@@ -129,9 +128,7 @@ export function SettingsTab({ group }: { group: Group }) {
                 maxLength={80}
                 value={name}
                 aria-invalid={Boolean(nameError)}
-                aria-describedby={
-                  nameError ? "group-settings-name-error" : undefined
-                }
+                aria-describedby={nameError ? "group-settings-name-error" : undefined}
                 disabled={updateGroup.isPending}
                 onChange={(event) => {
                   setName(event.target.value);
@@ -140,10 +137,7 @@ export function SettingsTab({ group }: { group: Group }) {
                 }}
               />
               {nameError && (
-                <p
-                  id="group-settings-name-error"
-                  className="text-sm text-destructive"
-                >
+                <p id="group-settings-name-error" className="text-sm text-destructive">
                   {nameError}
                 </p>
               )}
@@ -168,16 +162,9 @@ export function SettingsTab({ group }: { group: Group }) {
               />
             </div>
             {updateError && <InlineError message={updateError} />}
-            <Button
-              type="submit"
-              disabled={updateGroup.isPending || !hasChanges}
-            >
-              {updateGroup.isPending && (
-                <LoaderCircle className="animate-spin" aria-hidden />
-              )}
-              {updateGroup.isPending
-                ? "Salvando alterações..."
-                : "Salvar alterações"}
+            <Button type="submit" disabled={updateGroup.isPending || !hasChanges}>
+              {updateGroup.isPending && <LoaderCircle className="animate-spin" aria-hidden />}
+              {updateGroup.isPending ? "Salvando alterações..." : "Salvar alterações"}
             </Button>
           </form>
         </CardContent>
@@ -190,16 +177,12 @@ export function SettingsTab({ group }: { group: Group }) {
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Crie um novo código se o convite atual foi compartilhado com quem
-              não deveria ter acesso. O código anterior deixará de funcionar.
+              Crie um novo código se o convite atual foi compartilhado com quem não deveria ter
+              acesso. O código anterior deixará de funcionar.
             </p>
             <ConfirmGroupActionDialog
               trigger={
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="bg-transparent"
-                >
+                <Button type="button" variant="outline" className="bg-transparent">
                   <RotateCw /> Criar novo código
                 </Button>
               }
@@ -225,8 +208,8 @@ export function SettingsTab({ group }: { group: Group }) {
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-sm leading-relaxed text-muted-foreground">
-              O lobby deixará de ficar disponível para todos os membros. Esta
-              ação não pode ser desfeita pela interface.
+              O lobby deixará de ficar disponível para todos os membros. Esta ação não pode ser
+              desfeita pela interface.
             </p>
             <ConfirmGroupActionDialog
               trigger={

@@ -59,10 +59,7 @@ export function AuthPageLayout({
         className="relative z-10"
       >
         <main className="mx-auto grid min-h-[calc(100svh-4.75rem)] max-w-6xl items-center gap-12 px-5 py-10 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,28rem)] lg:gap-24 lg:py-16">
-          <section
-            className="hidden max-w-md lg:block"
-            aria-labelledby="auth-intro-title"
-          >
+          <section className="hidden max-w-md lg:block" aria-labelledby="auth-intro-title">
             <h2
               id="auth-intro-title"
               className="mt-5 text-6xl font-bold leading-[0.98] tracking-tighter text-balance"
@@ -71,14 +68,8 @@ export function AuthPageLayout({
             </h2>
             <ul className="mt-10 space-y-4">
               {lobbyBenefits.map((benefit) => (
-                <li
-                  key={benefit}
-                  className="flex items-center gap-3 text-sm text-[#AAB7B5]"
-                >
-                  <Check
-                    className="h-4 w-4 shrink-0 text-[#23B5D3]"
-                    aria-hidden
-                  />
+                <li key={benefit} className="flex items-center gap-3 text-sm text-[#AAB7B5]">
+                  <Check className="h-4 w-4 shrink-0 text-[#23B5D3]" aria-hidden />
                   {benefit}
                 </li>
               ))}
@@ -90,24 +81,18 @@ export function AuthPageLayout({
             aria-labelledby="auth-title"
           >
             <header>
-              <p className="eyebrow text-[#23B5D3] lg:hidden">
-                {mobileEyebrow}
-              </p>
+              <p className="eyebrow text-[#23B5D3] lg:hidden">{mobileEyebrow}</p>
               <h1
                 id="auth-title"
                 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl lg:mt-0"
               >
                 {title}
               </h1>
-              <p className="mt-3 text-sm leading-relaxed text-[#AAB7B5]">
-                {description}
-              </p>
+              <p className="mt-3 text-sm leading-relaxed text-[#AAB7B5]">{description}</p>
             </header>
 
             <div className="mt-8">{children}</div>
-            <div className="mt-6 text-center text-sm text-[#AAB7B5]">
-              {footer}
-            </div>
+            <div className="mt-6 text-center text-sm text-[#AAB7B5]">{footer}</div>
           </section>
         </main>
       </FadeContent>

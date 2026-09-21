@@ -19,8 +19,7 @@ export const queryKeys = {
       ["games", filters] as const,
   },
   votes: {
-    list: (groupId: string, itemId: string) =>
-      ["votes", groupId, itemId] as const,
+    list: (groupId: string, itemId: string) => ["votes", groupId, itemId] as const,
   },
   history: {
     root: (groupId: string) => ["history", groupId] as const,

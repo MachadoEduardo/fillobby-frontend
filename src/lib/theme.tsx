@@ -1,10 +1,4 @@
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { ThemeContext, type Theme } from "@/lib/theme-context";
 
 const THEME_STORAGE_KEY = "fillobby-theme";
@@ -32,12 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     applyTheme(nextTheme);
   }, []);
 
-  const value = useMemo(
-    () => ({ theme, setTheme, mounted }),
-    [mounted, setTheme, theme],
-  );
+  const value = useMemo(() => ({ theme, setTheme, mounted }), [mounted, setTheme, theme]);
 
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

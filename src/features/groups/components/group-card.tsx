@@ -37,9 +37,7 @@ export function GroupCard({ group }: GroupCardProps) {
           <div className="mt-auto flex items-center justify-between gap-4 border-t pt-4 text-sm">
             <span className="flex min-w-0 items-center gap-2 text-muted-foreground">
               <Clock3 className="h-4 w-4 shrink-0" />
-              <span className="truncate">
-                {formatLastActivity(group.updatedAt)}
-              </span>
+              <span className="truncate">{formatLastActivity(group.updatedAt)}</span>
             </span>
             <span className="flex shrink-0 items-center gap-2 font-semibold text-foreground">
               Abrir lobby

@@ -28,16 +28,16 @@ A direção combina uma sala de jogos escura com movimentos lentos de metal líq
 
 ### Paleta principal
 
-| Papel | Nome | Cor | Uso |
-| --- | --- | --- | --- |
-| Fundo-base | **Azul Abissal** | `#0F1C21` | fundo predominante das telas e base para profundidade |
-| Superfície elevada | **Azul Profundo** | `#13282F` | diálogos, campos, painéis de tarefa e áreas que exigem separação real |
-| Ação primária | **Ciano Lobby** | `#23B5D3` | CTAs, foco, seleção e avanço de fluxo |
-| Violeta de ambiente | **Violeta-noturno** | `#241B3D` | reflexos, fundos decorativos, gráficos e detalhes de baixa ênfase |
-| Reflexo violeta | **Violeta Bruma** | `#735A8F` | luz ambiente, hover muito sutil e gradientes de fundo |
-| Texto principal | **Marfim Frio** | `#F5F1E8` | títulos, rótulos importantes e ícones ativos |
-| Texto secundário | **Névoa Azulada** | `#AAB7B5` | descrições, metadados e ações secundárias |
-| Contorno | **Linha Abissal** | `#30434A` | divisores, campos e botões secundários |
+| Papel               | Nome                | Cor       | Uso                                                                   |
+| ------------------- | ------------------- | --------- | --------------------------------------------------------------------- |
+| Fundo-base          | **Azul Abissal**    | `#0F1C21` | fundo predominante das telas e base para profundidade                 |
+| Superfície elevada  | **Azul Profundo**   | `#13282F` | diálogos, campos, painéis de tarefa e áreas que exigem separação real |
+| Ação primária       | **Ciano Lobby**     | `#23B5D3` | CTAs, foco, seleção e avanço de fluxo                                 |
+| Violeta de ambiente | **Violeta-noturno** | `#241B3D` | reflexos, fundos decorativos, gráficos e detalhes de baixa ênfase     |
+| Reflexo violeta     | **Violeta Bruma**   | `#735A8F` | luz ambiente, hover muito sutil e gradientes de fundo                 |
+| Texto principal     | **Marfim Frio**     | `#F5F1E8` | títulos, rótulos importantes e ícones ativos                          |
+| Texto secundário    | **Névoa Azulada**   | `#AAB7B5` | descrições, metadados e ações secundárias                             |
+| Contorno            | **Linha Abissal**   | `#30434A` | divisores, campos e botões secundários                                |
 
 O Ciano Lobby é a única cor de ação recorrente. Violeta-noturno e Violeta Bruma pertencem à camada atmosférica: podem aparecer no Molten Metal, em gradientes muito escuros, ilustrações abstratas e gráficos, mas não devem competir com CTAs, estados críticos ou texto.
 

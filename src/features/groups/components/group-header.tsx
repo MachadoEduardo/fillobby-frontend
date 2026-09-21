@@ -31,9 +31,7 @@ export function GroupHeader({ group }: { group: Group }) {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-3xl font-bold tracking-[-0.045em] sm:text-4xl">
-              {group.name}
-            </h1>
+            <h1 className="text-3xl font-bold tracking-[-0.045em] sm:text-4xl">{group.name}</h1>
             <RoleBadge role={group.role} />
           </div>
           {group.description && (
@@ -78,8 +76,7 @@ function LeaveGroupButton({ group }: { group: Group }) {
       queryClient.invalidateQueries({ queryKey: queryKeys.groups.all() });
       navigate({ to: "/groups" });
     },
-    onError: (error) =>
-      toast.error(error instanceof ApiError ? error.message : "Erro ao sair."),
+    onError: (error) => toast.error(error instanceof ApiError ? error.message : "Erro ao sair."),
   });
 
   return (

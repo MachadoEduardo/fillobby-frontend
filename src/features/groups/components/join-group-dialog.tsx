@@ -105,8 +105,8 @@ export function JoinGroupDialog() {
                 </p>
               ) : (
                 <p id="j-code-help" className="text-xs text-muted-foreground">
-                  O código identifica o grupo e pode deixar de funcionar se for
-                  renovado pelo administrador.
+                  O código identifica o grupo e pode deixar de funcionar se for renovado pelo
+                  administrador.
                 </p>
               )}
             </div>
@@ -123,18 +123,12 @@ export function JoinGroupDialog() {
           </div>
           <DialogFooter className="gap-2 border-t bg-muted/35 px-6 py-4 sm:space-x-0">
             <DialogClose asChild>
-              <Button
-                type="button"
-                variant="ghost"
-                disabled={joinGroup.isPending}
-              >
+              <Button type="button" variant="ghost" disabled={joinGroup.isPending}>
                 Cancelar
               </Button>
             </DialogClose>
             <Button type="submit" disabled={joinGroup.isPending}>
-              {joinGroup.isPending && (
-                <LoaderCircle className="animate-spin" aria-hidden />
-              )}
+              {joinGroup.isPending && <LoaderCircle className="animate-spin" aria-hidden />}
               {joinGroup.isPending ? "Entrando no grupo..." : "Entrar no grupo"}
             </Button>
           </DialogFooter>

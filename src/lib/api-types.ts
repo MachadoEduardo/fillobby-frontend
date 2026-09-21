@@ -7,13 +7,7 @@ export type GroupRole = "OWNER" | "ADMIN" | "MEMBER";
 export type MemberStatus = "ACTIVE" | "REMOVED" | "INACTIVE";
 
 export type QueueStatus =
-  | "SUGGESTED"
-  | "VOTING"
-  | "WAITING_PLAYERS"
-  | "READY"
-  | "PLAYING"
-  | "COMPLETED"
-  | "CANCELLED";
+  "SUGGESTED" | "VOTING" | "WAITING_PLAYERS" | "READY" | "PLAYING" | "COMPLETED" | "CANCELLED";
 
 export const ACTIVE_QUEUE_STATUSES: QueueStatus[] = [
   "SUGGESTED",

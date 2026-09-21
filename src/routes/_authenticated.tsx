@@ -12,8 +12,7 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated)
-      navigate({ to: "/login", replace: true });
+    if (!isLoading && !isAuthenticated) navigate({ to: "/login", replace: true });
   }, [isAuthenticated, isLoading, navigate]);
 
   if (isLoading || !isAuthenticated) {

@@ -8,13 +8,7 @@ import { api, resolveApiAssetUrl } from "@/lib/api";
 import type { Group, Member } from "@/lib/api-types";
 import { queryKeys } from "@/lib/query-keys";
 
-export function RemovedMemberRow({
-  member,
-  group,
-}: {
-  member: Member;
-  group: Group;
-}) {
+export function RemovedMemberRow({ member, group }: { member: Member; group: Group }) {
   const queryClient = useQueryClient();
   const restoreMember = useMutation({
     mutationFn: () => api.groups.restoreMember(group.id, member.id),
@@ -38,9 +32,7 @@ export function RemovedMemberRow({
       <CardContent className="flex flex-wrap items-center gap-3 p-3">
         <Avatar>
           <AvatarImage src={resolveApiAssetUrl(member.avatarUrl)} />
-          <AvatarFallback>
-            {member.name.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
+          <AvatarFallback>{member.name.slice(0, 2).toUpperCase()}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
           <div className="font-medium">{member.name}</div>

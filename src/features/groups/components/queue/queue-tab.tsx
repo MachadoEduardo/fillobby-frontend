@@ -23,9 +23,7 @@ export function QueueTab({ group }: { group: Group }) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Decisão em andamento</p>
-          <h2 className="mt-2 text-2xl font-bold tracking-[-0.035em]">
-            Próximos jogos
-          </h2>
+          <h2 className="mt-2 text-2xl font-bold tracking-[-0.035em]">Próximos jogos</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Vote, reúna os participantes e leve a escolha até a partida.
           </p>
@@ -47,8 +45,7 @@ export function QueueTab({ group }: { group: Group }) {
           className="flex flex-col gap-3 rounded-lg border bg-muted/35 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
         >
           <span className="text-muted-foreground">
-            Não foi possível atualizar a fila. Você ainda está vendo os dados
-            anteriores.
+            Não foi possível atualizar a fila. Você ainda está vendo os dados anteriores.
           </span>
           <Button
             type="button"
@@ -68,19 +65,13 @@ export function QueueTab({ group }: { group: Group }) {
           </div>
           <h3 className="mt-4 text-lg font-semibold">A fila está livre</h3>
           <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            Sugira o primeiro jogo e dê ao grupo um ponto de partida para a
-            próxima sessão.
+            Sugira o primeiro jogo e dê ao grupo um ponto de partida para a próxima sessão.
           </p>
         </div>
       )}
       <div className="space-y-3">
         {queueQuery.data?.queueItems.map((item, index) => (
-          <QueueItemCard
-            key={item.id}
-            item={item}
-            group={group}
-            position={index + 1}
-          />
+          <QueueItemCard key={item.id} item={item} group={group} position={index + 1} />
         ))}
       </div>
     </div>
@@ -120,11 +111,7 @@ function QueueError({
 
 function QueueSkeleton() {
   return (
-    <div
-      aria-label="Carregando fila de jogos"
-      aria-busy="true"
-      className="space-y-3"
-    >
+    <div aria-label="Carregando fila de jogos" aria-busy="true" className="space-y-3">
       {[0, 1, 2].map((item) => (
         <div key={item} className="rounded-xl border bg-card/70 p-5">
           <div className="flex gap-4">

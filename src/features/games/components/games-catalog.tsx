@@ -1,11 +1,5 @@
 import type { UseQueryResult } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  ChevronRight,
-  CircleAlert,
-  Gamepad2,
-  LoaderCircle,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, CircleAlert, Gamepad2, LoaderCircle } from "lucide-react";
 import type { ReactNode } from "react";
 import FadeContent from "@/components/fade-content";
 import { Button } from "@/components/ui/button";
@@ -41,9 +35,7 @@ export function GamesCatalog({
       <CatalogFade>
         <div className="rounded-xl border bg-card/70 px-5 py-10 text-center">
           <CircleAlert className="mx-auto h-6 w-6 text-destructive" />
-          <h2 className="mt-3 font-semibold">
-            Não foi possível carregar os jogos
-          </h2>
+          <h2 className="mt-3 font-semibold">Não foi possível carregar os jogos</h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
             {getGamesListErrorMessage(query.error)}
           </p>
@@ -66,10 +58,7 @@ export function GamesCatalog({
   if (query.data.games.length === 0) {
     return (
       <CatalogFade>
-        <EmptyCatalog
-          hasActiveFilters={hasActiveFilters}
-          onClearFilters={onClearFilters}
-        />
+        <EmptyCatalog hasActiveFilters={hasActiveFilters} onClearFilters={onClearFilters} />
       </CatalogFade>
     );
   }
@@ -85,15 +74,11 @@ export function GamesCatalog({
               Jogos disponíveis
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {meta.total}{" "}
-              {meta.total === 1 ? "jogo encontrado" : "jogos encontrados"}
+              {meta.total} {meta.total === 1 ? "jogo encontrado" : "jogos encontrados"}
             </p>
           </div>
           {query.isFetching && (
-            <span
-              role="status"
-              className="flex items-center gap-2 text-xs text-muted-foreground"
-            >
+            <span role="status" className="flex items-center gap-2 text-xs text-muted-foreground">
               <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden />
               Atualizando catálogo...
             </span>
@@ -143,12 +128,7 @@ export function GamesCatalog({
 
 function CatalogFade({ children }: { children: ReactNode }) {
   return (
-    <FadeContent
-      duration={470}
-      initialOpacity={0}
-      threshold={0.05}
-      respectReducedMotion
-    >
+    <FadeContent duration={470} initialOpacity={0} threshold={0.05} respectReducedMotion>
       {children}
     </FadeContent>
   );
@@ -167,9 +147,7 @@ function EmptyCatalog({
         <Gamepad2 className="h-5 w-5" />
       </div>
       <h2 className="mt-4 text-lg font-semibold">
-        {hasActiveFilters
-          ? "Nenhum jogo corresponde aos filtros"
-          : "O catálogo ainda está vazio"}
+        {hasActiveFilters ? "Nenhum jogo corresponde aos filtros" : "O catálogo ainda está vazio"}
       </h2>
       <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
         {hasActiveFilters
@@ -200,10 +178,7 @@ function GamesCatalogSkeleton() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {[0, 1, 2, 3, 4, 5].map((item) => (
-          <div
-            key={item}
-            className="overflow-hidden rounded-xl border bg-card/70"
-          >
+          <div key={item} className="overflow-hidden rounded-xl border bg-card/70">
             <Skeleton className="aspect-video w-full rounded-none" />
             <div className="space-y-3 p-5">
               <Skeleton className="h-5 w-3/5" />

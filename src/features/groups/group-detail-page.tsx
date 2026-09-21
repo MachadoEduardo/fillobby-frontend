@@ -51,9 +51,7 @@ function GroupDetailError({
     <div className="rounded-xl border bg-card/70 px-6 py-12 text-center">
       <CircleAlert className="mx-auto h-6 w-6 text-destructive" />
       <h1 className="mt-3 text-lg font-semibold">
-        {groupUnavailable
-          ? "Este grupo não está disponível"
-          : "Não foi possível abrir o grupo"}
+        {groupUnavailable ? "Este grupo não está disponível" : "Não foi possível abrir o grupo"}
       </h1>
       <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
         {groupUnavailable
@@ -67,12 +65,7 @@ function GroupDetailError({
           </Link>
         </Button>
         {!groupUnavailable && (
-          <Button
-            type="button"
-            variant="outline"
-            disabled={retrying}
-            onClick={onRetry}
-          >
+          <Button type="button" variant="outline" disabled={retrying} onClick={onRetry}>
             {retrying && <LoaderCircle className="animate-spin" aria-hidden />}
             {retrying ? "Tentando novamente..." : "Tentar novamente"}
           </Button>

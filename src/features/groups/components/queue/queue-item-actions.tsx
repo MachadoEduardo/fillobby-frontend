@@ -1,12 +1,4 @@
-import {
-  Check,
-  Play,
-  ThumbsDown,
-  ThumbsUp,
-  Trash2,
-  Users,
-  X,
-} from "lucide-react";
+import { Check, Play, ThumbsDown, ThumbsUp, Trash2, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ConfirmGroupActionDialog } from "@/features/groups/components/confirm-group-action-dialog";
 import type { Group, QueueItem } from "@/lib/api-types";
@@ -112,26 +104,24 @@ export function QueueItemActions({
           <Check className="mr-1 h-3 w-3" /> Concluir partida
         </Button>
       )}
-      {isAdmin &&
-        item.status !== "COMPLETED" &&
-        item.status !== "CANCELLED" && (
-          <div className="sm:ml-auto">
-            <ConfirmGroupActionDialog
-              trigger={
-                <Button size="sm" variant="ghost">
-                  <Trash2 /> Cancelar
-                </Button>
-              }
-              title={`Cancelar ${item.game.title}?`}
-              description="O jogo sairá da decisão em andamento e não poderá receber novos votos ou participantes."
-              confirmLabel="Cancelar sugestão"
-              pendingLabel="Cancelando sugestão..."
-              pending={actions.cancel.isPending}
-              confirmVariant="destructive"
-              onConfirm={() => actions.cancel.mutateAsync()}
-            />
-          </div>
-        )}
+      {isAdmin && item.status !== "COMPLETED" && item.status !== "CANCELLED" && (
+        <div className="sm:ml-auto">
+          <ConfirmGroupActionDialog
+            trigger={
+              <Button size="sm" variant="ghost">
+                <Trash2 /> Cancelar
+              </Button>
+            }
+            title={`Cancelar ${item.game.title}?`}
+            description="O jogo sairá da decisão em andamento e não poderá receber novos votos ou participantes."
+            confirmLabel="Cancelar sugestão"
+            pendingLabel="Cancelando sugestão..."
+            pending={actions.cancel.isPending}
+            confirmVariant="destructive"
+            onConfirm={() => actions.cancel.mutateAsync()}
+          />
+        </div>
+      )}
     </div>
   );
 }

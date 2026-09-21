@@ -23,9 +23,7 @@ export function AuthFormField({
   const errorMessages = errors ?? [];
   const helpId = helpText ? `${id}-help` : undefined;
   const errorsId = errorMessages.length ? `${id}-errors` : undefined;
-  const describedBy = [inputProps["aria-describedby"], helpId, errorsId]
-    .filter(Boolean)
-    .join(" ");
+  const describedBy = [inputProps["aria-describedby"], helpId, errorsId].filter(Boolean).join(" ");
 
   return (
     <div className="space-y-2">
@@ -63,11 +61,7 @@ export function AuthFormField({
         </p>
       )}
       {errorsId && (
-        <ul
-          id={errorsId}
-          role="alert"
-          className="space-y-1 text-xs text-[#EF8A82]"
-        >
+        <ul id={errorsId} role="alert" className="space-y-1 text-xs text-[#EF8A82]">
           {errorMessages.map((message, index) => (
             <li key={`${message}-${index}`}>{message}</li>
           ))}

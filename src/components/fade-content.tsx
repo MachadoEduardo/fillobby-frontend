@@ -47,10 +47,7 @@ const FadeContent: React.FC<FadeContentProps> = ({
     const el = ref.current;
     if (!el) return;
 
-    if (
-      respectReducedMotion &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
+    if (respectReducedMotion && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       return;
     }
 

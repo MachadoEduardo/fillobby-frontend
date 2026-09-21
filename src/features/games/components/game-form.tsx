@@ -10,10 +10,7 @@ import type { GameFormValues } from "@/features/games/types";
 import { PLATFORMS, type Game, type Platform } from "@/lib/api-types";
 
 type GameFormProps = {
-  initial?: Pick<
-    Game,
-    "title" | "platforms" | "maxPlayers" | "coverUrl" | "description"
-  >;
+  initial?: Pick<Game, "title" | "platforms" | "maxPlayers" | "coverUrl" | "description">;
   submitting: boolean;
   submitLabel: string;
   pendingLabel: string;
@@ -22,9 +19,7 @@ type GameFormProps = {
   onSubmit: (values: GameFormValues) => void;
 };
 
-type FormErrors = Partial<
-  Record<"title" | "platforms" | "maxPlayers" | "coverUrl", string>
->;
+type FormErrors = Partial<Record<"title" | "platforms" | "maxPlayers" | "coverUrl", string>>;
 
 export function GameForm({
   initial,
@@ -37,12 +32,8 @@ export function GameForm({
 }: GameFormProps) {
   const fieldId = useId();
   const [title, setTitle] = useState(initial?.title ?? "");
-  const [platforms, setPlatforms] = useState<Platform[]>(
-    initial?.platforms ?? [],
-  );
-  const [maxPlayers, setMaxPlayers] = useState(
-    initial?.maxPlayers?.toString() ?? "",
-  );
+  const [platforms, setPlatforms] = useState<Platform[]>(initial?.platforms ?? []);
+  const [maxPlayers, setMaxPlayers] = useState(initial?.maxPlayers?.toString() ?? "");
   const [coverUrl, setCoverUrl] = useState(initial?.coverUrl ?? "");
   const [description, setDescription] = useState(initial?.description ?? "");
   const [errors, setErrors] = useState<FormErrors>({});
@@ -100,20 +91,13 @@ export function GameForm({
             placeholder="Ex.: Stardew Valley"
             value={title}
             aria-invalid={Boolean(errors.title)}
-            aria-describedby={
-              errors.title ? `${fieldId}-title-error` : undefined
-            }
+            aria-describedby={errors.title ? `${fieldId}-title-error` : undefined}
             className="bg-background"
             disabled={submitting}
-            onChange={(event) =>
-              updateField(() => setTitle(event.target.value), "title")
-            }
+            onChange={(event) => updateField(() => setTitle(event.target.value), "title")}
           />
           {errors.title && (
-            <p
-              id={`${fieldId}-title-error`}
-              className="text-sm text-destructive"
-            >
+            <p id={`${fieldId}-title-error`} className="text-sm text-destructive">
               {errors.title}
             </p>
           )}
@@ -122,9 +106,7 @@ export function GameForm({
         <fieldset
           className="space-y-2"
           disabled={submitting}
-          aria-describedby={
-            errors.platforms ? `${fieldId}-platforms-error` : undefined
-          }
+          aria-describedby={errors.platforms ? `${fieldId}-platforms-error` : undefined}
         >
           <legend className="text-sm font-medium">Plataformas</legend>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -143,16 +125,11 @@ export function GameForm({
             ))}
           </div>
           {errors.platforms ? (
-            <p
-              id={`${fieldId}-platforms-error`}
-              className="text-sm text-destructive"
-            >
+            <p id={`${fieldId}-platforms-error`} className="text-sm text-destructive">
               {errors.platforms}
             </p>
           ) : (
-            <p className="text-xs text-muted-foreground">
-              Selecione onde o jogo está disponível.
-            </p>
+            <p className="text-xs text-muted-foreground">Selecione onde o jogo está disponível.</p>
           )}
         </fieldset>
 
@@ -167,16 +144,11 @@ export function GameForm({
               placeholder="Opcional"
               value={maxPlayers}
               aria-invalid={Boolean(errors.maxPlayers)}
-              aria-describedby={
-                errors.maxPlayers ? `${fieldId}-players-error` : undefined
-              }
+              aria-describedby={errors.maxPlayers ? `${fieldId}-players-error` : undefined}
               className="bg-background"
               disabled={submitting}
               onChange={(event) =>
-                updateField(
-                  () => setMaxPlayers(event.target.value),
-                  "maxPlayers",
-                )
+                updateField(() => setMaxPlayers(event.target.value), "maxPlayers")
               }
               onBlur={() => {
                 const maxPlayersError = validateMaxPlayers(maxPlayers);
@@ -187,10 +159,7 @@ export function GameForm({
               }}
             />
             {errors.maxPlayers && (
-              <p
-                id={`${fieldId}-players-error`}
-                className="text-sm text-destructive"
-              >
+              <p id={`${fieldId}-players-error`} className="text-sm text-destructive">
                 {errors.maxPlayers}
               </p>
             )}
@@ -204,20 +173,13 @@ export function GameForm({
               placeholder="https://..."
               value={coverUrl}
               aria-invalid={Boolean(errors.coverUrl)}
-              aria-describedby={
-                errors.coverUrl ? `${fieldId}-cover-error` : undefined
-              }
+              aria-describedby={errors.coverUrl ? `${fieldId}-cover-error` : undefined}
               className="bg-background"
               disabled={submitting}
-              onChange={(event) =>
-                updateField(() => setCoverUrl(event.target.value), "coverUrl")
-              }
+              onChange={(event) => updateField(() => setCoverUrl(event.target.value), "coverUrl")}
             />
             {errors.coverUrl && (
-              <p
-                id={`${fieldId}-cover-error`}
-                className="text-sm text-destructive"
-              >
+              <p id={`${fieldId}-cover-error`} className="text-sm text-destructive">
                 {errors.coverUrl}
               </p>
             )}
@@ -305,11 +267,7 @@ function validateMaxPlayers(value: string) {
   const containsOnlyDigits = /^\d+$/.test(value);
   const parsedValue = Number(value);
 
-  if (
-    !containsOnlyDigits ||
-    !Number.isSafeInteger(parsedValue) ||
-    parsedValue < 1
-  ) {
+  if (!containsOnlyDigits || !Number.isSafeInteger(parsedValue) || parsedValue < 1) {
     return "Use somente números inteiros maiores que zero.";
   }
 

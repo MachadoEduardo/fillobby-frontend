@@ -19,8 +19,7 @@ export function useMemberActions(group: Group, member: Member) {
   }
 
   const changeRole = useMutation({
-    mutationFn: (role: "ADMIN" | "MEMBER") =>
-      api.groups.changeRole(group.id, member.id, role),
+    mutationFn: (role: "ADMIN" | "MEMBER") => api.groups.changeRole(group.id, member.id, role),
     onSuccess: () => {
       toast.success("Papel alterado.");
       invalidateRelatedQueries();
