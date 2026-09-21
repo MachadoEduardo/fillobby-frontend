@@ -1,0 +1,14 @@
+.git
+.github
+.env
+.env.*
+node_modules
+coverage
+dist
+dist-ssr
+.output
+.vinxi
+.tanstack
+.nitro
+npm-debug.log*
+Dockerfile

@@ -118,8 +118,8 @@ src/
 
 ## Pré-requisitos
 
-- Node.js 22 ou versão compatível;
-- npm;
+- Node.js 24.21.0;
+- npm 11.19.0;
 - backend Fillobby local ou publicado.
 
 ## Instalação
@@ -127,7 +127,8 @@ src/
 ```bash
 git clone https://github.com/MachadoEduardo/fillobby-frontend.git
 cd fillobby-frontend
-npm install
+nvm use
+npm ci
 ```
 
 Crie o arquivo local de ambiente:
@@ -192,30 +193,27 @@ npm run lint
 | `npm run dev`       | Inicia o servidor de desenvolvimento    |
 | `npm run build`     | Gera o build de produção                |
 | `npm run build:dev` | Gera o build no modo de desenvolvimento |
+| `npm start`         | Executa o servidor gerado em `.output`  |
 | `npm run preview`   | Executa a pré-visualização do build     |
 | `npm run lint`      | Executa o ESLint                        |
+| `npm run typecheck` | Verifica os tipos TypeScript            |
+| `npm test`          | Executa a suíte com Vitest              |
 | `npm run format`    | Formata o projeto com Prettier          |
 
 ## Executando a solução completa localmente
 
-Em um terminal, inicie o backend:
+Com os repositórios `fillobby-backend` e `fillobby-frontend` em diretórios irmãos, use o Compose mantido pelo backend:
 
 ```bash
-git clone https://github.com/MachadoEduardo/fillobby-backend.git
 cd fillobby-backend
-npm install
-cp .env.example .env
-npm run dev
+docker compose up --build
 ```
 
-Configure `MONGO_URI`, `JWT_SECRET` e as demais variáveis descritas no README
-do backend.
+Esse comando inicia MongoDB em replica set, backend e frontend. A interface fica disponível em `http://localhost:5173` e a API em `http://localhost:3000`. Encerre o ambiente com `docker compose down`.
 
-Em outro terminal, inicie este frontend:
+Para executar apenas o frontend de forma nativa, configure `.env` e use:
 
 ```bash
-cd fillobby-frontend
-npm install
 npm run dev
 ```
 
@@ -275,7 +273,7 @@ O frontend utiliza `code` para decisões programáticas, `message` para avisos e
 
 ## Deploy na Vercel
 
-O projeto usa o preset da Vercel no TanStack Start.
+O projeto usa o preset da Vercel no TanStack Start. A variável `NITRO_PRESET` é usada apenas no build Docker para gerar um servidor Node; o deploy público permanece na Vercel.
 
 1. importe o repositório na Vercel;
 2. mantenha o comando de build `npm run build`;
