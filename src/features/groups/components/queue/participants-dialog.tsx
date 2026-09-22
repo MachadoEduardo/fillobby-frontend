@@ -128,6 +128,7 @@ export function ParticipantsDialog({ group, item, open, onOpenChange }: Particip
                 className="flex min-h-12 items-center gap-3 rounded-lg border bg-background p-2.5 transition-colors hover:bg-accent"
               >
                 <Checkbox
+                  aria-label={member.name}
                   checked={selected.includes(member.id)}
                   disabled={
                     updateParticipants.isPending || (reachedLimit && !selected.includes(member.id))

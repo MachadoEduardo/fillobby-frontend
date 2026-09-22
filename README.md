@@ -63,7 +63,8 @@ concluídas.
 - Radix UI;
 - Lucide React;
 - Sonner;
-- ESLint e Prettier.
+- ESLint e Prettier;
+- Vitest e Playwright.
 
 ## Arquitetura
 
@@ -188,17 +189,20 @@ npm run lint
 
 ## Scripts
 
-| Comando             | Descrição                               |
-| ------------------- | --------------------------------------- |
-| `npm run dev`       | Inicia o servidor de desenvolvimento    |
-| `npm run build`     | Gera o build de produção                |
-| `npm run build:dev` | Gera o build no modo de desenvolvimento |
-| `npm start`         | Executa o servidor gerado em `.output`  |
-| `npm run preview`   | Executa a pré-visualização do build     |
-| `npm run lint`      | Executa o ESLint                        |
-| `npm run typecheck` | Verifica os tipos TypeScript            |
-| `npm test`          | Executa a suíte com Vitest              |
-| `npm run format`    | Formata o projeto com Prettier          |
+| Comando                   | Descrição                               |
+| ------------------------- | --------------------------------------- |
+| `npm run dev`             | Inicia o servidor de desenvolvimento    |
+| `npm run build`           | Gera o build de produção                |
+| `npm run build:dev`       | Gera o build no modo de desenvolvimento |
+| `npm start`               | Executa o servidor gerado em `.output`  |
+| `npm run preview`         | Executa a pré-visualização do build     |
+| `npm run lint`            | Executa o ESLint                        |
+| `npm run typecheck`       | Verifica os tipos TypeScript            |
+| `npm test`                | Executa a suíte com Vitest              |
+| `npm run test:e2e`        | Executa os fluxos E2E no Chromium       |
+| `npm run test:e2e:ui`     | Abre o runner interativo do Playwright  |
+| `npm run test:e2e:report` | Abre o último relatório E2E             |
+| `npm run format`          | Formata o projeto com Prettier          |
 
 ## Executando a solução completa localmente
 
@@ -222,6 +226,21 @@ O arquivo `.env` do frontend deve conter:
 ```env
 VITE_API_URL=http://localhost:3000
 ```
+
+### Testes E2E
+
+Instale o navegador uma vez com `npx playwright install chromium`. Os cenários exigem o ambiente isolado mantido no backend:
+
+```bash
+cd ../fillobby-backend
+docker compose --env-file .env.e2e up --build --detach --wait
+cd ../fillobby-frontend
+npm run test:e2e
+cd ../fillobby-backend
+docker compose --env-file .env.e2e down --volumes --remove-orphans
+```
+
+Os testes cobrem a proteção de sessão e o ciclo principal com dois usuários: cadastro, grupo, convite, catálogo, sugestão, votação, participantes, prontidão, partida e histórico. Falhas preservam screenshot, vídeo e trace em `test-results/`; o relatório fica em `playwright-report/`.
 
 ## Rotas da interface
 

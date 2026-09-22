@@ -31,3 +31,76 @@ jobs:
           docker build --target production
           --build-arg VITE_API_URL=http://localhost:3000
           --tag fillobby-frontend:ci .
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: validate
+
+    steps:
+      - name: Checkout frontend under test
+        uses: actions/checkout@v4
+        with:
+          path: fillobby-frontend
+
+      - name: Checkout backend main
+        uses: actions/checkout@v4
+        with:
+          repository: MachadoEduardo/fillobby-backend
+          ref: main
+          path: fillobby-backend
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: fillobby-frontend/.nvmrc
+          cache: npm
+          cache-dependency-path: fillobby-frontend/package-lock.json
+
+      - run: npm ci
+        working-directory: fillobby-frontend
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+        working-directory: fillobby-frontend
+
+      - name: Start isolated E2E stack
+        run: docker compose up --build --detach --wait
+        working-directory: fillobby-backend
+
+      - name: Wait for the web application
+        shell: bash
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent http://localhost:5173 >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Run central E2E flows
+        run: npm run test:e2e
+        working-directory: fillobby-frontend
+        env:
+          E2E_BASE_URL: http://localhost:5173
+          E2E_API_URL: http://127.0.0.1:3000
+
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose logs --no-color
+        working-directory: fillobby-backend
+
+      - name: Upload E2E diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-e2e-diagnostics
+          path: |
+            fillobby-frontend/playwright-report
+            fillobby-frontend/test-results
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Stop isolated E2E stack
+        if: always()
+        run: docker compose down --volumes --remove-orphans
+        working-directory: fillobby-backend

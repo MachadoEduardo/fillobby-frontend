@@ -288,7 +288,11 @@ function HistoryItem({ item }: { item: QueueItem }) {
   const coverUrl = resolveApiAssetUrl(item.game.coverUrl);
 
   return (
-    <Card className="bg-card/70 shadow-none">
+    <Card
+      role="article"
+      aria-label={`Partida concluída: ${item.game.title}`}
+      className="bg-card/70 shadow-none"
+    >
       <CardContent className="space-y-3 p-3">
         <div className="flex items-center gap-3">
           {coverUrl ? (

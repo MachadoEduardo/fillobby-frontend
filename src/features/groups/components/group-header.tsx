@@ -42,7 +42,10 @@ export function GroupHeader({ group }: { group: Group }) {
           {inviteCode && (
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <span className="text-xs text-brand-foreground/50">Convite</span>
-              <code className="mono-data rounded-lg border border-white/12 bg-white/8 px-3 py-1.5 text-sm font-semibold tracking-[0.16em] text-brand-foreground">
+              <code
+                aria-label="Código de convite"
+                className="mono-data rounded-lg border border-white/12 bg-white/8 px-3 py-1.5 text-sm font-semibold tracking-[0.16em] text-brand-foreground"
+              >
                 {inviteCode}
               </code>
               <Button

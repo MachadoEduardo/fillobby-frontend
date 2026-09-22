@@ -29,7 +29,11 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
   const canReady = isParticipant && (item.status === "WAITING_PLAYERS" || item.status === "READY");
 
   return (
-    <Card className="overflow-hidden border-brand/12 shadow-[0_14px_40px_-34px_#17313a] transition-colors hover:border-brand/25">
+    <Card
+      role="article"
+      aria-label={`Jogo na fila: ${item.game.title}`}
+      className="overflow-hidden border-brand/12 shadow-[0_14px_40px_-34px_#17313a] transition-colors hover:border-brand/25"
+    >
       <div className="border-b bg-muted/25 px-4 py-3 sm:px-5">
         <QueueProgress status={item.status} />
       </div>
