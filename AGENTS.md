@@ -1,7 +1,7 @@
 ## Language
 
 - Use Brazilian Portuguese as the default language for responses, progress updates, explanations, documentation and user-facing interface text.
-- Keep English only where it is required by source code, APIs, library conventions, technical identifiers or the semantic commit-message convention below.
+- Keep English only where required by source code, APIs, library conventions, technical identifiers or Conventional Commit types and scopes.
 
 ## Frontend visual guidelines
 
@@ -12,4 +12,4 @@
 ## Commit handoff
 
 - At the end of every significant change, include a suggested commit message in the final response.
-- Follow the Conventional Commits format (`type(scope): description`), use an imperative English description, and choose the narrowest scope that accurately represents the change.
+- Follow the Conventional Commits format (`type(scope): description`), use an imperative description in Brazilian Portuguese, and choose the narrowest scope that accurately represents the change. Keep only `type` and technical `scope` identifiers in English; for example, `fix(auth): corrija a validação do login`.
