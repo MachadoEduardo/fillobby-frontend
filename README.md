@@ -217,14 +217,11 @@ primeiro passo após a entrada.
 
 ## Contrato da API
 
-
 `contracts/openapi.yaml` é um snapshot do contrato oficial em
-`fillobby-backend/docs/openapi.yaml`; `contracts/source.json` registra o commit
-de origem (`null` enquanto a alteração coordenada do backend ainda não tem commit).
-Após publicar o backend, atualize o SHA em `source.json`, execute
-`npm run contract:generate` e depois
+`fillobby-backend/docs/openapi.yaml`. Após publicar uma alteração no contrato do
+backend, copie o YAML atualizado, execute `npm run contract:generate` e depois
 `npm run contract:check`, `npm run typecheck` e `npm test`. Versione o snapshot e
-`src/lib/generated/openapi.ts` juntos. O CI compara o snapshot com o backend
+`src/lib/generated/openapi.ts` juntos. A CI compara o snapshot com o backend
 `main` e impede divergências. `src/lib/api.ts` mantém a fachada usada pelas telas,
 mas suas rotas e respostas vêm do cliente tipado pelo contrato.
 
