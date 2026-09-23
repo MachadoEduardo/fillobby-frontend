@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { AuthFormField } from "@/features/auth/components/auth-form-field";
 import { AuthPageLayout } from "@/features/auth/components/auth-page-layout";
@@ -25,7 +25,12 @@ export function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   function clearFieldError(field: string) {
     setFieldErrors((currentErrors) => {
@@ -153,7 +158,7 @@ export function RegisterPage() {
         <Button
           type="submit"
           className="w-full bg-[#23B5D3] text-[#0F1C21] hover:bg-[#72D5E8]"
-          disabled={isSubmitting}
+          disabled={!isHydrated || isSubmitting}
         >
           {isSubmitting ? "Criando conta..." : "Criar conta"}
         </Button>

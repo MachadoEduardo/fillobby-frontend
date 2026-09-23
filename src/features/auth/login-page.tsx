@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
 import { AuthFormField } from "@/features/auth/components/auth-form-field";
 import { AuthPageLayout } from "@/features/auth/components/auth-page-layout";
@@ -13,6 +13,11 @@ export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,7 +73,7 @@ export function LoginPage() {
         <Button
           type="submit"
           className="w-full bg-[#23B5D3] text-[#0F1C21] hover:bg-[#72D5E8]"
-          disabled={isSubmitting}
+          disabled={!isHydrated || isSubmitting}
         >
           {isSubmitting ? "Entrando..." : "Entrar"}
         </Button>
