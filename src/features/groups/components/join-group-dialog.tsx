@@ -28,7 +28,7 @@ export function JoinGroupDialog() {
   const joinGroup = useMutation({
     mutationFn: () => api.groups.join({ inviteCode: code.trim() }),
     onSuccess: () => {
-      toast.success("Você entrou no grupo!");
+      toast.success("Grupo disponível na sua lista!");
       void queryClient.invalidateQueries({ queryKey: queryKeys.groups.all() });
       setOpen(false);
       resetForm();
@@ -145,10 +145,6 @@ function getJoinGroupErrorMessage(error: unknown) {
 
   if (error.status === 404 || error.status === 400) {
     return "Esse código não foi encontrado ou não está mais válido. Confira o convite e tente novamente.";
-  }
-
-  if (error.status === 409) {
-    return "Você já participa deste grupo. Atualize a lista para encontrá-lo.";
   }
 
   return "Não foi possível entrar no grupo agora. Aguarde um momento e tente novamente.";

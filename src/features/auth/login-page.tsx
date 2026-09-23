@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
-export function LoginPage() {
+export function LoginPage({ inviteCode }: { inviteCode?: string }) {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -26,7 +26,11 @@ export function LoginPage() {
     try {
       await login(email, password);
       toast.success("Bem-vindo de volta!");
-      navigate({ to: "/groups" });
+      if (inviteCode) {
+        navigate({ to: "/invite/$code", params: { code: inviteCode }, replace: true });
+      } else {
+        navigate({ to: "/groups" });
+      }
     } catch (error) {
       toast.error(error instanceof ApiError ? error.message : "Erro ao entrar.");
     } finally {
@@ -44,6 +48,7 @@ export function LoginPage() {
           Ainda não tem conta?{" "}
           <Link
             to="/register"
+            search={{ invite: inviteCode }}
             className="font-semibold text-[#23B5D3] transition-colors hover:text-[#72D5E8] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#23B5D3]"
           >
             Criar conta

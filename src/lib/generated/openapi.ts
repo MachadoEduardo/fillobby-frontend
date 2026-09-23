@@ -1509,6 +1509,15 @@ export interface operations {
             };
         };
         responses: {
+            /** @description Usuário já participava do grupo; retorna seus dados atuais sem criar outra associação. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GroupSuccess"];
+                };
+            };
             /** @description Usuário adicionado como `MEMBER`. O código de convite não é retornado. */
             201: {
                 headers: {
@@ -1530,15 +1539,6 @@ export interface operations {
             };
             /** @description `INVITE_NOT_FOUND`: convite inexistente ou grupo inativo. */
             404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description `ALREADY_GROUP_MEMBER`: usuário já participa do grupo. */
-            409: {
                 headers: {
                     [name: string]: unknown;
                 };

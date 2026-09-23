@@ -206,12 +206,23 @@ npm run lint
 | `npm run test:e2e:report` | Abre o último relatório E2E             |
 | `npm run format`          | Formata o projeto com Prettier          |
 
+## Convites por link
+
+O convite de grupo pode ser compartilhado como `/invite/:code`. A rota é pública,
+preserva o código durante cadastro e login e só associa a pessoa ao grupo após
+ela confirmar “Entrar no grupo”. O botão “Compartilhar link” no cabeçalho do
+grupo fica disponível para quem pode ver o código; se o navegador não oferecer
+compartilhamento nativo, o link é copiado. O estado vazio da fila orienta o
+primeiro passo após a entrada.
+
 ## Contrato da API
+
 
 `contracts/openapi.yaml` é um snapshot do contrato oficial em
 `fillobby-backend/docs/openapi.yaml`; `contracts/source.json` registra o commit
-de origem. Para sincronizar após a publicação do backend, copie o YAML atualizado,
-atualize o SHA em `source.json`, execute `npm run contract:generate` e depois
+de origem (`null` enquanto a alteração coordenada do backend ainda não tem commit).
+Após publicar o backend, atualize o SHA em `source.json`, execute
+`npm run contract:generate` e depois
 `npm run contract:check`, `npm run typecheck` e `npm test`. Versione o snapshot e
 `src/lib/generated/openapi.ts` juntos. O CI compara o snapshot com o backend
 `main` e impede divergências. `src/lib/api.ts` mantém a fachada usada pelas telas,

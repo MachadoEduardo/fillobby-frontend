@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Copy, LogOut } from "lucide-react";
+import { ArrowLeft, Copy, LogOut, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { api, ApiError } from "@/lib/api";
 import type { Group } from "@/lib/api-types";
@@ -10,6 +10,22 @@ import { RoleBadge } from "@/features/groups/components/role-badge";
 
 export function GroupHeader({ group }: { group: Group }) {
   const inviteCode = group.inviteCode;
+
+  async function shareInvite() {
+    if (!inviteCode) return;
+    const url = new URL(`/invite/${encodeURIComponent(inviteCode)}`, window.location.origin).href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `Convite para ${group.name}`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link do convite copiado!");
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      toast.error("Não foi possível compartilhar o convite.");
+    }
+  }
 
   return (
     <section className="relative overflow-hidden rounded-3xl bg-brand px-5 py-6 text-brand-foreground sm:px-7 sm:py-8">
@@ -52,12 +68,24 @@ export function GroupHeader({ group }: { group: Group }) {
                 variant="ghost"
                 size="sm"
                 className="text-brand-foreground/65 hover:bg-white/8 hover:text-brand-foreground"
-                onClick={() => {
-                  navigator.clipboard.writeText(inviteCode);
-                  toast.success("Código copiado!");
+                onClick={async () => {
+                  try {
+                    await navigator.clipboard.writeText(inviteCode);
+                    toast.success("Código copiado!");
+                  } catch {
+                    toast.error("Não foi possível copiar o código.");
+                  }
                 }}
               >
                 <Copy className="h-3 w-3" /> Copiar
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-brand-foreground/65 hover:bg-white/8 hover:text-brand-foreground"
+                onClick={shareInvite}
+              >
+                <Share2 className="h-3 w-3" /> Compartilhar link
               </Button>
             </div>
           )}

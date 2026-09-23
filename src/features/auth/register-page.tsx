@@ -18,7 +18,7 @@ function getFieldErrors(error: ApiError) {
   }, {});
 }
 
-export function RegisterPage() {
+export function RegisterPage({ inviteCode }: { inviteCode?: string }) {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -58,7 +58,7 @@ export function RegisterPage() {
     try {
       await api.auth.register({ name, email, password, confirmPassword });
       toast.success("Conta criada! Faça login para continuar.");
-      navigate({ to: "/login" });
+      navigate({ to: "/login", search: { invite: inviteCode } });
     } catch (error) {
       if (!(error instanceof ApiError)) {
         toast.error("Erro ao cadastrar.");
@@ -88,6 +88,7 @@ export function RegisterPage() {
           Já tem conta?{" "}
           <Link
             to="/login"
+            search={{ invite: inviteCode }}
             className="font-semibold text-[#23B5D3] transition-colors hover:text-[#72D5E8] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#23B5D3]"
           >
             Entrar
