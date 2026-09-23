@@ -198,11 +198,24 @@ npm run lint
 | `npm run preview`         | Executa a pré-visualização do build     |
 | `npm run lint`            | Executa o ESLint                        |
 | `npm run typecheck`       | Verifica os tipos TypeScript            |
+| `npm run contract:generate` | Gera tipos e enums do OpenAPI         |
+| `npm run contract:check`  | Confere os tipos versionados            |
 | `npm test`                | Executa a suíte com Vitest              |
 | `npm run test:e2e`        | Executa os fluxos E2E no Chromium       |
 | `npm run test:e2e:ui`     | Abre o runner interativo do Playwright  |
 | `npm run test:e2e:report` | Abre o último relatório E2E             |
 | `npm run format`          | Formata o projeto com Prettier          |
+
+## Contrato da API
+
+`contracts/openapi.yaml` é um snapshot do contrato oficial em
+`fillobby-backend/docs/openapi.yaml`; `contracts/source.json` registra o commit
+de origem. Para sincronizar após a publicação do backend, copie o YAML atualizado,
+atualize o SHA em `source.json`, execute `npm run contract:generate` e depois
+`npm run contract:check`, `npm run typecheck` e `npm test`. Versione o snapshot e
+`src/lib/generated/openapi.ts` juntos. O CI compara o snapshot com o backend
+`main` e impede divergências. `src/lib/api.ts` mantém a fachada usada pelas telas,
+mas suas rotas e respostas vêm do cliente tipado pelo contrato.
 
 ## Executando a solução completa localmente
 

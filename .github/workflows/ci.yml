@@ -22,6 +22,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      - run: npm run contract:check
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
@@ -31,6 +32,15 @@ jobs:
           docker build --target production
           --build-arg VITE_API_URL=http://localhost:3000
           --tag fillobby-frontend:ci .
+      - name: Checkout backend contract
+        uses: actions/checkout@v4
+        with:
+          repository: MachadoEduardo/fillobby-backend
+          ref: main
+          path: backend-contract
+      - name: Verify contract snapshot against backend main
+        shell: bash
+        run: cmp contracts/openapi.yaml backend-contract/docs/openapi.yaml
 
   e2e:
     runs-on: ubuntu-latest
