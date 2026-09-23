@@ -1,17 +1,6 @@
-import type {
-  ApiErrorPayload,
-  CreateGameResult,
-  Game,
-  Group,
-  Member,
-  PaginationMeta,
-  Platform,
-  PublicUser,
-  QueueItem,
-  QueueSort,
-  QueueStatus,
-  Vote,
-} from "./api-types";
+import createClient from "openapi-fetch";
+import type { paths } from "./generated/openapi";
+import type { ApiErrorPayload, Platform, PublicUser, QueueStatus } from "./api-types";
 
 const RAW_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:3000";
 export const API_BASE_URL = RAW_BASE.replace(/\/+$/, "");
@@ -156,125 +145,159 @@ async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   return (json?.data ?? json) as T;
 }
 
+const client = createClient<paths>({
+  baseUrl: API_BASE_URL,
+  fetch: (input) => fetch(input),
+});
+
+client.use({
+  onRequest({ request }) {
+    const token = getStoredToken();
+    if (token && !/\/api\/v1\/auth\/(login|register)$/.test(new URL(request.url).pathname)) {
+      request.headers.set("Authorization", `Bearer ${token}`);
+    }
+    return request;
+  },
+});
+
+async function unwrap<T extends { success: true; data: unknown }>(
+  result: Promise<{ data?: T; error?: unknown; response: Response }>,
+  auth = true,
+): Promise<T extends { success: true; data: infer D } ? D : never> {
+  let resolved: Awaited<typeof result>;
+  try {
+    resolved = await result;
+  } catch {
+    throw new ApiError(0, {
+      code: "NETWORK_ERROR",
+      message: "Não foi possível conectar. Verifique sua conexão.",
+      details: [],
+    });
+  }
+  if (resolved.response.ok && resolved.data) {
+    return resolved.data.data as T extends { success: true; data: infer D } ? D : never;
+  }
+  const envelope = resolved.error as { error?: ApiErrorPayload } | undefined;
+  const payload = envelope?.error ?? {
+    code: "UNKNOWN_ERROR",
+    message: `Erro ${resolved.response.status}.`,
+    details: [],
+  };
+  if (
+    auth &&
+    resolved.response.status === 401 &&
+    (payload.code === "AUTH_TOKEN_REQUIRED" || payload.code === "AUTH_TOKEN_INVALID")
+  ) {
+    setStoredToken(null);
+    setStoredUser(null);
+    unauthorizedListeners.forEach((cb) => cb());
+  }
+  throw new ApiError(resolved.response.status, payload);
+}
+
 // ============ AUTH ============
 export const api = {
   auth: {
-    register: (input: { name: string; email: string; password: string; confirmPassword: string }) =>
-      request<PublicUser>("/api/v1/auth/register", {
-        method: "POST",
-        body: input,
-        auth: false,
-      }),
-    login: (input: { email: string; password: string }) =>
-      request<{ token: string; user: PublicUser }>("/api/v1/auth/login", {
-        method: "POST",
-        body: input,
-        auth: false,
-      }),
-    me: () => request<{ user: PublicUser }>("/api/v1/auth/me"),
+    register: (
+      input: paths["/api/v1/auth/register"]["post"]["requestBody"]["content"]["application/json"],
+    ) => unwrap(client.POST("/api/v1/auth/register", { body: input }), false),
+    login: (
+      input: paths["/api/v1/auth/login"]["post"]["requestBody"]["content"]["application/json"],
+    ) => unwrap(client.POST("/api/v1/auth/login", { body: input }), false),
+    me: () => unwrap(client.GET("/api/v1/auth/me")),
   },
 
   // ============ PROFILE ============
   profile: {
-    update: (input: { name: string }) =>
-      request<PublicUser>("/api/v1/profile", { method: "PATCH", body: input }),
+    update: (input: { name: string }) => unwrap(client.PATCH("/api/v1/profile", { body: input })),
     changePassword: (input: {
       currentPassword: string;
       newPassword: string;
       confirmPassword: string;
-    }) =>
-      request<PublicUser>("/api/v1/profile/password", {
-        method: "PATCH",
-        body: input,
-      }),
+    }) => unwrap(client.PATCH("/api/v1/profile/password", { body: input })),
     updatePreferences: (preferredPlatforms: Platform[]) =>
-      request<PublicUser>("/api/v1/profile/preferences", {
-        method: "PATCH",
-        body: { preferredPlatforms },
-      }),
+      unwrap(client.PATCH("/api/v1/profile/preferences", { body: { preferredPlatforms } })),
     uploadAvatar: (file: File) =>
       request<PublicUser>("/api/v1/profile/avatar", {
         method: "PUT",
         rawBody: file,
         contentType: file.type,
       }),
-    removeAvatar: () => request<PublicUser>("/api/v1/profile/avatar", { method: "DELETE" }),
+    removeAvatar: () => unwrap(client.DELETE("/api/v1/profile/avatar")),
   },
 
   // ============ GROUPS ============
   groups: {
     list: (query?: { page?: number; limit?: number }) =>
-      request<{ groups: Group[]; meta: PaginationMeta }>("/api/v1/groups", {
-        query,
-      }),
+      unwrap(client.GET("/api/v1/groups", { params: { query } })),
     create: (input: { name: string; description?: string | null }) =>
-      request<Group>("/api/v1/groups", { method: "POST", body: input }),
+      unwrap(client.POST("/api/v1/groups", { body: input })),
     join: (input: { inviteCode: string }) =>
-      request<Group>("/api/v1/groups/join", { method: "POST", body: input }),
-    get: (groupId: string) => request<Group>(`/api/v1/groups/${groupId}`),
+      unwrap(client.POST("/api/v1/groups/join", { body: input })),
+    get: (groupId: string) =>
+      unwrap(client.GET("/api/v1/groups/{groupId}", { params: { path: { groupId } } })),
     update: (groupId: string, input: { name?: string; description?: string | null }) =>
-      request<Group>(`/api/v1/groups/${groupId}`, {
-        method: "PATCH",
-        body: input,
-      }),
+      unwrap(
+        client.PATCH("/api/v1/groups/{groupId}", { params: { path: { groupId } }, body: input }),
+      ),
     deactivate: (groupId: string) =>
-      request<{ id: string; isActive: false }>(`/api/v1/groups/${groupId}`, {
-        method: "DELETE",
-      }),
+      unwrap(client.DELETE("/api/v1/groups/{groupId}", { params: { path: { groupId } } })),
     listMembers: (
       groupId: string,
       query?: { page?: number; limit?: number; status?: "ACTIVE" | "REMOVED" },
     ) =>
-      request<{ members: Member[]; meta: PaginationMeta }>(`/api/v1/groups/${groupId}/members`, {
-        query,
-      }),
+      unwrap(
+        client.GET("/api/v1/groups/{groupId}/members", { params: { path: { groupId }, query } }),
+      ),
     changeRole: (groupId: string, userId: string, role: "ADMIN" | "MEMBER") =>
-      request<Member>(`/api/v1/groups/${groupId}/members/${userId}/role`, {
-        method: "PATCH",
-        body: { role },
-      }),
+      unwrap(
+        client.PATCH("/api/v1/groups/{groupId}/members/{userId}/role", {
+          params: { path: { groupId, userId } },
+          body: { role },
+        }),
+      ),
     removeMember: (groupId: string, userId: string) =>
-      request<{ userId: string; status: "REMOVED" }>(
-        `/api/v1/groups/${groupId}/members/${userId}`,
-        { method: "DELETE" },
+      unwrap(
+        client.DELETE("/api/v1/groups/{groupId}/members/{userId}", {
+          params: { path: { groupId, userId } },
+        }),
       ),
     leave: (groupId: string) =>
-      request<{ userId: string; status: "INACTIVE" }>(`/api/v1/groups/${groupId}/leave`, {
-        method: "POST",
-      }),
+      unwrap(client.POST("/api/v1/groups/{groupId}/leave", { params: { path: { groupId } } })),
     restoreMember: (groupId: string, userId: string) =>
-      request<Member>(`/api/v1/groups/${groupId}/members/${userId}/restore`, {
-        method: "POST",
-      }),
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/members/{userId}/restore", {
+          params: { path: { groupId, userId } },
+        }),
+      ),
     transferOwner: (groupId: string, newOwnerId: string) =>
-      request<Group>(`/api/v1/groups/${groupId}/transfer-owner`, {
-        method: "POST",
-        body: { newOwnerId },
-      }),
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/transfer-owner", {
+          params: { path: { groupId } },
+          body: { newOwnerId },
+        }),
+      ),
     regenerateInvite: (groupId: string) =>
-      request<Group>(`/api/v1/groups/${groupId}/regenerate-invite`, {
-        method: "POST",
-      }),
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/regenerate-invite", {
+          params: { path: { groupId } },
+        }),
+      ),
   },
 
   // ============ GAMES ============
   games: {
     list: (query?: { search?: string; platform?: Platform; page?: number; limit?: number }) =>
-      request<{ games: Game[]; meta: PaginationMeta }>("/api/v1/games", {
-        query,
-      }),
+      unwrap(client.GET("/api/v1/games", { params: { query } })),
     create: (input: {
       title: string;
       platforms: Platform[];
       maxPlayers?: number | null;
       coverUrl?: string | null;
       description?: string | null;
-    }) =>
-      request<CreateGameResult>("/api/v1/games", {
-        method: "POST",
-        body: input,
-      }),
-    get: (gameId: string) => request<Game>(`/api/v1/games/${gameId}`),
+    }) => unwrap(client.POST("/api/v1/games", { body: input })),
+    get: (gameId: string) =>
+      unwrap(client.GET("/api/v1/games/{gameId}", { params: { path: { gameId } } })),
     update: (
       gameId: string,
       input: Partial<{
@@ -285,14 +308,14 @@ export const api = {
         description: string | null;
       }>,
     ) =>
-      request<Game>(`/api/v1/games/${gameId}`, {
-        method: "PATCH",
-        body: input,
-      }),
+      unwrap(
+        client.PATCH("/api/v1/games/{gameId}", {
+          params: { path: { gameId } },
+          body: input,
+        }),
+      ),
     deactivate: (gameId: string) =>
-      request<{ id: string; isActive: false }>(`/api/v1/games/${gameId}`, {
-        method: "DELETE",
-      }),
+      unwrap(client.DELETE("/api/v1/games/{gameId}", { params: { path: { gameId } } })),
   },
 
   // ============ QUEUE ============
@@ -300,65 +323,85 @@ export const api = {
     list: (
       groupId: string,
       query?: {
-        status?: string;
+        status?: QueueStatus;
         search?: string;
         platform?: Platform;
         page?: number;
         limit?: number;
-        sort?: QueueSort;
+        sort?: import("./api-types").QueueSort;
       },
     ) =>
-      request<{ queueItems: QueueItem[]; meta: PaginationMeta }>(
-        `/api/v1/groups/${groupId}/queue`,
-        { query },
+      unwrap(
+        client.GET("/api/v1/groups/{groupId}/queue", {
+          params: { path: { groupId }, query },
+        }),
       ),
     create: (groupId: string, gameId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue`, {
-        method: "POST",
-        body: { gameId },
-      }),
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/queue", {
+          params: { path: { groupId } },
+          body: { gameId },
+        }),
+      ),
     get: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}`),
+      unwrap(
+        client.GET("/api/v1/groups/{groupId}/queue/{itemId}", {
+          params: { path: { groupId, itemId } },
+        }),
+      ),
     cancel: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}`, {
-        method: "DELETE",
-      }),
+      unwrap(
+        client.DELETE("/api/v1/groups/{groupId}/queue/{itemId}", {
+          params: { path: { groupId, itemId } },
+        }),
+      ),
     transition: (groupId: string, itemId: string, status: "VOTING" | "PLAYING" | "COMPLETED") =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/status`, {
-        method: "PATCH",
-        body: { status },
-      }),
+      unwrap(
+        client.PATCH("/api/v1/groups/{groupId}/queue/{itemId}/status", {
+          params: { path: { groupId, itemId } },
+          body: { status },
+        }),
+      ),
     setParticipants: (groupId: string, itemId: string, participantIds: string[]) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/participants`, {
-        method: "PUT",
-        body: { participantIds },
-      }),
+      unwrap(
+        client.PUT("/api/v1/groups/{groupId}/queue/{itemId}/participants", {
+          params: { path: { groupId, itemId } },
+          body: { participantIds },
+        }),
+      ),
     markReady: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, {
-        method: "POST",
-      }),
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/queue/{itemId}/ready", {
+          params: { path: { groupId, itemId } },
+        }),
+      ),
     unmarkReady: (groupId: string, itemId: string) =>
-      request<QueueItem>(`/api/v1/groups/${groupId}/queue/${itemId}/ready`, {
-        method: "DELETE",
-      }),
+      unwrap(
+        client.DELETE("/api/v1/groups/{groupId}/queue/{itemId}/ready", {
+          params: { path: { groupId, itemId } },
+        }),
+      ),
   },
 
   // ============ VOTES ============
   votes: {
     create: (groupId: string, itemId: string) =>
-      request<{ vote: Vote; voteCount: number }>(
-        `/api/v1/groups/${groupId}/queue/${itemId}/votes`,
-        { method: "POST" },
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/queue/{itemId}/votes", {
+          params: { path: { groupId, itemId } },
+        }),
       ),
     removeOwn: (groupId: string, itemId: string) =>
-      request<{ queueItemId: string; voteCount: number }>(
-        `/api/v1/groups/${groupId}/queue/${itemId}/votes/me`,
-        { method: "DELETE" },
+      unwrap(
+        client.DELETE("/api/v1/groups/{groupId}/queue/{itemId}/votes/me", {
+          params: { path: { groupId, itemId } },
+        }),
       ),
     list: (groupId: string, itemId: string, query?: { page?: number; limit?: number }) =>
-      request<{ votes: Vote[]; meta: PaginationMeta }>(
-        `/api/v1/groups/${groupId}/queue/${itemId}/votes`,
-        { query },
+      unwrap(
+        client.GET("/api/v1/groups/{groupId}/queue/{itemId}/votes", {
+          params: { path: { groupId, itemId }, query },
+        }),
       ),
   },
 
@@ -375,9 +418,10 @@ export const api = {
         limit?: number;
       },
     ) =>
-      request<{ historyItems: QueueItem[]; meta: PaginationMeta }>(
-        `/api/v1/groups/${groupId}/history`,
-        { query },
+      unwrap(
+        client.GET("/api/v1/groups/{groupId}/history", {
+          params: { path: { groupId }, query },
+        }),
       ),
   },
 };

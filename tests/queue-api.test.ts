@@ -23,10 +23,9 @@ describe("queue API", () => {
     await expect(api.queue.list("group-1", { limit: 50, sort: "votes_desc" })).resolves.toEqual(
       response,
     );
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/groups/group-1/queue?limit=50&sort=votes_desc"),
-      expect.objectContaining({ method: "GET" }),
-    );
+    const sent = fetchMock.mock.calls[0][0] as Request;
+    expect(sent.url).toContain("/api/v1/groups/group-1/queue?limit=50&sort=votes_desc");
+    expect(sent.method).toBe("GET");
   });
 
   it("creates a queue item for a game", async () => {
@@ -40,13 +39,10 @@ describe("queue API", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await expect(api.queue.create("group-1", "game-1")).resolves.toEqual(item);
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/groups/group-1/queue"),
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ gameId: "game-1" }),
-      }),
-    );
+    const sent = fetchMock.mock.calls[0][0] as Request;
+    expect(sent.url).toContain("/api/v1/groups/group-1/queue");
+    expect(sent.method).toBe("POST");
+    expect(await sent.clone().json()).toEqual({ gameId: "game-1" });
   });
 
   it("transitions a queue item to playing", async () => {
@@ -60,12 +56,9 @@ describe("queue API", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     await expect(api.queue.transition("group-1", "queue-1", "PLAYING")).resolves.toEqual(item);
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/groups/group-1/queue/queue-1/status"),
-      expect.objectContaining({
-        method: "PATCH",
-        body: JSON.stringify({ status: "PLAYING" }),
-      }),
-    );
+    const sent = fetchMock.mock.calls[0][0] as Request;
+    expect(sent.url).toContain("/api/v1/groups/group-1/queue/queue-1/status");
+    expect(sent.method).toBe("PATCH");
+    expect(await sent.clone().json()).toEqual({ status: "PLAYING" });
   });
 });

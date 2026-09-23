@@ -86,13 +86,10 @@ describe("API client", () => {
       user,
     });
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/auth/login"),
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({ email: user.email, password: "Password123" }),
-      }),
-    );
+    const sent = fetchMock.mock.calls[0][0] as Request;
+    expect(sent.url).toContain("/api/v1/auth/login");
+    expect(sent.method).toBe("POST");
+    expect(await sent.clone().json()).toEqual({ email: user.email, password: "Password123" });
   });
 
   it("sends the password confirmation when registering", async () => {
@@ -111,17 +108,41 @@ describe("API client", () => {
       confirmPassword: "Password123",
     });
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.stringContaining("/api/v1/auth/register"),
-      expect.objectContaining({
-        method: "POST",
-        body: JSON.stringify({
-          name: user.name,
-          email: user.email,
-          password: "Password123",
-          confirmPassword: "Password123",
-        }),
+    const sent = fetchMock.mock.calls[0][0] as Request;
+    expect(sent.url).toContain("/api/v1/auth/register");
+    expect(sent.method).toBe("POST");
+    expect(await sent.clone().json()).toEqual({
+      name: user.name,
+      email: user.email,
+      password: "Password123",
+      confirmPassword: "Password123",
+    });
+  });
+
+  it("maps network failures to the existing API error", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("offline")));
+    await expect(api.auth.me()).rejects.toMatchObject({ code: "NETWORK_ERROR", status: 0 });
+  });
+
+  it("uploads avatar bytes with the original media type and authorization", async () => {
+    setStoredToken("token-123");
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ data: user }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
       }),
     );
+    vi.stubGlobal("fetch", fetchMock);
+    const file = new File(["image-bytes"], "avatar.png", { type: "image/png" });
+
+    await expect(api.profile.uploadAvatar(file)).resolves.toEqual(user);
+    const [url, options] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/api/v1/profile/avatar");
+    expect(options.method).toBe("PUT");
+    expect(options.body).toBe(file);
+    expect(options.headers).toMatchObject({
+      "Content-Type": "image/png",
+      Authorization: "Bearer token-123",
+    });
   });
 });
