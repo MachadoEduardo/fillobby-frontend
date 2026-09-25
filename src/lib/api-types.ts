@@ -19,6 +19,7 @@ export type CreateGameResult = Schemas["CreateGameSuccess"]["data"];
 export type QueueGame = Schemas["QueueGame"];
 export type QueueItem = Schemas["QueueItem"];
 export type Vote = Schemas["Vote"];
+export type VotingRound = Schemas["VotingRound"];
 export type PaginationMeta = Schemas["PaginationMeta"];
 export type ErrorDetail = Schemas["ErrorDetail"];
 export type ApiErrorPayload = Schemas["Error"];

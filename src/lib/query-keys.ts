@@ -8,6 +8,9 @@ export const queryKeys = {
   queue: {
     list: (groupId: string) => ["queue", groupId] as const,
   },
+  votingRounds: {
+    list: (groupId: string) => ["voting-rounds", groupId] as const,
+  },
   members: {
     list: (groupId: string) => ["members", groupId] as const,
     removed: (groupId: string) => ["members", groupId, "removed"] as const,

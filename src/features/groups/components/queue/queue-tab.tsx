@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getGroupLoadErrorMessage } from "@/features/groups/group-errors";
 import { QueueItemCard } from "@/features/groups/components/queue/queue-item-card";
 import { SuggestGameDialog } from "@/features/groups/components/queue/suggest-game-dialog";
+import { VotingRoundsPanel } from "@/features/groups/components/queue/voting-rounds-panel";
 import { api } from "@/lib/api";
 import type { Group } from "@/lib/api-types";
 import { GROUP_LIVE_REFRESH_MS } from "@/lib/query-config";
@@ -30,6 +31,18 @@ export function QueueTab({ group }: { group: Group }) {
         </div>
         <SuggestGameDialog groupId={group.id} />
       </div>
+
+      <VotingRoundsPanel
+        group={group}
+        hasSuggestions={Boolean(
+          queueQuery.data?.queueItems.some((item) => item.status === "SUGGESTED"),
+        )}
+        hasLegacyVoting={Boolean(
+          queueQuery.data?.queueItems.some(
+            (item) => item.status === "VOTING" && !item.votingRoundId,
+          ),
+        )}
+      />
 
       {queueQuery.isLoading && <QueueSkeleton />}
       {queueQuery.error && !queueQuery.data && (

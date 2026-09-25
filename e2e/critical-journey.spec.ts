@@ -66,7 +66,13 @@ test("conclui o fluxo central de uma partida entre dois membros", async ({ brows
     });
 
     await test.step("votar e selecionar os dois participantes", async () => {
-      await queueItem(ownerPage, gameName).getByRole("button", { name: "Iniciar votação" }).click();
+      await ownerPage.getByRole("button", { name: "Iniciar votação", exact: true }).click();
+      const startDialog = ownerPage.getByRole("dialog", { name: "Escolher jogos da votação" });
+      await startDialog.getByText(gameName, { exact: true }).click();
+      await startDialog.getByRole("button", { name: "Iniciar com 1 jogo" }).click();
+      await expect(
+        queueItem(ownerPage, gameName).getByRole("button", { name: "Selecionar participantes" }),
+      ).toHaveCount(0);
 
       await memberPage.goto(groupUrl);
       const memberItem = queueItem(memberPage, gameName);
@@ -74,6 +80,11 @@ test("conclui o fluxo central de uma partida entre dois membros", async ({ brows
       await expect(memberItem.getByRole("button", { name: "Remover voto" })).toBeVisible();
 
       await ownerPage.reload();
+      await ownerPage.getByRole("button", { name: "Encerrar votação" }).click();
+      await ownerPage
+        .getByRole("dialog", { name: "Encerrar votação?" })
+        .getByRole("button", { name: "Confirmar resultado" })
+        .click();
       await queueItem(ownerPage, gameName)
         .getByRole("button", { name: "Selecionar participantes" })
         .click();

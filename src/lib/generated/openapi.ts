@@ -457,6 +457,69 @@ export interface paths {
         patch: operations["updateGame"];
         trace?: never;
     };
+    "/api/v1/groups/{groupId}/voting-rounds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+            };
+            cookie?: never;
+        };
+        /** Consultar rodadas de votação do grupo */
+        get: operations["listVotingRounds"];
+        put?: never;
+        /** Abrir rodada com sugestões selecionadas */
+        post: operations["startVotingRound"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}/voting-rounds/{roundId}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                roundId: components["schemas"]["ObjectId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Encerrar rodada e registrar vencedor
+         * @description O maior placar vence; empate exige escolher um dos líderes. Sem votos, cancele a rodada.
+         */
+        post: operations["closeVotingRound"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}/voting-rounds/{roundId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                roundId: components["schemas"]["ObjectId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancelar rodada e devolver jogos às sugestões */
+        post: operations["cancelVotingRound"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/groups/{groupId}/queue": {
         parameters: {
             query?: never;
@@ -797,6 +860,31 @@ export interface components {
             /** Format: uri */
             coverUrl: string | null;
         };
+        VotingRoundCandidate: {
+            itemId: components["schemas"]["ObjectId"];
+            gameTitle: string;
+            voteCount: number;
+        };
+        VotingRound: {
+            id: components["schemas"]["ObjectId"];
+            groupId: components["schemas"]["ObjectId"];
+            /** @enum {string} */
+            status: "OPEN" | "CLOSED" | "CANCELLED";
+            candidates: components["schemas"]["VotingRoundCandidate"][];
+            startedBy: components["schemas"]["UserSummary"];
+            /** Format: date-time */
+            startedAt: string;
+            closedBy: components["schemas"]["UserSummary"] | null;
+            /** Format: date-time */
+            closedAt: string | null;
+            winnerItemId: string | null;
+        };
+        StartVotingRoundInput: {
+            candidateIds: components["schemas"]["ObjectId"][];
+        };
+        CloseVotingRoundInput: {
+            winnerItemId?: components["schemas"]["ObjectId"];
+        };
         QueueItem: {
             id: components["schemas"]["ObjectId"];
             groupId: components["schemas"]["ObjectId"];
@@ -804,6 +892,7 @@ export interface components {
             suggestedBy: components["schemas"]["UserSummary"];
             status: components["schemas"]["QueueStatus"];
             voteCount: number;
+            votingRoundId: string | null;
             /** @description Indica se o usuário autenticado já votou neste item. */
             viewerHasVoted: boolean;
             participantIds: components["schemas"]["ObjectId"][];
@@ -1015,6 +1104,19 @@ export interface components {
             success: true;
             data: {
                 games: components["schemas"]["Game"][];
+                meta: components["schemas"]["PaginationMeta"];
+            };
+        };
+        VotingRoundSuccess: {
+            /** @constant */
+            success: true;
+            data: components["schemas"]["VotingRound"];
+        };
+        VotingRoundListSuccess: {
+            /** @constant */
+            success: true;
+            data: {
+                rounds: components["schemas"]["VotingRound"][];
                 meta: components["schemas"]["PaginationMeta"];
             };
         };
@@ -2079,6 +2181,149 @@ export interface operations {
             422: components["responses"]["ValidationError"];
         };
     };
+    listVotingRounds: {
+        parameters: {
+            query?: {
+                page?: components["parameters"]["Page"];
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rodadas recentes, incluindo a rodada ativa. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VotingRoundListSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["GroupNotFound"];
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    startVotingRound: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StartVotingRoundInput"];
+            };
+        };
+        responses: {
+            /** @description Rodada aberta. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VotingRoundSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["InsufficientGroupRole"];
+            404: components["responses"]["GroupNotFound"];
+            /** @description Rodada já aberta, votação antiga pendente ou sugestão indisponível. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    closeVotingRound: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                roundId: components["schemas"]["ObjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CloseVotingRoundInput"];
+            };
+        };
+        responses: {
+            /** @description Resultado registrado. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VotingRoundSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["InsufficientGroupRole"];
+            404: components["responses"]["GroupNotFound"];
+            /** @description Rodada não aberta ou sem votos. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    cancelVotingRound: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                roundId: components["schemas"]["ObjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rodada cancelada. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VotingRoundSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["InsufficientGroupRole"];
+            404: components["responses"]["GroupNotFound"];
+            /** @description Rodada não está aberta. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            422: components["responses"]["ValidationError"];
+        };
+    };
     listQueueItems: {
         parameters: {
             query?: {
@@ -2633,5 +2878,6 @@ export const memberStatusValues: ReadonlyArray<FlattenedDeepRequired<components>
 export const queueStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["QueueStatus"]> = ["SUGGESTED", "VOTING", "WAITING_PLAYERS", "READY", "PLAYING", "COMPLETED", "CANCELLED"];
 export const activeQueueStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ActiveQueueStatus"]> = ["SUGGESTED", "VOTING", "WAITING_PLAYERS", "READY", "PLAYING"];
 export const queueSortValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["QueueSort"]> = ["votes_desc", "created_asc", "updated_desc"];
+export const votingRoundStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["VotingRound"]["status"]> = ["OPEN", "CLOSED", "CANCELLED"];
 export const changeRoleInputRoleValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["ChangeRoleInput"]["role"]> = ["ADMIN", "MEMBER"];
 export const transitionQueueInputStatusValues: ReadonlyArray<FlattenedDeepRequired<components>["schemas"]["TransitionQueueInput"]["status"]> = ["VOTING", "PLAYING", "COMPLETED"];

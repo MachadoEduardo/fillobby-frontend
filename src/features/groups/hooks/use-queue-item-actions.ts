@@ -22,6 +22,9 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
     void queryClient.invalidateQueries({
       queryKey: queryKeys.votes.list(groupId, item.id),
     });
+    void queryClient.invalidateQueries({
+      queryKey: queryKeys.votingRounds.list(groupId),
+    });
   }
 
   const vote = useMutation({

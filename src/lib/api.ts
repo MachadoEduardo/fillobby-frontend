@@ -383,6 +383,36 @@ export const api = {
       ),
   },
 
+  // ============ VOTING ROUNDS ============
+  votingRounds: {
+    list: (groupId: string, page = 1) =>
+      unwrap(
+        client.GET("/api/v1/groups/{groupId}/voting-rounds", {
+          params: { path: { groupId }, query: { page, limit: 5 } },
+        }),
+      ),
+    start: (groupId: string, candidateIds: string[]) =>
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/voting-rounds", {
+          params: { path: { groupId } },
+          body: { candidateIds },
+        }),
+      ),
+    close: (groupId: string, roundId: string, winnerItemId?: string) =>
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/voting-rounds/{roundId}/close", {
+          params: { path: { groupId, roundId } },
+          body: winnerItemId ? { winnerItemId } : {},
+        }),
+      ),
+    cancel: (groupId: string, roundId: string) =>
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/voting-rounds/{roundId}/cancel", {
+          params: { path: { groupId, roundId } },
+        }),
+      ),
+  },
+
   // ============ VOTES ============
   votes: {
     create: (groupId: string, itemId: string) =>

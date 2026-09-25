@@ -25,7 +25,8 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
   const isReady = user ? item.readyUserIds.includes(user.id) : false;
   const canVote = item.status === "VOTING";
   const canSelectParticipants =
-    isAdmin && (item.status === "VOTING" || item.status === "WAITING_PLAYERS");
+    isAdmin &&
+    (item.status === "WAITING_PLAYERS" || (item.status === "VOTING" && !item.votingRoundId));
   const canReady = isParticipant && (item.status === "WAITING_PLAYERS" || item.status === "READY");
 
   return (
@@ -84,7 +85,11 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
 
             <div className="mt-4 flex items-start gap-2 border-l-2 border-signal/55 pl-3 text-sm text-muted-foreground">
               <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
-              <span>{QUEUE_STATUS_MESSAGE[item.status]}</span>
+              <span>
+                {item.status === "WAITING_PLAYERS" && item.participants.length === 0
+                  ? "A votação terminou. Selecione os participantes para organizar a partida."
+                  : QUEUE_STATUS_MESSAGE[item.status]}
+              </span>
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">

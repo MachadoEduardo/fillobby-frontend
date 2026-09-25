@@ -76,15 +76,6 @@ export function QueueItemActions({
         </Button>
       )}
 
-      {isAdmin && item.status === "SUGGESTED" && (
-        <Button
-          size="sm"
-          disabled={actions.transition.isPending}
-          onClick={() => actions.transition.mutate("VOTING")}
-        >
-          <ThumbsUp className="mr-1 h-3 w-3" /> Iniciar votação
-        </Button>
-      )}
       {isAdmin && item.status === "READY" && (
         <Button
           size="sm"
@@ -104,24 +95,27 @@ export function QueueItemActions({
           <Check className="mr-1 h-3 w-3" /> Concluir partida
         </Button>
       )}
-      {isAdmin && item.status !== "COMPLETED" && item.status !== "CANCELLED" && (
-        <div className="sm:ml-auto">
-          <ConfirmGroupActionDialog
-            trigger={
-              <Button size="sm" variant="ghost">
-                <Trash2 /> Cancelar
-              </Button>
-            }
-            title={`Cancelar ${item.game.title}?`}
-            description="O jogo sairá da decisão em andamento e não poderá receber novos votos ou participantes."
-            confirmLabel="Cancelar sugestão"
-            pendingLabel="Cancelando sugestão..."
-            pending={actions.cancel.isPending}
-            confirmVariant="destructive"
-            onConfirm={() => actions.cancel.mutateAsync()}
-          />
-        </div>
-      )}
+      {isAdmin &&
+        item.status !== "COMPLETED" &&
+        item.status !== "CANCELLED" &&
+        !(item.status === "VOTING" && item.votingRoundId) && (
+          <div className="sm:ml-auto">
+            <ConfirmGroupActionDialog
+              trigger={
+                <Button size="sm" variant="ghost">
+                  <Trash2 /> Cancelar
+                </Button>
+              }
+              title={`Cancelar ${item.game.title}?`}
+              description="O jogo sairá da decisão em andamento e não poderá receber novos votos ou participantes."
+              confirmLabel="Cancelar sugestão"
+              pendingLabel="Cancelando sugestão..."
+              pending={actions.cancel.isPending}
+              confirmVariant="destructive"
+              onConfirm={() => actions.cancel.mutateAsync()}
+            />
+          </div>
+        )}
     </div>
   );
 }
