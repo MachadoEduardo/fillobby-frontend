@@ -32,7 +32,8 @@ type ParticipantsDialogProps = {
 };
 
 export function ParticipantsDialog({ group, item, open, onOpenChange }: ParticipantsDialogProps) {
-  const [selected, setSelected] = useState<string[]>(item.participantIds);
+  const [initialIds] = useState<string[]>(item.participantIds);
+  const [selected, setSelected] = useState<string[]>(initialIds);
   const [operationError, setOperationError] = useState("");
   const queryClient = useQueryClient();
   const membersQuery = useQuery({
@@ -43,7 +44,15 @@ export function ParticipantsDialog({ group, item, open, onOpenChange }: Particip
     enabled: open,
   });
   const updateParticipants = useMutation({
-    mutationFn: () => api.queue.setParticipants(group.id, item.id, selected),
+    mutationFn: () =>
+      item.status === "VOTING"
+        ? api.queue.setParticipants(group.id, item.id, selected)
+        : api.queue.adjustParticipants(
+            group.id,
+            item.id,
+            selected.filter((id) => !initialIds.includes(id)),
+            initialIds.filter((id) => !selected.includes(id)),
+          ),
     onSuccess: () => {
       toast.success("Participantes atualizados.");
       void queryClient.invalidateQueries({
@@ -160,7 +169,9 @@ export function ParticipantsDialog({ group, item, open, onOpenChange }: Particip
             </Button>
           </DialogClose>
           <Button
-            disabled={updateParticipants.isPending || selected.length === 0}
+            disabled={
+              updateParticipants.isPending || (item.status === "VOTING" && selected.length === 0)
+            }
             onClick={() => updateParticipants.mutate()}
           >
             {updateParticipants.isPending && <LoaderCircle className="animate-spin" aria-hidden />}

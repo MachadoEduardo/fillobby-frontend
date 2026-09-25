@@ -69,6 +69,24 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
     onError: (error) => toast.error(getQueueActionError(error)),
   });
 
+  const setSelfEnrollment = useMutation({
+    mutationFn: (enabled: boolean) => api.queue.setSelfEnrollment(groupId, item.id, enabled),
+    onSuccess: invalidateRelatedQueries,
+    onError: (error) => toast.error(getQueueActionError(error)),
+  });
+
+  const joinParticipants = useMutation({
+    mutationFn: () => api.queue.joinParticipants(groupId, item.id),
+    onSuccess: invalidateRelatedQueries,
+    onError: (error) => toast.error(getQueueActionError(error)),
+  });
+
+  const leaveParticipants = useMutation({
+    mutationFn: () => api.queue.leaveParticipants(groupId, item.id),
+    onSuccess: invalidateRelatedQueries,
+    onError: (error) => toast.error(getQueueActionError(error)),
+  });
+
   const transition = useMutation({
     mutationFn: (status: QueueTransition) => api.queue.transition(groupId, item.id, status),
     onSuccess: invalidateRelatedQueries,
@@ -90,6 +108,9 @@ export function useQueueItemActions(groupId: string, item: QueueItem) {
     removeVote,
     markReady,
     unmarkReady,
+    setSelfEnrollment,
+    joinParticipants,
+    leaveParticipants,
     transition,
     cancel,
   };

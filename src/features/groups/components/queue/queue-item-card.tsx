@@ -26,7 +26,9 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
   const canVote = item.status === "VOTING";
   const canSelectParticipants =
     isAdmin &&
-    (item.status === "WAITING_PLAYERS" || (item.status === "VOTING" && !item.votingRoundId));
+    (item.status === "WAITING_PLAYERS" ||
+      item.status === "READY" ||
+      (item.status === "VOTING" && !item.votingRoundId));
   const canReady = isParticipant && (item.status === "WAITING_PLAYERS" || item.status === "READY");
 
   return (
@@ -78,16 +80,24 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
               ))}
               {item.game.maxPlayers && (
                 <Badge variant="outline" className="text-xs">
-                  até {item.game.maxPlayers} jogadores
+                  {item.participants.length}/{item.game.maxPlayers} jogadores
                 </Badge>
               )}
+              {item.selfEnrollmentEnabled &&
+                (item.status === "WAITING_PLAYERS" || item.status === "READY") && (
+                  <Badge variant="secondary" className="text-xs">
+                    Inscrições abertas
+                  </Badge>
+                )}
             </div>
 
             <div className="mt-4 flex items-start gap-2 border-l-2 border-signal/55 pl-3 text-sm text-muted-foreground">
               <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-signal" />
               <span>
                 {item.status === "WAITING_PLAYERS" && item.participants.length === 0
-                  ? "A votação terminou. Selecione os participantes para organizar a partida."
+                  ? item.selfEnrollmentEnabled
+                    ? "Inscrições abertas. Entre para participar e depois confirme sua prontidão."
+                    : "A votação terminou. Selecione os participantes para organizar a partida."
                   : QUEUE_STATUS_MESSAGE[item.status]}
               </span>
             </div>
@@ -129,6 +139,7 @@ export function QueueItemCard({ item, group, position }: QueueItemCardProps) {
               group={group}
               item={item}
               isReady={isReady}
+              isParticipant={isParticipant}
               canVote={canVote}
               canReady={canReady}
               canSelectParticipants={canSelectParticipants}

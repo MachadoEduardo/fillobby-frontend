@@ -47,6 +47,14 @@ export function getGroupActionErrorMessage(error: unknown, fallback: string) {
     return "Essa informação não está mais disponível. Atualize a página e tente novamente.";
   }
 
+  if (error.code === "QUEUE_CAPACITY_REACHED" || error.code === "MAX_PLAYERS_EXCEEDED") {
+    return "Todas as vagas deste jogo já foram preenchidas.";
+  }
+
+  if (error.code === "QUEUE_SELF_ENROLLMENT_DISABLED") {
+    return "A inscrição neste jogo foi encerrada. Atualize a fila.";
+  }
+
   if (error.status === 409) {
     return "O grupo foi atualizado por outra pessoa. Aguarde a atualização da tela e tente novamente.";
   }

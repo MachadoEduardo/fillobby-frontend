@@ -369,6 +369,32 @@ export const api = {
           body: { participantIds },
         }),
       ),
+    adjustParticipants: (groupId: string, itemId: string, addIds: string[], removeIds: string[]) =>
+      unwrap(
+        client.PATCH("/api/v1/groups/{groupId}/queue/{itemId}/participants", {
+          params: { path: { groupId, itemId } },
+          body: { addIds, removeIds },
+        }),
+      ),
+    setSelfEnrollment: (groupId: string, itemId: string, enabled: boolean) =>
+      unwrap(
+        client.PATCH("/api/v1/groups/{groupId}/queue/{itemId}/self-enrollment", {
+          params: { path: { groupId, itemId } },
+          body: { enabled },
+        }),
+      ),
+    joinParticipants: (groupId: string, itemId: string) =>
+      unwrap(
+        client.POST("/api/v1/groups/{groupId}/queue/{itemId}/participants/me", {
+          params: { path: { groupId, itemId } },
+        }),
+      ),
+    leaveParticipants: (groupId: string, itemId: string) =>
+      unwrap(
+        client.DELETE("/api/v1/groups/{groupId}/queue/{itemId}/participants/me", {
+          params: { path: { groupId, itemId } },
+        }),
+      ),
     markReady: (groupId: string, itemId: string) =>
       unwrap(
         client.POST("/api/v1/groups/{groupId}/queue/{itemId}/ready", {

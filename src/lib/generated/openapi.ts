@@ -613,6 +613,8 @@ export interface paths {
         /**
          * Definir participantes
          * @description Exige `OWNER` ou `ADMIN` e item em `VOTING` ou `WAITING_PLAYERS`.
+         *     Em itens com autoinscrição ativa, use PATCH para evitar sobrescrever
+         *     entradas e saídas simultâneas.
          *     Todos os IDs devem representar membros ativos, sem duplicatas, e a
          *     quantidade deve respeitar `game.maxPlayers`.
          *
@@ -626,7 +628,61 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
+        /**
+         * Adicionar ou remover participantes sem substituir a lista inteira
+         * @description Exige OWNER ou ADMIN e item em WAITING_PLAYERS ou READY. Preserva alterações simultâneas de outros membros.
+         */
+        patch: operations["adjustQueueParticipants"];
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}/queue/{itemId}/participants/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                itemId: components["parameters"]["ItemId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Inscrever-se no jogo
+         * @description Requer membro ativo, autoinscrição ligada, item em WAITING_PLAYERS ou READY e vaga quando houver limite. Não marca prontidão.
+         */
+        post: operations["joinQueueParticipants"];
+        /**
+         * Sair voluntariamente antes da partida
+         * @description Disponível para membros ativos em WAITING_PLAYERS ou READY, mesmo com autoinscrição desligada. Remove a própria prontidão.
+         */
+        delete: operations["leaveQueueParticipants"];
+        options?: never;
+        head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/groups/{groupId}/queue/{itemId}/self-enrollment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                itemId: components["parameters"]["ItemId"];
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Habilitar ou desabilitar autoinscrição do jogo
+         * @description Exige OWNER ou ADMIN e item em WAITING_PLAYERS ou READY. Desligar não remove participantes.
+         */
+        patch: operations["setQueueSelfEnrollment"];
         trace?: never;
     };
     "/api/v1/groups/{groupId}/queue/{itemId}/ready": {
@@ -892,6 +948,8 @@ export interface components {
             suggestedBy: components["schemas"]["UserSummary"];
             status: components["schemas"]["QueueStatus"];
             voteCount: number;
+            /** @description Se membros ativos podem entrar por conta própria antes da partida. */
+            selfEnrollmentEnabled: boolean;
             votingRoundId: string | null;
             /** @description Indica se o usuário autenticado já votou neste item. */
             viewerHasVoted: boolean;
@@ -1003,6 +1061,13 @@ export interface components {
         };
         SelectParticipantsInput: {
             participantIds: components["schemas"]["ObjectId"][];
+        };
+        AdjustParticipantsInput: {
+            addIds: components["schemas"]["ObjectId"][];
+            removeIds: components["schemas"]["ObjectId"][];
+        };
+        SelfEnrollmentInput: {
+            enabled: boolean;
         };
         HealthSuccess: {
             /** @constant */
@@ -1208,6 +1273,24 @@ export interface components {
         };
         /** @description `GAME_NOT_FOUND`: jogo inexistente ou inativo. */
         GameNotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorResponse"];
+            };
+        };
+        /** @description Grupo ou item inexistente ou inacessível. */
+        NotFound: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/json": components["schemas"]["ErrorResponse"];
+            };
+        };
+        /** @description O estado atual do item não permite a operação. */
+        Conflict: {
             headers: {
                 [name: string]: unknown;
             };
@@ -2599,6 +2682,122 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
+        };
+    };
+    adjustQueueParticipants: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                itemId: components["parameters"]["ItemId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdjustParticipantsInput"];
+            };
+        };
+        responses: {
+            /** @description Participantes e prontidão recalculados. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueItemSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["InsufficientGroupRole"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationError"];
+        };
+    };
+    joinQueueParticipants: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                itemId: components["parameters"]["ItemId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Inscrição registrada, inclusive se já era participante. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueItemSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+        };
+    };
+    leaveQueueParticipants: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                itemId: components["parameters"]["ItemId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Participação retirada, inclusive se já estava ausente. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueItemSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+        };
+    };
+    setQueueSelfEnrollment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                groupId: components["parameters"]["GroupId"];
+                itemId: components["parameters"]["ItemId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SelfEnrollmentInput"];
+            };
+        };
+        responses: {
+            /** @description Preferência aplicada. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QueueItemSuccess"];
+                };
+            };
+            401: components["responses"]["Unauthorized"];
+            403: components["responses"]["InsufficientGroupRole"];
+            404: components["responses"]["NotFound"];
+            409: components["responses"]["Conflict"];
+            422: components["responses"]["ValidationError"];
         };
     };
     markQueueItemReady: {

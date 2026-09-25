@@ -8,6 +8,7 @@ type QueueItemActionsProps = {
   group: Group;
   item: QueueItem;
   isReady: boolean;
+  isParticipant: boolean;
   canVote: boolean;
   canReady: boolean;
   canSelectParticipants: boolean;
@@ -18,6 +19,7 @@ export function QueueItemActions({
   group,
   item,
   isReady,
+  isParticipant,
   canVote,
   canReady,
   canSelectParticipants,
@@ -25,9 +27,31 @@ export function QueueItemActions({
 }: QueueItemActionsProps) {
   const isAdmin = group.role === "OWNER" || group.role === "ADMIN";
   const actions = useQueueItemActions(group.id, item);
+  const acceptingParticipants = item.status === "WAITING_PLAYERS" || item.status === "READY";
+  const capacityReached =
+    item.game.maxPlayers !== null && item.participantIds.length >= item.game.maxPlayers;
 
   return (
     <div className="mt-5 flex flex-wrap items-center gap-2 border-t pt-4">
+      {acceptingParticipants && !isParticipant && item.selfEnrollmentEnabled && (
+        <Button
+          size="sm"
+          disabled={capacityReached || actions.joinParticipants.isPending}
+          onClick={() => actions.joinParticipants.mutate()}
+        >
+          {capacityReached ? "Sem vagas" : "Quero jogar"}
+        </Button>
+      )}
+      {acceptingParticipants && isParticipant && (
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={actions.leaveParticipants.isPending}
+          onClick={() => actions.leaveParticipants.mutate()}
+        >
+          Sair da partida
+        </Button>
+      )}
       {canVote &&
         (actions.hasVoted ? (
           <Button
@@ -73,6 +97,17 @@ export function QueueItemActions({
       {canSelectParticipants && (
         <Button size="sm" variant="outline" onClick={onSelectParticipants}>
           <Users className="mr-1 h-3 w-3" /> Selecionar participantes
+        </Button>
+      )}
+
+      {isAdmin && acceptingParticipants && (
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={actions.setSelfEnrollment.isPending}
+          onClick={() => actions.setSelfEnrollment.mutate(!item.selfEnrollmentEnabled)}
+        >
+          {item.selfEnrollmentEnabled ? "Fechar inscrições" : "Permitir inscrições"}
         </Button>
       )}
 
